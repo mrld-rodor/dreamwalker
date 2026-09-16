@@ -3,10 +3,173 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dreamwalker</title>
+  <title>Dreamwalker — Contos de Sonhos Lúcidos</title>
+  <meta name="description" content="Contos baseados em sonhos lúcidos reais. Histórias vividas, não imaginadas.">
+
+  <!-- Preload das fontes críticas -->
+  <link rel="preload" href="{{ url_for('static', filename='fonts/Orbitron-Black.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ url_for('static', filename='fonts/AmaticSC-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ url_for('static', filename='fonts/RobotoMono-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+
+  <!-- Tailwind CDN (só para layout) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
-  <h1>Olá, Dreamwalker!</h1>
-  <p>Se estás a ver isto no browser, o Flask está a funcionar. ✅</p>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <header class="navbar bg-glass border-b border-deep">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+
+      <a href="/" class="navbar-logo text-lg sm:text-xl">
+        DREAMWALKER
+      </a>
+
+      <!-- Links desktop -->
+      <ul class="hidden md:flex items-center gap-6 lg:gap-8 text-sm">
+        <li><a href="#inicio"  class="nav-link">Início</a></li>
+        <li><a href="#projeto" class="nav-link">O Projeto</a></li>
+        <li><a href="#contos"  class="nav-link">Contos</a></li>
+        <li><a href="#comprar" class="nav-link">Comprar</a></li>
+      </ul>
+
+      <!-- Hambúrguer mobile -->
+      <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+
+    <!-- Menu mobile -->
+    <ul id="mobile-menu" class="hidden md:hidden flex-col gap-4 px-6 pb-5 pt-2 text-sm border-t border-deep-30">
+      <li><a href="#inicio"  class="mobile-link">Início</a></li>
+      <li><a href="#projeto" class="mobile-link">O Projeto</a></li>
+      <li><a href="#contos"  class="mobile-link">Contos</a></li>
+      <li><a href="#comprar" class="mobile-link">Comprar</a></li>
+    </ul>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         1. HERO
+    ============================================================ -->
+    <section id="inicio" class="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-28 pb-16">
+      <div class="max-w-4xl text-center">
+        <h1 class="hero-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-wide mb-6">
+          [Título aqui]
+        </h1>
+        <p class="hero-slogan text-3xl sm:text-4xl md:text-5xl mb-10">
+          [Slogan aqui]
+        </p>
+        <a href="#contos" class="btn-primary text-xs sm:text-sm px-8 sm:px-10 py-4 rounded-sm">
+          EXPLORAR OS CONTOS
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         2. O PROJETO
+    ============================================================ -->
+    <section id="projeto" class="py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-deep-30">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center">
+          O PROJETO
+        </h2>
+        <div class="body-text text-sm sm:text-base space-y-4">
+          <p>[Parágrafo sobre o projeto]</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         3. OS CONTOS
+    ============================================================ -->
+    <section id="contos" class="py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-deep-30">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-12 text-center">
+          OS CONTOS
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <!-- Cards aqui (próxima etapa) -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. O AUTOR
+    ============================================================ -->
+    <section id="autor" class="py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-deep-30">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8">
+          O AUTOR
+        </h2>
+        <p class="body-text text-sm sm:text-base">
+          [Bio do autor]
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5. COMPRAR
+    ============================================================ -->
+    <section id="comprar" class="py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-deep-30">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="cta-title text-4xl sm:text-5xl md:text-6xl mb-6">
+          Pronto para mergulhar?
+        </h2>
+        <p class="body-text mb-10 text-sm sm:text-base">
+          [Texto CTA]
+        </p>
+        <a href="#" class="btn-primary text-xs sm:text-sm px-10 sm:px-12 py-4 rounded-sm">
+          COMPRAR AGORA
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         6. CONTACTO
+    ============================================================ -->
+    <section id="contacto" class="py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-deep-30">
+      <div class="max-w-xl mx-auto">
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center">
+          CONTACTO
+        </h2>
+        <form id="contact-form" class="space-y-4">
+          <input type="text"  name="nome"  placeholder="Nome"  required
+                 class="form-input w-full px-4 py-3 text-sm rounded-sm">
+          <input type="email" name="email" placeholder="Email" required
+                 class="form-input w-full px-4 py-3 text-sm rounded-sm">
+          <textarea name="mensagem" rows="5" placeholder="Mensagem" required
+                    class="form-input w-full px-4 py-3 text-sm rounded-sm resize-y"></textarea>
+          <button type="submit" class="btn-primary w-full text-xs py-4 rounded-sm">
+            ENVIAR
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="border-t border-deep py-10 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-dw">
+      <span>© 2026 Dreamwalker. Todos os direitos reservados.</span>
+      <div class="flex gap-6">
+        <a href="#" class="footer-link">Instagram</a>
+        <a href="#" class="footer-link">TikTok</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

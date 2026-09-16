@@ -1,0 +1,313 @@
+/* ============================================================
+   DREAMWALKER — Fonte única de verdade
+============================================================ */
+
+/* ---------- FONTES ---------- */
+@font-face {
+  font-family: 'Amatic SC';
+  src: url('../fonts/AmaticSC-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('../fonts/Orbitron-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('../fonts/Orbitron-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('../fonts/Orbitron-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('../fonts/RobotoMono-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('../fonts/RobotoMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('../fonts/RobotoMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- VARIÁVEIS ---------- */
+:root {
+  /* Cores */
+  --dw-black:        #000000;
+  --dw-blue-deep:    #0603B4;
+  --dw-blue:         #3A36FF;
+  --dw-blue-bright:  #6B68FF;
+  --dw-blue-glow:    #8B88FF;
+  --dw-white:        #FFFFFF;
+  --dw-gray:         #9CA3AF;
+  --dw-gray-light:   #D3D3D3;
+
+  /* Fontes */
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-amatic:   'Amatic SC', cursive;
+  --font-mono:     'Roboto Mono', monospace;
+}
+
+/* ---------- BASE ---------- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--dw-black);
+  color: var(--dw-white);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- SCROLLBAR ---------- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--dw-black); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--dw-blue), var(--dw-blue-deep));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--dw-blue-bright), var(--dw-blue));
+}
+
+/* ============================================================
+   UTILITÁRIOS DE TEMA (para usar no HTML)
+============================================================ */
+.text-gray-dw    { color: var(--dw-gray); }
+.text-light-dw   { color: var(--dw-gray-light); }
+.text-bright-dw  { color: var(--dw-blue-bright); }
+
+.border-deep     { border-color: rgba(6, 3, 180, 0.4); }
+.border-deep-30  { border-color: rgba(6, 3, 180, 0.3); }
+
+.bg-glass {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ============================================================
+   NAVBAR
+============================================================ */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+}
+
+.navbar-logo {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--dw-white);
+  transition: color 0.25s ease;
+}
+.navbar-logo:hover { color: var(--dw-blue-bright); }
+
+.nav-link {
+  position: relative;
+  color: var(--dw-gray);
+  transition: color 0.25s ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -4px;
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, var(--dw-blue-bright), var(--dw-blue));
+  transition: width 0.3s ease;
+}
+.nav-link:hover { color: var(--dw-blue-bright); }
+.nav-link:hover::after { width: 100%; }
+
+.mobile-link {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--dw-gray-light);
+  transition: color 0.25s ease;
+}
+.mobile-link:hover { color: var(--dw-blue-bright); }
+
+/* ============================================================
+   TIPOGRAFIA
+============================================================ */
+.hero-title {
+  font-family: var(--font-orbitron);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  text-shadow:
+    0 0 20px rgba(107, 104, 255, 0.5),
+    0 0 40px rgba(58, 54, 255, 0.3);
+}
+
+.hero-slogan {
+  font-family: var(--font-amatic);
+  font-weight: 700;
+  color: var(--dw-blue-bright);
+}
+
+.section-title {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.cta-title {
+  font-family: var(--font-amatic);
+  font-weight: 700;
+  color: var(--dw-blue-bright);
+  text-shadow:
+    0 0 20px rgba(107, 104, 255, 0.5),
+    0 0 40px rgba(58, 54, 255, 0.3);
+}
+
+.body-text {
+  color: var(--dw-gray);
+  line-height: 1.8;
+}
+
+/* ============================================================
+   BOTÃO PRIMÁRIO
+============================================================ */
+.btn-primary {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--dw-blue-deep);
+  color: var(--dw-white);
+  border: 1px solid rgba(107, 104, 255, 0.4);
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(139, 136, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+  z-index: 1;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(58, 54, 255, 0.7), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: -1;
+  filter: blur(15px);
+}
+
+.btn-primary:hover {
+  border-color: var(--dw-blue-bright);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 20px rgba(58, 54, 255, 0.6),
+    0 0 40px rgba(58, 54, 255, 0.3),
+    0 0 80px rgba(58, 54, 255, 0.15);
+}
+.btn-primary:hover::before { left: 100%; }
+.btn-primary:hover::after  { opacity: 1; }
+.btn-primary:active        { transform: translateY(0); }
+
+/* ============================================================
+   CARD DOS CONTOS
+============================================================ */
+.card {
+  background: rgba(6, 3, 180, 0.08);
+  border: 1px solid rgba(6, 3, 180, 0.4);
+  transition: all 0.3s ease;
+}
+.card:hover {
+  border-color: var(--dw-blue-bright);
+  box-shadow: 0 0 30px rgba(58, 54, 255, 0.3);
+  transform: translateY(-4px);
+}
+
+/* ============================================================
+   FORM
+============================================================ */
+.form-input {
+  background: transparent;
+  border: 1px solid rgba(6, 3, 180, 0.5);
+  color: var(--dw-white);
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.form-input::placeholder { color: var(--dw-gray); }
+.form-input:focus {
+  border-color: var(--dw-blue-bright);
+  box-shadow: 0 0 12px rgba(107, 104, 255, 0.3);
+}
+
+/* ============================================================
+   MENU MOBILE — hambúrguer
+============================================================ */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+@media (max-width: 767px) {
+  .menu-toggle { display: flex; }
+}
+
+.menu-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--dw-white);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.footer-link { transition: color 0.25s ease; }
+.footer-link:hover { color: var(--dw-blue-bright); }
