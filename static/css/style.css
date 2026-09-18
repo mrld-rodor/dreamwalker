@@ -117,6 +117,58 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
+
+/* ============================================================
+   CUBO 3D
+============================================================ */
+
+#cube-wrapper {
+  perspective: 400px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cube-container {
+  box-sizing: border-box;
+  transform-style: preserve-3d;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  animation: cube-spin 5s infinite linear;
+}
+
+.face {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 1px solid var(--dw-blue-deep);          
+  background: transparent;
+  background-image: url('../img/pngegg.png');      
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 0 30px var(--dw-blue-deep);      
+  filter: drop-shadow(0 0 8px var(--dw-blue-deep));
+}
+
+/* Posicionamento 3D — 50/2 = 25px de translateZ */
+.face.front  { transform: translateZ(25px); }
+.face.back   { transform: rotateY(180deg) translateZ(25px); }
+.face.right  { transform: rotateY(90deg)  translateZ(25px); }
+.face.left   { transform: rotateY(-90deg) translateZ(25px); }
+.face.top    { transform: rotateX(90deg)  translateZ(25px); }
+.face.bottom { transform: rotateX(-90deg) translateZ(25px); }
+
+@keyframes cube-spin {
+  from { transform: rotateX(0deg)   rotateY(0deg);   }
+  to   { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+
+
 /* ============================================================
    NAVBAR
 ============================================================ */
@@ -129,7 +181,7 @@ body {
 .navbar-logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;                          
+  gap: 20px;                          
   font-family: var(--font-orbitron);
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -178,9 +230,24 @@ body {
   height: 90px;
   width: auto;
   display: block;
-  transition: opacity 0.25s ease;
+  border-radius: 50%;
+  border: 2px solid rgba(6, 3, 180, 0.3);
+  box-shadow: 
+    0 0 8px  rgba(6, 3, 180, 0.4),
+    0 0 16px rgba(6, 3, 180, 0.3),
+    inset 0 0 12px rgba(6, 3, 180, 0.2),
+    0 6px 12px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
 }
-.navbar-logo:hover img { opacity: 0.85; }
+
+.navbar-logo img:hover {
+  box-shadow: 
+    0 0 12px rgba(58, 54, 255, 0.6),       /* --dw-blue mais vivo no hover */
+    0 0 24px rgba(58, 54, 255, 0.4),
+    inset 0 0 16px rgba(107, 104, 255, 0.3), /* --dw-blue-bright */
+    0 10px 20px rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+}
 
 /* Botão "Comprar" no header (versão compacta do btn-primary) */
 .nav-cta {
