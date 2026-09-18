@@ -70,7 +70,7 @@
   --dw-white:        #FFFFFF;
   --dw-gray:         #9CA3AF;
   --dw-gray-light:   #D3D3D3;
-
+  --dw-red:          #BB0A1E;
   /* Fontes */
   --font-orbitron: 'Orbitron', sans-serif;
   --font-amatic:   'Amatic SC', cursive;
@@ -133,7 +133,7 @@ body {
   color: var(--dw-white);
   transition: color 0.25s ease;
 }
-.navbar-logo:hover { color: var(--dw-blue-bright); }
+.navbar-logo:hover { color: var(--dw-blue-deep); }
 
 .nav-link {
   position: relative;
@@ -145,10 +145,10 @@ body {
   position: absolute;
   left: 0; bottom: -4px;
   width: 0; height: 2px;
-  background: linear-gradient(90deg, var(--dw-blue-bright), var(--dw-blue));
+  background: linear-gradient(90deg, var(--dw-blue-deep), var(--dw-blue-deep));
   transition: width 0.3s ease;
 }
-.nav-link:hover { color: var(--dw-blue-bright); }
+.nav-link:hover { color: var(--dw-blue-deep); }
 .nav-link:hover::after { width: 100%; }
 
 .mobile-link {
@@ -157,7 +157,7 @@ body {
   color: var(--dw-gray-light);
   transition: color 0.25s ease;
 }
-.mobile-link:hover { color: var(--dw-blue-bright); }
+.mobile-link:hover { color: var(--dw-blue-deep); }
 
 /* ============================================================
    TIPOGRAFIA
