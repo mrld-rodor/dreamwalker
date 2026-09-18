@@ -127,12 +127,17 @@ body {
 }
 
 .navbar-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;                          
   font-family: var(--font-orbitron);
   font-weight: 700;
   letter-spacing: 0.15em;
   color: var(--dw-white);
+  text-decoration: none;
   transition: color 0.25s ease;
 }
+
 .navbar-logo:hover { color: var(--dw-blue-deep); }
 
 .nav-link {
@@ -148,16 +153,63 @@ body {
   background: linear-gradient(90deg, var(--dw-blue-deep), var(--dw-blue-deep));
   transition: width 0.3s ease;
 }
+
 .nav-link:hover { color: var(--dw-blue-deep); }
 .nav-link:hover::after { width: 100%; }
+
+#mobile-menu li {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
 
 .mobile-link {
   display: block;
   padding: 0.5rem 0;
   color: var(--dw-gray-light);
   transition: color 0.25s ease;
+  text-align: center;
 }
+
 .mobile-link:hover { color: var(--dw-blue-deep); }
+
+/* Logo */
+.navbar-logo img {
+  height: 90px;
+  width: auto;
+  display: block;
+  transition: opacity 0.25s ease;
+}
+.navbar-logo:hover img { opacity: 0.85; }
+
+/* Botão "Comprar" no header (versão compacta do btn-primary) */
+.nav-cta {
+  padding: 10px 20px;
+  font-size: 12px;
+}
+
+.nav-cta:hover {
+  background: var(--dw-blue);
+  border-color: var(--dw-blue-bright);
+  box-shadow: 0 0 20px rgba(58, 54, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Header esconde ao descer / mostra ao subir */
+.navbar {
+  transition: transform 0.35s ease;
+}
+.navbar.is-hidden {
+  transform: translateY(-100%);
+}
+
+/* Header esconde/mostra apenas em mobile */
+@media (min-width: 768px) {
+  .navbar,
+  .navbar.is-hidden {
+    transform: none !important;
+  }
+}
 
 /* ============================================================
    TIPOGRAFIA

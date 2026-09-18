@@ -25,10 +25,12 @@
        NAVBAR
   ============================================================ -->
   <header class="navbar bg-glass border-b border-deep">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <nav class="max-w-7xl mx-auto px-2 sm:px-6 py-3 flex items-center justify-between">
 
-      <a href="/" class="navbar-logo text-lg sm:text-xl">
-        DREAMWALKER TALES
+      <!-- Logo -->
+      <a href="/" class="navbar-logo">
+        <img src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}" alt="Dreamwalker">
+        <span class="navbar-logo-text">DREAMWALKER<br>TALES</span>
       </a>
 
       <!-- Links desktop -->
@@ -36,7 +38,9 @@
         <li><a href="#inicio"  class="nav-link">Início</a></li>
         <li><a href="#projeto" class="nav-link">O Projeto</a></li>
         <li><a href="#contos"  class="nav-link">Contos</a></li>
-        <li><a href="#comprar" class="nav-link">Comprar</a></li>
+        <li><a href="#autor"   class="nav-link">O Autor</a></li>
+        <li><a href="#contacto" class="nav-link">Contacto</a></li>
+        <li><a href="#comprar" class="btn-primary nav-cta">Comprar</a></li>
       </ul>
 
       <!-- Hambúrguer mobile -->
@@ -52,7 +56,9 @@
       <li><a href="#inicio"  class="mobile-link">Início</a></li>
       <li><a href="#projeto" class="mobile-link">O Projeto</a></li>
       <li><a href="#contos"  class="mobile-link">Contos</a></li>
-      <li><a href="#comprar" class="mobile-link">Comprar</a></li>
+      <li><a href="#autor"   class="mobile-link">O Autor</a></li>
+      <li><a href="#contacto" class="mobile-link">Contacto</a></li>
+      <li><a href="#comprar" class="btn-primary nav-cta">Comprar</a></li>
     </ul>
   </header>
 
