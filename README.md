@@ -15,27 +15,6 @@ Este repositório contém a landing page onde os leitores podem conhecer o proje
 - **Deploy:** Vercel
 - **Email:** Resend
 
-## Como correr localmente
-
-```bash
-# 1. Clonar o repositório
-git clone <url-do-repo>
-cd dreamwalker
-
-# 2. Criar e ativar o ambiente virtual
-python -m venv venv
-source venv/bin/activate        # Linux/Mac
-# venv\Scripts\activate         # Windows
-
-# 3. Instalar dependências
-pip install -r requirements.txt
-
-# 4. Correr o servidor de desenvolvimento
-python api/index.py
-```
-
-O site fica disponível em `http://localhost:5000`.
-
 ## Estrutura do projeto
 
 ```
