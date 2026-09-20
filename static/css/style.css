@@ -80,7 +80,17 @@
 /* ---------- BASE ---------- */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+}
+
+@media (min-width: 768px) {
+  #inicio,
+  #projeto,
+  #contos,
+  #autor,
+  #comprar,
+  #contacto {
+    scroll-margin-top: 115px;   
+  }
 }
 
 body {
@@ -89,6 +99,24 @@ body {
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
 }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image: url('../img/background.png');   
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  /* Escurecimento para o texto por cima ficar legível */
+  filter: brightness(0.55) saturate(1.1);
+}
+
 
 /* ---------- SCROLLBAR ---------- */
 ::-webkit-scrollbar { width: 8px; }
@@ -116,6 +144,34 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+
+/* ============================================================
+   MENU MOBILE — hambúrguer
+============================================================ */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+@media (max-width: 767px) {
+  .menu-toggle { display: flex; }
+}
+
+.menu-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--dw-white);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 
 /* ============================================================
@@ -150,7 +206,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0 0 30px var(--dw-blue-deep);      
+  box-shadow: 0 0 10px var(--dw-blue-deep);      
   filter: drop-shadow(0 0 8px var(--dw-blue-deep));
 }
 
@@ -221,9 +277,16 @@ body {
   color: var(--dw-gray-light);
   transition: color 0.25s ease;
   text-align: center;
+  padding: 14px 24px;
+  border-radius: 4px;
+  transition: color 0.25s ease, background-color 0.25s ease;
 }
 
-.mobile-link:hover { color: var(--dw-blue-deep); }
+.mobile-link:hover,
+.mobile-link:active {
+  color: var(--dw-blue-bright);
+  background: rgba(6, 3, 180, 0.15);  
+}
 
 /* Logo */
 .navbar-logo img {
@@ -256,10 +319,9 @@ body {
 }
 
 .nav-cta:hover {
-  background: var(--dw-blue);
-  border-color: var(--dw-blue-bright);
-  box-shadow: 0 0 20px rgba(58, 54, 255, 0.5);
-  transform: translateY(-1px);
+  padding: 10px 20px;
+  font-size: 12px;  
+  /* O efeito do hover será herdado do btn-primary */
 }
 
 /* Header esconde ao descer / mostra ao subir */
@@ -283,7 +345,7 @@ body {
 ============================================================ */
 .hero-title {
   font-family: var(--font-orbitron);
-  font-weight: 900;
+  font-weight: 400;
   letter-spacing: 0.05em;
   line-height: 1.1;
   text-shadow:
@@ -294,7 +356,7 @@ body {
 .hero-slogan {
   font-family: var(--font-amatic);
   font-weight: 700;
-  color: var(--dw-blue-bright);
+  color: var(--dw-red);
 }
 
 .section-title {
@@ -325,7 +387,10 @@ body {
   display: inline-block;
   overflow: hidden;
   isolation: isolate;
-  background: var(--dw-blue-deep);
+  background-color: var(--dw-blue-deep);
+  background-image: url('../img/star_button.webp');
+  background-position: center;
+  background-repeat: no-repeat;
   color: var(--dw-white);
   border: 1px solid rgba(107, 104, 255, 0.4);
   font-family: var(--font-orbitron);
@@ -364,9 +429,12 @@ body {
     0 0 40px rgba(58, 54, 255, 0.3),
     0 0 80px rgba(58, 54, 255, 0.15);
 }
+
 .btn-primary:hover::before { left: 100%; }
 .btn-primary:hover::after  { opacity: 1; }
-.btn-primary:active        { transform: translateY(0); }
+.btn-primary:active        { transform: translateY(0); 
+}
+
 
 /* ============================================================
    CARD DOS CONTOS
@@ -398,32 +466,6 @@ body {
   box-shadow: 0 0 12px rgba(107, 104, 255, 0.3);
 }
 
-/* ============================================================
-   MENU MOBILE — hambúrguer
-============================================================ */
-.menu-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  padding: 8px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-@media (max-width: 767px) {
-  .menu-toggle { display: flex; }
-}
-
-.menu-toggle span {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--dw-white);
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.menu-toggle.open span:nth-child(2) { opacity: 0; }
-.menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ============================================================
    FOOTER
