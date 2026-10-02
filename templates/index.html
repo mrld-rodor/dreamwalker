@@ -12,6 +12,9 @@
   <link rel="preload" href="{{ url_for('static', filename='fonts/AmaticSC-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ url_for('static', filename='fonts/RobotoMono-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 
+  <!-- Favicon -->
+  <link rel="icon" href="{{ url_for('static', filename='img/amiraldo_logo_transparent_white.png') }}" type="image/png">
+
   <!-- Tailwind CDN (só para layout) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -41,6 +44,7 @@
         <li><a href="#inicio"  class="nav-link">Início</a></li>
         <li><a href="#projeto" class="nav-link">O Projeto</a></li>
         <li><a href="#autor"   class="nav-link">O Autor</a></li>
+        <li><a href="#contos"   class="nav-link">Os Contos</a></li>
         <li><a href="#contacto" class="nav-link">Contacto</a></li>
         <li><a href="#comprar" class="btn-primary nav-cta">COMPRAR</a></li>
       </ul>
@@ -58,6 +62,7 @@
       <li><a href="#inicio"  class="mobile-link">Início</a></li>
       <li><a href="#projeto" class="mobile-link">O Projeto</a></li>
       <li><a href="#autor"   class="mobile-link">O Autor</a></li>
+      <li><a href="#contos"   class="nav-link">Os Contos</a></li>
       <li><a href="#contacto" class="mobile-link">Contacto</a></li>
       <li><a href="#comprar" class="btn-primary nav-cta">COMPRAR</a></li>
         
@@ -166,31 +171,174 @@
       <div class="max-w-3xl mx-auto text-center">
         <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8">O AUTOR</h2>
         <p class="text-center text-2xl">.:.</p></br>
-        <p class="body-text text-sm sm:text-base">
-          "Escrevo o que sonho, não invento mundos. Visito-os."
-          — DreamWalker
-        </p>
+
+        <div class="max-w-2xl mx-auto">
+
+          <article class="letter">
+
+            <p class="letter-greeting">Caro leitor,</p>
+
+            <p>
+              Não escrevo para inventar mundos. Escrevo porque os visitei — e voltar
+              sem deixar rasto é uma forma silenciosa de os perder.
+            </p>
+
+            <p>
+              Cada conto que encontras aqui nasceu numa dessas noites em que o sonho
+              não terminou quando abri os olhos. Houve histórias que me perseguiram
+              durante dias — sussurros que insistiam em ser escritos antes de se
+              desfazerem. Outras ainda me perseguem. Há mundos que não se fecham
+              quando acordamos; apenas esperam que alguém se lembre deles.
+            </p>
+
+            <p>
+              Durante muito tempo guardei tudo só para mim. Eram paisagens que
+              ninguém mais veria, conversas que ninguém mais ouviria, cidades que
+              existiam apenas enquanto eu dormia. Mas um sonho não partilhado
+              começa, aos poucos, a desvanecer-se — como uma fotografia exposta
+              à luz. Foi para os salvar que comecei a escrever.
+            </p>
+
+            <p>
+              Se chegaste até aqui, talvez também já tenhas caminhado entre sonhos
+              sem saber. Talvez reconheças algo nestas páginas que não consegues
+              explicar — uma sensação familiar, um lugar que juras já ter visto,
+              uma frase que parece ter sido dita por alguém que conheceste. Talvez
+              estejas apenas curioso. E isso também basta. A curiosidade é, muitas
+              vezes, a primeira porta.
+            </p>
+
+            <p>
+              Não prometo respostas. Prometo travessias. Cada conto é uma passagem
+              que se abre durante a leitura e que, por alguns minutos, te deixa
+              habitar um mundo que não obedece às regras do dia. Leva o tempo que
+              precisares. Volta quando quiseres. As portas destes sonhos ficam
+              sempre entreabertas.
+            </p>
+            <p>
+              Escrevo o que sonho, não invento mundos. Visito-os.
+            </p>
+            <p>
+              É para ti que escrevo.
+            </p>
+
+            <div class="letter-signature">
+              <span class="letter-signature-mark">—</span>
+              <span class="letter-signature-name">DreamWalker</span>
+            </div>
+
+          </article>
+
+        </div>        
       </div>
     </section>
 
     <!-- ============================================================
-         5. COMPRAR
+         5.  OS CONTOS
     ============================================================ -->
-    <section id="comprar" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
-      <div class="max-w-2xl mx-auto text-center">
-        <h2 class="cta-title text-4xl sm:text-5xl md:text-6xl mb-6">
-          Pronto para mergulhar?
-        </h2>
-        <p class="body-text mb-10 text-sm sm:text-base">
-                      Apoie o projeto e seja um dos primeiros a explorar os contos que nasceram dos sonhos.
+    <section id="contos" class="section-bg mt-8 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
+      <div class="max-w-6xl mx-auto">
 
-          lorem ipsum dolor sit amet consectetur, adipisicing elit. Rerum ducimus, 
-          alias possimus enim molestias labore necessitatibus natus facilis corporis 
-          assumenda ipsum officiis quam nam soluta perferendis quasi, iusto ipsa!
-        </p>
-        <a href="#" class="btn-primary text-xs sm:text-sm px-10 sm:px-12 py-4 rounded-sm">
-          COMPRAR AGORA
-        </a>
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-12 text-center">
+          OS CONTOS
+        </h2>
+
+        <!-- Carrossel -->
+        <div class="carousel" id="contos-carousel">
+
+          <div class="carousel-viewport">
+            <div class="carousel-track" id="carousel-track">
+
+              <!-- ===== CONTO 1 ===== -->
+              <article class="carousel-slide">
+                <div class="conto-card">
+                  <div class="conto-cover">
+                    <img src="{{ url_for('static', filename='img/conto-1.jpg') }}" alt="Capa do conto 1">
+                  </div>
+                  <div class="conto-info">
+                    <span class="conto-number">01</span>
+                    <h3 class="conto-title">Título do Primeiro Conto</h3>
+                    <p class="conto-synopsis">
+                      Sinopse breve do conto. Duas a três frases que agarram o leitor
+                      e o fazem querer saber mais. Fala do sonho que originou a
+                      história e do que o leitor vai encontrar.
+                    </p>
+                    <a href="https://hotmart.com/SEU-LINK-1" target="_blank" rel="noopener" class="btn-primary conto-btn">
+                      COMPRAR NA HOTMART
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+              <!-- ===== CONTO 2 ===== -->
+              <article class="carousel-slide">
+                <div class="conto-card">
+                  <div class="conto-cover">
+                    <img src="{{ url_for('static', filename='img/conto-2.jpg') }}" alt="Capa do conto 2">
+                  </div>
+                  <div class="conto-info">
+                    <span class="conto-number">02</span>
+                    <h3 class="conto-title">Título do Segundo Conto</h3>
+                    <p class="conto-synopsis">
+                      Sinopse breve do segundo conto. Mesma estrutura — o leitor
+                      deve sentir que cada conto é uma porta diferente para o
+                      mesmo universo onírico.
+                    </p>
+                    <a href="https://hotmart.com/SEU-LINK-2" target="_blank" rel="noopener" class="btn-primary conto-btn">
+                      COMPRAR NA HOTMART
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+              <!-- ===== CONTO 3 ===== -->
+              <article class="carousel-slide">
+                <div class="conto-card">
+                  <div class="conto-cover">
+                    <img src="{{ url_for('static', filename='img/conto-3.jpg') }}" alt="Capa do conto 3">
+                  </div>
+                  <div class="conto-info">
+                    <span class="conto-number">03</span>
+                    <h3 class="conto-title">Título do Terceiro Conto</h3>
+                    <p class="conto-synopsis">
+                      Sinopse breve do terceiro conto. Mantém o mesmo tom
+                      narrativo — mistério, experiência vivida, atmosfera
+                      onírica.
+                    </p>
+                    <a href="https://hotmart.com/SEU-LINK-3" target="_blank" rel="noopener" class="btn-primary conto-btn">
+                      COMPRAR NA HOTMART
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </div>
+
+          <!-- Controlos -->
+          <div class="carousel-controls">
+            <button type="button" class="carousel-arrow" id="carousel-prev" aria-label="Conto anterior">
+              ←
+            </button>
+
+            <div class="carousel-counter">
+              <input
+                type="number"
+                id="carousel-input"
+                class="carousel-input"
+                min="1"
+                max="3"
+                value="1"
+                aria-label="Número do conto">
+              <span class="carousel-total">/ 3</span>
+            </div>
+
+            <button type="button" class="carousel-arrow" id="carousel-next" aria-label="Próximo conto">
+              →
+            </button>
+          </div>
+
+        </div>
       </div>
     </section>
 

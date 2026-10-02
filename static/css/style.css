@@ -591,6 +591,311 @@ body::before {
 }
 
 
+/* ============================================================
+   CARTA AO LEITOR — secção "O Autor"
+============================================================ */
+.letter {
+  font-family: var(--font-mono);
+  color: var(--dw-gray);
+  font-size: 15px;
+  line-height: 2;
+  text-align: left;                   /* carta = alinhada à esquerda */
+  position: relative;
+  padding-left: 32px;
+}
+
+/* Barra vertical decorativa à esquerda — sugere uma carta/página */
+.letter::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(107, 104, 255, 0.4) 20%,
+    rgba(107, 104, 255, 0.4) 80%,
+    transparent
+  );
+}
+
+.letter p {
+  margin-bottom: 20px;
+}
+
+/* Saudação — destaque com o azul do tema */
+.letter-greeting {
+  font-family: var(--font-orbitron);
+  font-weight: 500;
+  font-size: clamp(18px, 2.4vw, 22px);
+  letter-spacing: 0.03em;
+  color: var(--dw-white);
+  margin-bottom: 32px;
+  text-shadow:
+    0 0 8px  rgba(139, 136, 255, 0.5),
+    0 0 20px rgba(58, 54, 255, 0.3);
+}
+
+/* Última frase antes da assinatura — ganha peso */
+.letter p:last-of-type {
+  font-family: var(--font-orbitron);
+  font-weight: 500;
+  font-size: clamp(16px, 2.2vw, 20px);
+  letter-spacing: 0.03em;
+  color: var(--dw-white);
+  margin-top: 32px;
+  margin-bottom: 0;
+  text-shadow:
+    0 0 6px  rgba(139, 136, 255, 0.8),
+    0 0 16px rgba(89, 87, 240, 0.5),
+    0 0 30px rgba(58, 54, 255, 0.3);
+}
+
+/* Assinatura à direita */
+.letter-signature {
+  margin-top: 48px;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.letter-signature-mark {
+  color: var(--dw-gray);
+  font-size: 20px;
+}
+
+.letter-signature-name {
+  font-family: var(--font-amatic);
+  font-weight: 700;
+  font-size: 38px;
+  letter-spacing: 0.05em;
+  color: var(--dw-red);
+  line-height: 1;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .letter {
+    font-size: 14px;
+    line-height: 1.9;
+    padding-left: 20px;
+  }
+  .letter-signature-name {
+    font-size: 30px;
+  }
+  .letter-signature {
+    margin-top: 32px;
+  }
+}
+
+
+/* ============================================================
+   CARROSSEL DE CONTOS
+============================================================ */
+.carousel {
+  position: relative;
+}
+
+.carousel-viewport {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: 0 4px;   /* espaço para a borda respirar */
+}
+
+/* ---------- Card do conto ---------- */
+.conto-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  padding: 24px;
+  background: rgba(6, 3, 180, 0.08);
+  border: 1px solid rgba(107, 104, 255, 0.25);
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.conto-card:hover {
+  border-color: rgba(107, 104, 255, 0.5);
+  box-shadow:
+    0 0 20px rgba(58, 54, 255, 0.2),
+    inset 0 0 30px rgba(6, 3, 180, 0.08);
+}
+
+/* Desktop: capa + info lado a lado */
+@media (min-width: 768px) {
+  .conto-card {
+    grid-template-columns: 240px 1fr;
+    gap: 40px;
+    padding: 32px;
+    align-items: center;
+  }
+}
+
+.conto-cover {
+  width: 100%;
+  max-width: 240px;
+  margin: 0 auto;
+  aspect-ratio: 2 / 3;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  box-shadow:
+    0 0 20px rgba(58, 54, 255, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.conto-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.conto-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.conto-number {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--dw-blue-bright);
+  margin-bottom: 8px;
+  text-shadow:
+    0 0 8px rgba(139, 136, 255, 0.6),
+    0 0 16px rgba(58, 54, 255, 0.3);
+}
+
+.conto-title {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: clamp(20px, 3vw, 28px);
+  letter-spacing: 0.04em;
+  color: var(--dw-white);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.conto-synopsis {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--dw-gray);
+  margin-bottom: 24px;
+  max-width: 520px;
+}
+
+.conto-btn {
+  align-self: flex-start;
+  font-size: 12px;
+  padding: 14px 28px;
+}
+
+/* Em mobile, o botão estica */
+@media (max-width: 640px) {
+  .conto-btn {
+    align-self: stretch;
+    text-align: center;
+  }
+}
+
+/* ---------- Controlos do carrossel ---------- */
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.carousel-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  color: var(--dw-gray);
+  background: rgba(6, 3, 180, 0.1);
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-arrow:hover {
+  color: var(--dw-white);
+  border-color: var(--dw-blue-bright);
+  background: rgba(58, 54, 255, 0.2);
+  box-shadow: 0 0 16px rgba(58, 54, 255, 0.4);
+}
+
+.carousel-arrow:active {
+  transform: scale(0.95);
+}
+
+.carousel-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-orbitron);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--dw-gray);
+}
+
+.carousel-input {
+  width: 44px;
+  padding: 6px 8px;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  color: var(--dw-white);
+  background: rgba(6, 3, 180, 0.1);
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.25s ease;
+  -moz-appearance: textfield;
+}
+
+/* Esconde as setinhas default do number em Chrome/Safari */
+.carousel-input::-webkit-outer-spin-button,
+.carousel-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.carousel-input:focus {
+  border-color: var(--dw-blue-bright);
+  box-shadow: 0 0 10px rgba(107, 104, 255, 0.4);
+}
+
+.carousel-total {
+  color: var(--dw-gray);
+  opacity: 0.7;
+}
+
 
 /* ============================================================
    CARD DOS CONTOS

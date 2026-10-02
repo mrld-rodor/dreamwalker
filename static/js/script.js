@@ -86,6 +86,90 @@ document.addEventListener('DOMContentLoaded', () => {
     lastScrollY = window.pageYOffset;
   });
 
+  // ============================================================
+  // CARROSSEL DE CONTOS
+  // ============================================================
+  const carousel = document.getElementById('contos-carousel');
+  if (carousel) {
+    const track   = document.getElementById('carousel-track');
+    const slides  = carousel.querySelectorAll('.carousel-slide');
+    const prevBtn = document.getElementById('carousel-prev');
+    const nextBtn = document.getElementById('carousel-next');
+    const input   = document.getElementById('carousel-input');
+    const total   = slides.length;
+
+    let current = 0;
+    let autoplayId = null;
+    const AUTOPLAY_DELAY = 6000;   // 6 segundos
+
+    function goTo(index) {
+      // wrap around
+      if (index < 0) index = total - 1;
+      if (index >= total) index = 0;
+
+      current = index;
+      track.style.transform = `translateX(-${current * 100}%)`;
+
+      if (input) input.value = current + 1;
+    }
+
+    function goNext() { goTo(current + 1); }
+    function goPrev() { goTo(current - 1); }
+
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayId = setInterval(goNext, AUTOPLAY_DELAY);
+    }
+
+    function stopAutoplay() {
+      if (autoplayId) {
+        clearInterval(autoplayId);
+        autoplayId = null;
+      }
+    }
+
+    // Arrows
+    if (nextBtn) nextBtn.addEventListener('click', () => { goNext(); startAutoplay(); });
+    if (prevBtn) prevBtn.addEventListener('click', () => { goPrev(); startAutoplay(); });
+
+    // Input — jump to slide
+    if (input) {
+      const jump = () => {
+        let n = parseInt(input.value, 10);
+        if (isNaN(n)) { input.value = current + 1; return; }
+        n = Math.max(1, Math.min(total, n));
+        goTo(n - 1);
+        startAutoplay();
+      };
+
+      input.addEventListener('change', jump);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); jump(); input.blur(); }
+      });
+    }
+
+    // Pausa autoplay ao passar o rato ou focar o input
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+    carousel.addEventListener('focusin', stopAutoplay);
+    carousel.addEventListener('focusout', () => {
+      // só reinicia se o foco sair do carrossel
+      setTimeout(() => {
+        if (!carousel.contains(document.activeElement)) startAutoplay();
+      }, 100);
+    });
+
+    // Pausa quando o separador não está visível (bateria/CPU)
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAutoplay();
+      else startAutoplay();
+    });
+
+    // Inicia
+    goTo(0);
+    startAutoplay();
+  }
+
 });
 
 
