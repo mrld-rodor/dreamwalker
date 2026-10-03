@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Dreamwalker Tales{% endblock %}</title>
+  <meta name="description" content="{% block description %}Contos baseados em sonhos lúcidos reais. Histórias vividas, não imaginadas.{% endblock %}">
+  <meta name="author" content="Amiraldo Rodrigues">
+
+  <!-- Preload das fontes críticas -->
+  <link rel="preload" href="{{ url_for('static', filename='fonts/Orbitron-Black.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ url_for('static', filename='fonts/AmaticSC-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ url_for('static', filename='fonts/RobotoMono-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{{ url_for('static', filename='img/amiraldo_logo_transparent_white.png') }}" type="image/png">
+
+  <!-- Tailwind CDN (só para layout) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="site-body">
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <header class="navbar bg-glass border-b border-deep">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+
+      <!-- Logo -->
+        <a href="/" class="navbar-logo">
+            <img
+                src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}"
+                alt="Dreamwalker"
+                class="logo-img">
+            <span class="navbar-logo-text">
+                <span class="block md:inline">DREAMWALKER</span>
+                <span class="block md:inline md:ml-2">TALES</span>
+            </span>
+        </a>
+
+      <!-- Links desktop -->
+      <ul class="hidden md:flex items-center gap-6 lg:gap-8 text-sm">
+        <li><a href="/#inicio"   class="nav-link">Início</a></li>
+        <li><a href="/#projeto"  class="nav-link">O Projeto</a></li>
+        <li><a href="/#autor"    class="nav-link">O Autor</a></li>
+        <li><a href="/#contos"   class="nav-link">Os Contos</a></li>
+        <li><a href="/#contacto" class="nav-link">Contacto</a></li>
+        <li><a href="/#contos"   class="btn-primary nav-cta">COMPRAR</a></li>
+      </ul>
+
+      <!-- Hamburguer mobile -->
+      <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+
+    <!-- Menu mobile -->
+    <ul id="mobile-menu" class="hidden md:hidden flex-col gap-3 px-6 pb-5 pt-2 text-sm border-t border-deep-30">
+      <li><a href="/#inicio"   class="mobile-link">Início</a></li>
+      <li><a href="/#projeto"  class="mobile-link">O Projeto</a></li>
+      <li><a href="/#autor"    class="mobile-link">O Autor</a></li>
+      <li><a href="/#contos"   class="mobile-link">Os Contos</a></li>
+      <li><a href="/#contacto" class="mobile-link">Contacto</a></li>
+      <li><a href="/#contos"   class="btn-primary nav-cta">COMPRAR</a></li>
+
+      <!-- Cubo giratório -->
+      <li class="mt-12 mb-6">
+        <div class="cube-wrapper">
+          <div class="cube-container">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer mt-12" data-anime="fade">
+    <div class="site-footer-inner">
+
+      <!-- Coluna 1 — Marca -->
+        <div class="footer-brand">
+        <img
+            src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}"
+            alt="Dreamwalker Tales"
+            class="logo-img footer-logo-img">
+        <div class="footer-brand-text">
+            <span class="footer-brand-name">DREAMWALKER TALES</span>
+            <p class="footer-brand-tagline">
+            Sonhos que atravessam a realidade.
+            </p>
+        </div>
+        </div>
+
+      <!-- Coluna 2 — Navegação + Redes -->
+      <div class="footer-columns">
+
+        <nav class="footer-nav" aria-label="Navegação do rodapé">
+          <h4 class="footer-heading">Navegação</h4>
+          <a href="/#inicio">Início</a>
+          <a href="/#projeto">O Projeto</a>
+          <a href="/#autor">O Autor</a>
+          <a href="/#contos">Os Contos</a>
+          <a href="/#contacto">Contacto</a>
+        </nav>
+
+        <div class="footer-social">
+          <h4 class="footer-heading">Redes</h4>
+          <div class="footer-social-icons">
+            <a href="https://instagram.com/SEU-USER" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a href="https://facebook.com/SEU-USER" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.378 14.192 5 15.115 5H18V0h-3.808C10.596 0 9 1.583 9 4.615V8z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Linha inferior -->
+    <div class="site-footer-bottom">
+      <p class="footer-copy">© 2026 Dreamwalker Tales. Todos os direitos reservados.</p>
+
+    <p class="footer-notice">
+        Site desenvolvido por
+        <a href="https://www.linkedin.com/in/amiraldo-rodrigues" target="_blank" rel="noopener" class="footer-notice-link">
+            Amiraldo Rodrigues.
+        </a>
+    </p>
+
+      <nav class="footer-legal" aria-label="Links legais">
+        <a href="/privacidade">Política de Privacidade</a>
+        <span aria-hidden="true">·</span>
+        <a href="/termos">Termos de Uso</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

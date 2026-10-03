@@ -1,74 +1,26 @@
-<!doctype html>
-<html lang="pt">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dreamwalker Tales</title>
-  <meta name="description" content="Contos baseados em sonhos lúcidos reais. Histórias vividas, não imaginadas.">
-  <meta name="author" content="Amiraldo Rodrigues">
+{% extends 'base.html' %}
 
-  <!-- Preload das fontes críticas -->
-  <link rel="preload" href="{{ url_for('static', filename='fonts/Orbitron-Black.woff2') }}" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="{{ url_for('static', filename='fonts/AmaticSC-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="{{ url_for('static', filename='fonts/RobotoMono-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+{% block title %}Dreamwalker Tales — Contos de Sonhos Lúcidos{% endblock %}
+{% block description %}Contos baseados em sonhos lúcidos reais. Histórias vividas, não imaginadas.{% endblock %}
 
-  <!-- Favicon -->
-  <link rel="icon" href="{{ url_for('static', filename='img/amiraldo_logo_transparent_white.png') }}" type="image/png">
-
-  <!-- Tailwind CDN (só para layout) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-
-<body>
+{% block content %}
 
   <!-- ============================================================
-       NAVBAR
+       1. HERO
   ============================================================ -->
-  <header class="navbar bg-glass border-b border-deep">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-
-      <!-- Logo -->
-      <a href="/" class="navbar-logo">
-        <img src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}" alt="Dreamwalker">
-        <span class="navbar-logo-text">
-          <span class="block md:inline">DREAMWALKER</span>
-          <span class="block md:inline md:ml-2">TALES</span>
-        </span>
+  <section id="inicio" class="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-28 pb-16">
+    <div class="max-w-4xl text-center">
+      <h1 class="hero-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-wide mb-6" data-anime="down">
+        Dreamwalker Tales
+      </h1>
+      <p class="hero-slogan text-3xl sm:text-4xl md:text-5xl mb-10" data-anime="fade" data-delay="2">
+        Está preparado para caminhar entre os sonhos?
+      </p>
+      <a href="#contos" class="btn-primary text-xs sm:text-sm px-8 sm:px-10 py-4 rounded-sm" data-anime="up" data-delay="3">
+        EXPLORAR OS CONTOS
       </a>
-
-      <!-- Links desktop -->
-      <ul class="hidden md:flex items-center gap-6 lg:gap-8 text-sm">
-        <li><a href="#inicio"  class="nav-link">Início</a></li>
-        <li><a href="#projeto" class="nav-link">O Projeto</a></li>
-        <li><a href="#autor"   class="nav-link">O Autor</a></li>
-        <li><a href="#contos"   class="nav-link">Os Contos</a></li>
-        <li><a href="#contacto" class="nav-link">Contacto</a></li>
-        <li><a href="#comprar" class="btn-primary nav-cta">COMPRAR</a></li>
-      </ul>
-
-      <!-- Hamburguer mobile -->
-      <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </nav>
-
-    <!-- Menu mobile -->
-    <ul id="mobile-menu" class="hidden md:hidden flex-col gap-3 px-6 pb-5 pt-2 text-sm border-t border-deep-30">
-      <li><a href="#inicio"  class="mobile-link">Início</a></li>
-      <li><a href="#projeto" class="mobile-link">O Projeto</a></li>
-      <li><a href="#autor"   class="mobile-link">O Autor</a></li>
-      <li><a href="#contos"   class="nav-link">Os Contos</a></li>
-      <li><a href="#contacto" class="mobile-link">Contacto</a></li>
-      <li><a href="#comprar" class="btn-primary nav-cta">COMPRAR</a></li>
-        
-      <!-- Cubo giratório -->
-      <li class="mt-12 mb-6">
-        <div class="cube-wrapper">
+      <div class="mt-12 flex justify-center">
+        <div class="cube-wrapper" data-anime="scale" data-delay="4">
           <div class="cube-container">
             <div class="face front"></div>
             <div class="face back"></div>
@@ -78,340 +30,251 @@
             <div class="face bottom"></div>
           </div>
         </div>
-      </li>
-    </ul>
-  </header>
-
-  <main>
-
-    <!-- ============================================================
-         1. HERO
-    ============================================================ -->
-    <section id="inicio" class="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-28 pb-16">
-      <div class="max-w-4xl text-center">
-        <h1 class="hero-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-wide mb-6" data-anime="down">
-          Dreamwalker Tales
-        </h1>
-        <p class="hero-slogan text-3xl sm:text-4xl md:text-5xl mb-10" data-anime="fade" data-delay="2">
-          Está preparado para caminhar entre os sonhos?
-        </p>
-        <a href="#contos" class="btn-primary text-xs sm:text-sm px-8 sm:px-10 py-4 rounded-sm" data-anime="up" data-delay="3">
-          EXPLORAR OS CONTOS
-        </a>
-        <div class="mt-12 flex justify-center">
-          <div class="cube-wrapper" data-anime="scale" data-delay="4">
-            <div class="cube-container">
-              <div class="face front"></div>
-              <div class="face back"></div>
-              <div class="face right"></div>
-              <div class="face left"></div>
-              <div class="face top"></div>
-              <div class="face bottom"></div>
-            </div>
-          </div>
-        </div>
-      </div>      
-    </section>
-
-    <!-- ============================================================
-         2. O PROJETO
-    ============================================================ -->
-    <section id="projeto" class="section-bg py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
-      <div class="max-w-3xl mx-auto">
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">O PROJETO</h2>
-        <p class="text-center text-2xl">.:.</p></br>
-        <div class="body-text text-sm sm:text-base space-y-4" data-anime="fade" data-delay="1">          
-          <p>O <span class="span-text">DreamWalker Tales</span> nasce no limite entre o sonho e a realidade — 
-          onde experiências vividas durante sonhos Lúcidos se transformam em histórias. Aqui, cada conto começa com uma 
-          experiência onírica: lugares desconhecidos, pessoas que parecem reais, acontecimentos impossíveis e 
-          sensações que permanecem na memória mesmo depois de despertar. Esses sonhos são transformados em narrativas, 
-          preservando sua atmosfera, seus símbolos e a estranheza própria de um mundo onde as regras da 
-          realidade deixam de existir.</p>
-          <p><span class="hero-slogan text-2xl" >Você não está apenas comprando um conto.</span></p> 
-          <p>Está adquirindo uma passagem para uma experiência que nasceu durante o sono e ganhou forma através da escrita. 
-          Cada história é uma porta. Cada sonho, um caminho. E talvez, ao chegar ao fim de um conto, 
-          você perceba que algumas histórias não terminam quando acordamos.</p>
-          <p><span class="span-text">DreamWalker Tales</span> — histórias nascidas dos sonhos, escritas para atravessar a realidade.
-          A construção deste projeto está longe de ser simples. Algo no ar, invisível aos olhos, desafia nossa jornada. 
-          Linhas de código se entrelaçam, mas o progresso é sutil, como se algo estivesse constantemente a nos observar. 
-          A página está em manutenção, mas não se engane – não é apenas um processo técnico. Algo mais profundo e misterioso está em jogo. 
-          Cada ajuste parece atrair uma energia estranha, como se o site estivesse em transição para algo além. 
-          Agradecemos sua paciência, pois o que está por vir não é apenas uma atualização, mas algo que transcende o esperado.</p> 
-          <p><span class="hero-slogan text-2xl">O portal logo se abrirá, mas até lá, o mistério permanece.</span></p>
-          <p class="text-center text-2xl"><span class="span-text">Apoie o Sonho</span></p> 
-         
-          <!-- Card de doação -->
-          <div class="donation-card">
-            <h3 class="donation-title">Contribuição Voluntária</h3>
-
-            <p class="donation-text">
-              Se você deseja apoiar o projeto e ajudar a manter o portal vivo,
-              qualquer contribuição é bem-vinda.
-            </p>
-
-            <a href="https://paypal.me/rodriguesxes" target="_blank" rel="noopener" class="donation-btn">
-              <svg class="donation-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
-              </svg>
-              Via PayPal
-            </a>
-
-            <p class="donation-secure">
-              <span class="lock">🔒</span> Contribuição segura via PayPal
-            </p>
-          </div>    
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         4. O AUTOR
-    ============================================================ -->
-    <section id="autor" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
-      <div class="max-w-3xl mx-auto text-center">
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8" data-anime="down">O AUTOR</h2>
-        <p class="text-center text-2xl">.:.</p></br>
-
-        <div class="max-w-2xl mx-auto">
-
-          <article class="letter" data-anime="up" data-delay="1">
-
-            <p class="letter-greeting">Caro leitor,</p>
-
-            <p>
-              Não escrevo para inventar mundos. Escrevo porque os visitei — e voltar
-              sem deixar rasto é uma forma silenciosa de os perder.
-            </p>
-
-            <p>
-              Cada conto que encontras aqui nasceu numa dessas noites em que o sonho
-              não terminou quando abri os olhos. Houve histórias que me perseguiram
-              durante dias — sussurros que insistiam em ser escritos antes de se
-              desfazerem. Outras ainda me perseguem. Há mundos que não se fecham
-              quando acordamos; apenas esperam que alguém se lembre deles.
-            </p>
-
-            <p>
-              Durante muito tempo guardei tudo só para mim. Eram paisagens que
-              ninguém mais veria, conversas que ninguém mais ouviria, cidades que
-              existiam apenas enquanto eu dormia. Mas um sonho não partilhado
-              começa, aos poucos, a desvanecer-se — como uma fotografia exposta
-              à luz. Foi para os salvar que comecei a escrever.
-            </p>
-
-            <p>
-              Se chegaste até aqui, talvez também já tenhas caminhado entre sonhos
-              sem saber. Talvez reconheças algo nestas páginas que não consegues
-              explicar — uma sensação familiar, um lugar que juras já ter visto,
-              uma frase que parece ter sido dita por alguém que conheceste. Talvez
-              estejas apenas curioso. E isso também basta. A curiosidade é, muitas
-              vezes, a primeira porta.
-            </p>
-
-            <p>
-              Não prometo respostas. Prometo travessias. Cada conto é uma passagem
-              que se abre durante a leitura e que, por alguns minutos, te deixa
-              habitar um mundo que não obedece às regras do dia. Leva o tempo que
-              precisares. Volta quando quiseres. As portas destes sonhos ficam
-              sempre entreabertas.
-            </p>
-            <p>
-              Escrevo o que sonho, não invento mundos. Visito-os.
-            </p>
-            <p>
-              É para ti que escrevo.
-            </p>
-
-            <div class="letter-signature">
-              <span class="letter-signature-mark">—</span>
-              <span class="letter-signature-name">DreamWalker</span>
-            </div>
-
-          </article>
-
-        </div>        
-      </div>
-    </section>
-
-    <!-- ============================================================
-         5.  OS CONTOS
-    ============================================================ -->
-    <section id="contos" class="section-bg mt-8 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
-      <div class="max-w-6xl mx-auto">
-
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-12 text-center" data-anime="down">
-          OS CONTOS
-        </h2>
-
-        <!-- Carrossel -->
-        <div class="carousel" id="contos-carousel" data-anime="up" data-delay="1"> 
-          <div class="carousel-viewport">
-            <div class="carousel-track" id="carousel-track">
-
-              <!-- ===== CONTO 1 ===== -->
-              <article class="carousel-slide"
-                data-number="01"
-                data-title="Título do Primeiro Conto"
-                data-synopsis-short="Sinopse breve que aparece no card. Duas ou três frases que despertam curiosidade."
-                data-synopsis-long="Sinopse detalhada para o modal. Aqui podes desenvolver mais a história — o sonho que a originou, o que o leitor vai encontrar, a atmosfera. Três a cinco frases que criam imersão antes de convidar à compra."
-                data-cover="{{ url_for('static', filename='img/conto-1.jpg') }}"
-                data-buy="https://hotmart.com/SEU-LINK-1">
-                <div class="conto-card">
-                  <div class="conto-cover">
-                    <img src="{{ url_for('static', filename='img/conto-1.jpg') }}" alt="Capa do conto 1">
-                  </div>
-                  <div class="conto-info">
-                    <span class="conto-number">01</span>
-                    <h3 class="conto-title">Título do Primeiro Conto</h3>
-                    <p class="conto-synopsis">
-                      Sinopse breve que aparece no card. Duas ou três frases
-                      que despertam curiosidade.
-                    </p>
-                    <span class="conto-hint">Clique para ver detalhes →</span>
-                  </div>
-                </div>
-              </article>
-
-              <!-- ===== CONTO 2 ===== -->
-              <article class="carousel-slide"
-                data-number="02"
-                data-title="Título do Segundo Conto"
-                data-synopsis-short="Sinopse breve do segundo conto. Mesma estrutura — desperta curiosidade sem revelar tudo."
-                data-synopsis-long="Sinopse detalhada do segundo conto. Desenvolve o sonho que originou a história, o ambiente, e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
-                data-cover="{{ url_for('static', filename='img/conto-2.jpg') }}"
-                data-buy="https://hotmart.com/SEU-LINK-2">
-                <div class="conto-card">
-                  <div class="conto-cover">
-                    <img src="{{ url_for('static', filename='img/conto-2.jpg') }}" alt="Capa do conto 2">
-                  </div>
-                  <div class="conto-info">
-                    <span class="conto-number">02</span>
-                    <h3 class="conto-title">Título do Segundo Conto</h3>
-                    <p class="conto-synopsis">
-                      Sinopse breve do segundo conto. Mesma estrutura —
-                      desperta curiosidade sem revelar tudo.
-                    </p>
-                    <span class="conto-hint">Clique para ver detalhes →</span>
-                  </div>
-                </div>
-              </article>
-
-              <!-- ===== CONTO 3 ===== -->
-              <article class="carousel-slide"
-                data-number="03"
-                data-title="Título do Terceiro Conto"
-                data-synopsis-short="Sinopse breve do terceiro conto. Mantém o mesmo tom narrativo."
-                data-synopsis-long="Sinopse detalhada do terceiro conto. Desenvolve o sonho, o ambiente e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
-                data-cover="{{ url_for('static', filename='img/conto-3.jpg') }}"
-                data-buy="https://hotmart.com/SEU-LINK-3">
-                <div class="conto-card">
-                  <div class="conto-cover">
-                    <img src="{{ url_for('static', filename='img/conto-3.jpg') }}" alt="Capa do conto 3">
-                  </div>
-                  <div class="conto-info">
-                    <span class="conto-number">03</span>
-                    <h3 class="conto-title">Título do Terceiro Conto</h3>
-                    <p class="conto-synopsis">
-                      Sinopse breve do terceiro conto. Mantém o mesmo
-                      tom narrativo.
-                    </p>
-                    <span class="conto-hint">Clique para ver detalhes →</span>
-                  </div>
-                </div>
-              </article>
-
-            </div>
-          </div>
-
-          <!-- Controlos -->
-          <div class="carousel-controls">
-            <button type="button" class="carousel-arrow" id="carousel-prev" aria-label="Conto anterior">
-              <
-            </button>
-
-            <div class="carousel-counter">
-              <input
-                type="number"
-                id="carousel-input"
-                class="carousel-input"
-                min="1"
-                max="3"
-                value="1"
-                aria-label="Número do conto">
-              <span class="carousel-total">/ 3</span>
-            </div>
-
-            <button type="button" class="carousel-arrow" id="carousel-next" aria-label="Próximo conto">
-              >
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-
-    <!-- ============================================================
-     MODAL DE CONTO
-    ============================================================ -->
-    <div id="conto-modal" class="conto-modal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div class="conto-modal-backdrop" data-close-modal></div>
-
-      <div class="conto-modal-panel" role="document">
-        <button class="conto-modal-close" data-close-modal aria-label="Fechar">X</button>
-
-        <div class="conto-modal-content">
-          <div class="conto-modal-cover">
-            <img id="modal-cover" src="" alt="">
-          </div>
-          <div class="conto-modal-info">
-            <span class="conto-number" id="modal-number"></span>
-            <h3 class="conto-title" id="modal-title"></h3>
-            <p class="conto-synopsis" id="modal-synopsis"></p>
-            <a href="#" id="modal-buy" target="_blank" rel="noopener" class="btn-primary conto-modal-btn">
-              ADIQUIRIR O CONTO
-            </a>
-          </div>
-        </div>
       </div>
     </div>
-
-    <!-- ============================================================
-         6. CONTACTO
-    ============================================================ -->
-    <section id="contacto" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
-      <div class="max-w-xl mx-auto">
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">CONTACTO</h2>
-        <p class="text-center text-2xl">.:.</p></br>
-        <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1">
-          <input type="text"  name="nome"  placeholder="Nome"  required
-                 class="form-input w-full px-4 py-3 text-sm rounded-sm">
-          <input type="email" name="email" placeholder="Email" required
-                 class="form-input w-full px-4 py-3 text-sm rounded-sm">
-          <textarea name="mensagem" rows="5" placeholder="Mensagem" required
-                    class="form-input w-full px-4 py-3 text-sm rounded-sm resize-y"></textarea>
-          <button type="submit" class="btn-primary w-full text-xs py-4 rounded-sm">
-            ENVIAR
-          </button>
-        </form>
-      </div>
-    </section>
-
-  </main>
+  </section>
 
   <!-- ============================================================
-       FOOTER
+       2. O PROJETO
   ============================================================ -->
-  <footer class="bg-glass mt-12 border-t border-b border-deep py-10 px-4 sm:px-6" data-anime="fade">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-dw">
-      <span>© 2026 Dreamwalker. Todos os direitos reservados.</span>
-      <div class="flex gap-6">
-        <a href="#" class="footer-link">Instagram</a>
-        <a href="#" class="footer-link">TikTok</a>
+  <section id="projeto" class="section-bg py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">O PROJETO</h2>
+      <p class="text-center text-2xl">.:.</p><br>
+      <div class="body-text text-sm sm:text-base space-y-4" data-anime="fade" data-delay="1">
+        <p>O <span class="span-text">DreamWalker Tales</span> nasce no limite entre o sonho e a realidade — 
+        onde experiências vividas durante sonhos Lúcidos se transformam em histórias. Aqui, cada conto começa com uma 
+        experiência onírica: lugares desconhecidos, pessoas que parecem reais, acontecimentos impossíveis e 
+        sensações que permanecem na memória mesmo depois de despertar. Esses sonhos são transformados em narrativas, 
+        preservando sua atmosfera, seus símbolos e a estranheza própria de um mundo onde as regras da 
+        realidade deixam de existir.</p>
+        <p><span class="hero-slogan text-2xl">Você não está apenas comprando um conto.</span></p> 
+        <p>Está adquirindo uma passagem para uma experiência que nasceu durante o sono e ganhou forma através da escrita. 
+        Cada história é uma porta. Cada sonho, um caminho. E talvez, ao chegar ao fim de um conto, 
+        você perceba que algumas histórias não terminam quando acordamos.</p>
+        <p><span class="span-text">DreamWalker Tales</span> — histórias nascidas dos sonhos, escritas para atravessar a realidade.
+        A construção deste projeto está longe de ser simples. Algo no ar, invisível aos olhos, desafia nossa jornada. 
+        Linhas de código se entrelaçam, mas o progresso é sutil, como se algo estivesse constantemente a nos observar. 
+        A página está em manutenção, mas não se engane – não é apenas um processo técnico. Algo mais profundo e misterioso está em jogo. 
+        Cada ajuste parece atrair uma energia estranha, como se o site estivesse em transição para algo além. 
+        Agradecemos sua paciência, pois o que está por vir não é apenas uma atualização, mas algo que transcende o esperado.</p> 
+        <p><span class="hero-slogan text-2xl">O portal logo se abrirá, mas até lá, o mistério permanece.</span></p>
+        <p class="text-center text-2xl"><span class="span-text">Apoie o Sonho</span></p> 
+        
+        <!-- Card de doação -->
+        <div class="donation-card">
+          <h3 class="donation-title">Contribuição Voluntária</h3>
+
+          <p class="donation-text">
+            Se você deseja apoiar o projeto e ajudar a manter o portal vivo,
+            qualquer contribuição é bem-vinda.
+          </p>
+
+          <a href="https://paypal.me/rodriguesxes" target="_blank" rel="noopener" class="donation-btn">
+            <svg class="donation-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+            </svg>
+            Via PayPal
+          </a>
+
+          <p class="donation-secure">
+            <span class="lock">🔒</span> Contribuição segura via PayPal
+          </p>
+        </div>
       </div>
     </div>
-  </footer>
+  </section>
 
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
-</html>
+  <!-- ============================================================
+       3. O AUTOR
+  ============================================================ -->
+  <section id="autor" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8" data-anime="down">O AUTOR</h2>
+      <p class="text-center text-2xl">.:.</p><br>
+
+      <div class="max-w-2xl mx-auto">
+        <article class="letter" data-anime="up" data-delay="1">
+          <p class="letter-greeting">Caro leitor,</p>
+
+          <p>Não escrevo para inventar mundos. Escrevo porque os visitei — e voltar
+          sem deixar rasto é uma forma silenciosa de os perder.</p>
+
+          <p>Cada conto que encontras aqui nasceu numa dessas noites em que o sonho
+          não terminou quando abri os olhos. Houve histórias que me perseguiram
+          durante dias — sussurros que insistiam em ser escritos antes de se
+          desfazerem. Outras ainda me perseguem. Há mundos que não se fecham
+          quando acordamos; apenas esperam que alguém se lembre deles.</p>
+
+          <p>Durante muito tempo guardei tudo só para mim. Eram paisagens que
+          ninguém mais veria, conversas que ninguém mais ouviria, cidades que
+          existiam apenas enquanto eu dormia. Mas um sonho não partilhado
+          começa, aos poucos, a desvanecer-se — como uma fotografia exposta
+          à luz. Foi para os salvar que comecei a escrever.</p>
+
+          <p>Se chegaste até aqui, talvez também já tenhas caminhado entre sonhos
+          sem saber. Talvez reconheças algo nestas páginas que não consegues
+          explicar — uma sensação familiar, um lugar que juras já ter visto,
+          uma frase que parece ter sido dita por alguém que conheceste. Talvez
+          estejas apenas curioso. E isso também basta. A curiosidade é, muitas
+          vezes, a primeira porta.</p>
+
+          <p>Não prometo respostas. Prometo travessias. Cada conto é uma passagem
+          que se abre durante a leitura e que, por alguns minutos, te deixa
+          habitar um mundo que não obedece às regras do dia. Leva o tempo que
+          precisares. Volta quando quiseres. As portas destes sonhos ficam
+          sempre entreabertas.</p>
+          <p>Escrevo o que sonho, não invento mundos. Visito-os.</p>
+          <p>É para ti que escrevo.</p>
+
+          <div class="letter-signature">
+            <span class="letter-signature-mark">—</span>
+            <span class="letter-signature-name">DreamWalker</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. OS CONTOS
+  ============================================================ -->
+  <section id="contos" class="section-bg mt-8 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-12 text-center" data-anime="down">
+        OS CONTOS
+      </h2>
+
+      <div class="carousel" id="contos-carousel" data-anime="up" data-delay="1"> 
+        <div class="carousel-viewport">
+          <div class="carousel-track" id="carousel-track">
+
+            <!-- ===== CONTO 1 ===== -->
+            <article class="carousel-slide"
+              data-number="01"
+              data-title="Título do Primeiro Conto"
+              data-synopsis-short="Sinopse breve que aparece no card. Duas ou três frases que despertam curiosidade."
+              data-synopsis-long="Sinopse detalhada para o modal. Aqui podes desenvolver mais a história — o sonho que a originou, o que o leitor vai encontrar, a atmosfera. Três a cinco frases que criam imersão antes de convidar à compra."
+              data-cover="{{ url_for('static', filename='img/conto-1.jpg') }}"
+              data-buy="https://hotmart.com/SEU-LINK-1">
+              <div class="conto-card">
+                <div class="conto-cover">
+                  <img src="{{ url_for('static', filename='img/conto-1.jpg') }}" alt="Capa do conto 1">
+                </div>
+                <div class="conto-info">
+                  <span class="conto-number">01</span>
+                  <h3 class="conto-title">Título do Primeiro Conto</h3>
+                  <p class="conto-synopsis">Sinopse breve que aparece no card. Duas ou três frases que despertam curiosidade.</p>
+                  <span class="conto-hint">Clique para ver detalhes →</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- ===== CONTO 2 ===== -->
+            <article class="carousel-slide"
+              data-number="02"
+              data-title="Título do Segundo Conto"
+              data-synopsis-short="Sinopse breve do segundo conto. Mesma estrutura — desperta curiosidade sem revelar tudo."
+              data-synopsis-long="Sinopse detalhada do segundo conto. Desenvolve o sonho que originou a história, o ambiente, e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
+              data-cover="{{ url_for('static', filename='img/conto-2.jpg') }}"
+              data-buy="https://hotmart.com/SEU-LINK-2">
+              <div class="conto-card">
+                <div class="conto-cover">
+                  <img src="{{ url_for('static', filename='img/conto-2.jpg') }}" alt="Capa do conto 2">
+                </div>
+                <div class="conto-info">
+                  <span class="conto-number">02</span>
+                  <h3 class="conto-title">Título do Segundo Conto</h3>
+                  <p class="conto-synopsis">Sinopse breve do segundo conto. Mesma estrutura — desperta curiosidade sem revelar tudo.</p>
+                  <span class="conto-hint">Clique para ver detalhes →</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- ===== CONTO 3 ===== -->
+            <article class="carousel-slide"
+              data-number="03"
+              data-title="Título do Terceiro Conto"
+              data-synopsis-short="Sinopse breve do terceiro conto. Mantém o mesmo tom narrativo."
+              data-synopsis-long="Sinopse detalhada do terceiro conto. Desenvolve o sonho, o ambiente e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
+              data-cover="{{ url_for('static', filename='img/conto-3.jpg') }}"
+              data-buy="https://hotmart.com/SEU-LINK-3">
+              <div class="conto-card">
+                <div class="conto-cover">
+                  <img src="{{ url_for('static', filename='img/conto-3.jpg') }}" alt="Capa do conto 3">
+                </div>
+                <div class="conto-info">
+                  <span class="conto-number">03</span>
+                  <h3 class="conto-title">Título do Terceiro Conto</h3>
+                  <p class="conto-synopsis">Sinopse breve do terceiro conto. Mantém o mesmo tom narrativo.</p>
+                  <span class="conto-hint">Clique para ver detalhes →</span>
+                </div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <div class="carousel-controls">
+          <button type="button" class="carousel-arrow" id="carousel-prev" aria-label="Conto anterior"><</button>
+
+          <div class="carousel-counter">
+            <input type="number" id="carousel-input" class="carousel-input" min="1" max="3" value="1" aria-label="Número do conto">
+            <span class="carousel-total">/ 3</span>
+          </div>
+
+          <button type="button" class="carousel-arrow" id="carousel-next" aria-label="Próximo conto">></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5. CONTACTO
+  ============================================================ -->
+  <section id="contacto" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
+    <div class="max-w-xl mx-auto">
+      <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">CONTACTO</h2>
+      <p class="text-center text-2xl">.:.</p><br>
+      <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1">
+        <input type="text"  name="nome"  placeholder="Nome"  required
+               class="form-input w-full px-4 py-3 text-sm rounded-sm">
+        <input type="email" name="email" placeholder="Email" required
+               class="form-input w-full px-4 py-3 text-sm rounded-sm">
+        <textarea name="mensagem" rows="5" placeholder="Mensagem" required
+                  class="form-input w-full px-4 py-3 text-sm rounded-sm resize-y"></textarea>
+        <div class="flex justify-center pt-2 contact-action">
+          <button type="submit" class="btn-primary contact-btn font-orbitron">
+            ENVIAR
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODAL DE CONTO
+  ============================================================ -->
+  <div id="conto-modal" class="conto-modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="conto-modal-backdrop" data-close-modal></div>
+
+    <div class="conto-modal-panel" role="document">
+      <button class="conto-modal-close" data-close-modal aria-label="Fechar">X</button>
+
+      <div class="conto-modal-content">
+        <div class="conto-modal-cover">
+          <img id="modal-cover" src="" alt="">
+        </div>
+        <div class="conto-modal-info">
+          <span class="conto-number" id="modal-number"></span>
+          <h3 class="conto-title" id="modal-title"></h3>
+          <p class="conto-synopsis" id="modal-synopsis"></p>
+          <a href="#" id="modal-buy" target="_blank" rel="noopener" class="btn-primary conto-modal-btn">
+            ADIQUIRIR O CONTO
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -99,6 +99,13 @@ body {
   color: var(--dw-white);
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body > main {
+  flex: 1;
 }
 
 body::before {
@@ -276,25 +283,6 @@ body::before {
 
 
 /* ============================================================
-    ANIMAÇÕES (data-anime)
-   ============================================================ */
-/* [data-anime] {
-    opacity: 0;
-    transition: 1s;
-}
-
-[data-anime="down"] { transform: translate3d(0, -100%, 0); }
-[data-anime="up"]   { transform: translate3d(0, 100%, 0); }
-[data-anime="left"] { transform: translate3d(-100%, 0, 0); }
-[data-anime="right"]{ transform: translate3d(50%, 0, 0); }
-[data-anime="fade"] { transition: 2s; }
-
-[data-anime].animate {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-} */
-
-/* ============================================================
    NAVBAR
 ============================================================ */
 .navbar {
@@ -357,14 +345,16 @@ body::before {
   background: rgba(6, 3, 180, 0.15);  
 }
 
-/* Logo */
-.navbar-logo img {
-  height: 90px;
+/* ============================================================
+   LOGO — efeito circular com glow (reutilizável)
+============================================================ */
+.logo-img {
+  height: 44px;
   width: auto;
   display: block;
   border-radius: 50%;
   border: 2px solid rgba(6, 3, 180, 0.3);
-  box-shadow: 
+  box-shadow:
     0 0 8px  rgba(6, 3, 180, 0.4),
     0 0 16px rgba(6, 3, 180, 0.3),
     inset 0 0 12px rgba(6, 3, 180, 0.2),
@@ -372,13 +362,19 @@ body::before {
   transition: all 0.3s ease;
 }
 
-.navbar-logo img:hover {
-  box-shadow: 
-    0 0 12px rgba(58, 54, 255, 0.6),       /* --dw-blue mais vivo no hover */
+.logo-img:hover {
+  box-shadow:
+    0 0 12px rgba(58, 54, 255, 0.6),
     0 0 24px rgba(58, 54, 255, 0.4),
-    inset 0 0 16px rgba(107, 104, 255, 0.3), /* --dw-blue-bright */
+    inset 0 0 16px rgba(107, 104, 255, 0.3),
     0 10px 20px rgba(0, 0, 0, 0.6);
   transform: scale(1.05);
+}
+
+/* Logo no footer — versão maior */
+.footer-logo-img {
+  height: 64px;
+  margin-bottom: 16px;
 }
 
 /* Botão "Comprar" no header (versão compacta do btn-primary) */
@@ -1103,9 +1099,332 @@ body.modal-open { overflow: hidden; }
   box-shadow: 0 0 12px rgba(107, 104, 255, 0.3);
 }
 
+/* ============================================================
+   BOTÃO DE ENVIO DO FORMULÁRIO DE CONTACTO
+============================================================ */
+
+/* Contentor — só serve para posicionar o botão */
+.contact-actions {
+  display: flex;
+  padding-top: 8px;
+}
+
+/* Botão — mobile: largura total */
+.contact-btn {
+  width: 100%;
+  padding: 16px 24px;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-align: center;
+}
+
+/* Desktop (a partir de 640px) — largura natural, alinhado à direita */
+@media (min-width: 640px) {
+
+  .contact-actions {
+    justify-content: center;
+  }
+
+  .contact-btn {
+    width: auto;
+    padding: 16px 48px;    
+  }
+}
+
 
 /* ============================================================
    FOOTER
 ============================================================ */
-.footer-link { transition: color 0.25s ease; }
-.footer-link:hover { color: var(--dw-blue-bright); }
+.site-footer {
+  background: rgba(0, 0, 0, 0.92);
+  border-top: 1px solid rgba(6, 3, 180, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-mono);
+  color: var(--dw-gray);
+}
+
+.site-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 24px 48px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+}
+
+/* .footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+} */
+
+/* Mobile — centrado */
+.footer-brand {
+  display: flex;
+  flex-direction: column;      /* logo em cima, texto em baixo */
+  align-items: center;         /* centra horizontalmente */
+  text-align: center;
+  gap: 16px;
+}
+
+/* Desktop — logo à esquerda, texto ao lado */
+@media (min-width: 768px) {
+  .footer-brand {
+    flex-direction: row;       /* lado a lado */
+    align-items: center;
+    text-align: left;
+    gap: 20px;
+  }
+}
+
+
+/* Mobile — centrar tudo no footer */
+@media (max-width: 767px) {
+  .footer-columns {
+    text-align: center;
+  }
+  .footer-nav,
+  .footer-social {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.footer-logo-img {
+  height: 56px;
+  margin-bottom: 0;   /* já não é preciso */
+  flex-shrink: 0;     /* impede que o logo encolha em ecrãs estreitos */
+}
+
+.footer-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 767px) {
+  .footer-brand {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .site-footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+}
+
+/* ---------- Coluna 1: Marca ---------- */
+.footer-brand-name {
+  display: block;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.15em;
+  color: var(--dw-white);
+  margin-bottom: 12px;
+  text-shadow:
+    0 0 8px rgba(139, 136, 255, 0.5),
+    0 0 20px rgba(58, 54, 255, 0.3);
+}
+
+.footer-brand-tagline {
+  font-family: var(--font-amatic);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--dw-blue-bright);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+/* ---------- Coluna 2: Navegação + Redes ---------- */
+.footer-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.footer-heading {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--dw-white);
+  margin-bottom: 16px;
+}
+
+.footer-nav a {
+  display: block;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--dw-gray);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.footer-nav a:hover {
+  color: var(--dw-blue-bright);
+  transform: translateX(4px);
+}
+
+.footer-social-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-social-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--dw-gray);
+  background: rgba(6, 3, 180, 0.1);
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.footer-social-icons a:hover {
+  color: var(--dw-white);
+  border-color: var(--dw-blue-bright);
+  background: rgba(58, 54, 255, 0.2);
+  box-shadow: 0 0 16px rgba(58, 54, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.footer-social-icons svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Linha inferior ---------- */
+.site-footer-bottom {
+  border-top: 1px solid rgba(6, 3, 180, 0.25);
+  padding: 24px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+  font-size: 12px;
+  color: var(--dw-gray);
+}
+
+@media (min-width: 768px) {
+  .site-footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.footer-copy {
+  color: var(--dw-gray);
+}
+
+.footer-notice {
+  font-size: 11px;
+  color: rgba(156, 163, 175, 0.7);
+}
+
+.footer-notice strong {
+  color: var(--dw-blue-bright);
+  font-weight: 500;
+}
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.footer-legal a {
+  color: var(--dw-gray);
+  transition: color 0.25s ease;
+}
+
+.footer-legal a:hover {
+  color: var(--dw-blue-bright);
+}
+
+/* Mobile — reduz paddings */
+@media (max-width: 480px) {
+  .site-footer-inner {
+    padding: 48px 20px 32px;
+    gap: 36px;
+  }
+  .footer-columns {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* Link do autor no footer */
+.footer-notice-link {
+  color: var(--dw-blue-bright);
+  font-weight: 500;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+.footer-notice-link:hover {
+  color: var(--dw-white);
+  text-shadow:
+    0 0 8px rgba(139, 136, 255, 0.6),
+    0 0 16px rgba(58, 54, 255, 0.4);
+}
+
+
+/* ============================================================
+   PÁGINAS LEGAIS — estilos específicos
+============================================================ */
+.legal-heading {
+  font-family: var(--font-orbitron);
+  font-weight: 500;
+  font-size: clamp(16px, 2vw, 18px);
+  letter-spacing: 0.05em;
+  color: var(--dw-white);
+  margin-top: 32px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(107, 104, 255, 0.25);
+}
+
+.legal-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 12px 0;
+}
+
+.legal-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+  line-height: 1.7;
+}
+
+.legal-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--dw-blue-bright);
+  font-weight: 700;
+}
+
+.legal-content a {
+  color: var(--dw-blue-bright);
+  transition: color 0.25s ease;
+}
+
+.legal-content a:hover {
+  color: var(--dw-white);
+}

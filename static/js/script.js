@@ -2,13 +2,15 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Elementos globais (definidos primeiro para estarem acessíveis em todo o lado)
+  // ============================================================
+  // ELEMENTOS GLOBAIS
+  // ============================================================
   const header = document.querySelector('.navbar');
   const toggle = document.getElementById('menu-toggle');
   const menu   = document.getElementById('mobile-menu');
 
   // ============================================================
-  // MENU MOBILE
+  // MENU MOBILE — abrir/fechar
   // ============================================================
   if (toggle && menu) {
     toggle.addEventListener('click', () => {
@@ -17,21 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
       menu.classList.toggle('flex');
     });
 
-    // Ao clicar num link: fecha o menu E esconde o header
+    // Fechar o menu ao clicar num link
     menu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         toggle.classList.remove('open');
         menu.classList.add('hidden');
         menu.classList.remove('flex');
-
-        // Esconde o header imediatamente (só faz sentido em mobile)
-        if (window.innerWidth < 768) {
-          header.classList.add('is-hidden');
-          suppressHeaderReveal = true;   // bloqueia o reaparecimento
-        }
       });
     });
   }
+
+  // ============================================================
+  // HEADER — esconder ao descer / mostrar ao subir (só mobile)
+  // ============================================================
+  const isMobile = () => window.innerWidth < 768;
+  const SHOW_AT_TOP = 80;
 
   // Bloqueia o reaparecimento do header até o utilizador interagir manualmente
   let suppressHeaderReveal = false;
@@ -49,16 +51,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // HEADER — esconde ao descer / mostra ao subir (só mobile)
+  // LINKS INTERNOS — esconder header ao navegar (só mobile)
   // ============================================================
-  const isMobile = () => window.innerWidth < 768;
-  const SHOW_AT_TOP = 80;
+  // Apanha links que apontam para âncoras: "#...", "/#...", ou "/"
+  const internalLinks = document.querySelectorAll('a[href^="#"], a[href^="/#"], a[href="/"]');
+
+  internalLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth < 768) {
+        header.classList.add('is-hidden');
+        suppressHeaderReveal = true;
+      }
+    });
+  });
+
+  // ============================================================
+  // SCROLL HANDLER — esconde/mostra o header
+  // ============================================================
   let lastScrollY = window.pageYOffset;
   let ticking = false;
 
-    function handleScroll() {
+  function handleScroll() {
     const currentY = window.pageYOffset;
 
+    // Desktop → header sempre visível
     if (!isMobile()) {
       header.classList.remove('is-hidden');
       lastScrollY = currentY;
@@ -66,12 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Perto do topo → sempre visível
     if (currentY < SHOW_AT_TOP) {
       header.classList.remove('is-hidden');
-      suppressHeaderReveal = false;   // chegou ao topo → liberta
+      suppressHeaderReveal = false;
     }
+    // A descer → esconde
     else if (currentY > lastScrollY) {
-      // A descer → esconde sempre
       header.classList.add('is-hidden');
       if (menu && !menu.classList.contains('hidden')) {
         menu.classList.add('hidden');
@@ -79,8 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (toggle) toggle.classList.remove('open');
       }
     }
+    // A subir → mostra, MAS só se não estiver bloqueado
     else if (currentY < lastScrollY && !suppressHeaderReveal) {
-      // A subir → mostra, MAS só se não estiver bloqueado
       header.classList.remove('is-hidden');
     }
 
@@ -103,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // CARROSSEL + MODAL DE CONTOS
+  // CARROSSEL DE CONTOS
   // ============================================================
   const carousel = document.getElementById('contos-carousel');
   const modal    = document.getElementById('conto-modal');
@@ -143,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    window.__carouselStopAutoplay = stopAutoplay;
+    window.__carouselStopAutoplay  = stopAutoplay;
     window.__carouselStartAutoplay = startAutoplay;
 
     if (nextBtn) nextBtn.addEventListener('click', () => { goNext(); startAutoplay(); });
@@ -247,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
   // ============================================================
   // ANIMAÇÕES DE ENTRADA — IntersectionObserver
   // ============================================================
@@ -258,17 +274,16 @@ document.addEventListener('DOMContentLoaded', () => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);   // anima só uma vez
+          observer.unobserve(entry.target);
         }
       });
     }, {
-      threshold: 0.15,                       // 15% do elemento visível
-      rootMargin: '0px 0px -50px 0px'        // dispara 50px antes do fim do viewport
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
     });
 
     animatedEls.forEach(el => observer.observe(el));
   } else {
-    // Fallback: se o browser não suporta, mostra tudo
     animatedEls.forEach(el => el.classList.add('is-visible'));
   }
 
