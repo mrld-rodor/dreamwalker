@@ -92,14 +92,14 @@
         <h1 class="hero-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-wide mb-6" data-anime="down">
           Dreamwalker Tales
         </h1>
-        <p class="hero-slogan text-3xl sm:text-4xl md:text-5xl mb-10" data-anime="fade">
+        <p class="hero-slogan text-3xl sm:text-4xl md:text-5xl mb-10" data-anime="fade" data-delay="2">
           Está preparado para caminhar entre os sonhos?
         </p>
-        <a href="#contos" class="btn-primary text-xs sm:text-sm px-8 sm:px-10 py-4 rounded-sm" data-anime="up">
+        <a href="#contos" class="btn-primary text-xs sm:text-sm px-8 sm:px-10 py-4 rounded-sm" data-anime="up" data-delay="3">
           EXPLORAR OS CONTOS
         </a>
         <div class="mt-12 flex justify-center">
-          <div class="cube-wrapper" data-anime="fade">
+          <div class="cube-wrapper" data-anime="scale" data-delay="4">
             <div class="cube-container">
               <div class="face front"></div>
               <div class="face back"></div>
@@ -118,9 +118,9 @@
     ============================================================ -->
     <section id="projeto" class="section-bg py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
       <div class="max-w-3xl mx-auto">
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center">O PROJETO</h2>
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">O PROJETO</h2>
         <p class="text-center text-2xl">.:.</p></br>
-        <div class="body-text text-sm sm:text-base space-y-4">          
+        <div class="body-text text-sm sm:text-base space-y-4" data-anime="fade" data-delay="1">          
           <p>O <span class="span-text">DreamWalker Tales</span> nasce no limite entre o sonho e a realidade — 
           onde experiências vividas durante sonhos Lúcidos se transformam em histórias. Aqui, cada conto começa com uma 
           experiência onírica: lugares desconhecidos, pessoas que parecem reais, acontecimentos impossíveis e 
@@ -169,12 +169,12 @@
     ============================================================ -->
     <section id="autor" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
       <div class="max-w-3xl mx-auto text-center">
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8">O AUTOR</h2>
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8" data-anime="down">O AUTOR</h2>
         <p class="text-center text-2xl">.:.</p></br>
 
         <div class="max-w-2xl mx-auto">
 
-          <article class="letter">
+          <article class="letter" data-anime="up" data-delay="1">
 
             <p class="letter-greeting">Caro leitor,</p>
 
@@ -239,18 +239,23 @@
     <section id="contos" class="section-bg mt-8 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
       <div class="max-w-6xl mx-auto">
 
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-12 text-center">
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-12 text-center" data-anime="down">
           OS CONTOS
         </h2>
 
         <!-- Carrossel -->
-        <div class="carousel" id="contos-carousel">
-
+        <div class="carousel" id="contos-carousel" data-anime="up" data-delay="1"> 
           <div class="carousel-viewport">
             <div class="carousel-track" id="carousel-track">
 
               <!-- ===== CONTO 1 ===== -->
-              <article class="carousel-slide">
+              <article class="carousel-slide"
+                data-number="01"
+                data-title="Título do Primeiro Conto"
+                data-synopsis-short="Sinopse breve que aparece no card. Duas ou três frases que despertam curiosidade."
+                data-synopsis-long="Sinopse detalhada para o modal. Aqui podes desenvolver mais a história — o sonho que a originou, o que o leitor vai encontrar, a atmosfera. Três a cinco frases que criam imersão antes de convidar à compra."
+                data-cover="{{ url_for('static', filename='img/conto-1.jpg') }}"
+                data-buy="https://hotmart.com/SEU-LINK-1">
                 <div class="conto-card">
                   <div class="conto-cover">
                     <img src="{{ url_for('static', filename='img/conto-1.jpg') }}" alt="Capa do conto 1">
@@ -259,19 +264,22 @@
                     <span class="conto-number">01</span>
                     <h3 class="conto-title">Título do Primeiro Conto</h3>
                     <p class="conto-synopsis">
-                      Sinopse breve do conto. Duas a três frases que agarram o leitor
-                      e o fazem querer saber mais. Fala do sonho que originou a
-                      história e do que o leitor vai encontrar.
+                      Sinopse breve que aparece no card. Duas ou três frases
+                      que despertam curiosidade.
                     </p>
-                    <a href="https://hotmart.com/SEU-LINK-1" target="_blank" rel="noopener" class="btn-primary conto-btn">
-                      COMPRAR NA HOTMART
-                    </a>
+                    <span class="conto-hint">Clique para ver detalhes →</span>
                   </div>
                 </div>
               </article>
 
               <!-- ===== CONTO 2 ===== -->
-              <article class="carousel-slide">
+              <article class="carousel-slide"
+                data-number="02"
+                data-title="Título do Segundo Conto"
+                data-synopsis-short="Sinopse breve do segundo conto. Mesma estrutura — desperta curiosidade sem revelar tudo."
+                data-synopsis-long="Sinopse detalhada do segundo conto. Desenvolve o sonho que originou a história, o ambiente, e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
+                data-cover="{{ url_for('static', filename='img/conto-2.jpg') }}"
+                data-buy="https://hotmart.com/SEU-LINK-2">
                 <div class="conto-card">
                   <div class="conto-cover">
                     <img src="{{ url_for('static', filename='img/conto-2.jpg') }}" alt="Capa do conto 2">
@@ -280,19 +288,22 @@
                     <span class="conto-number">02</span>
                     <h3 class="conto-title">Título do Segundo Conto</h3>
                     <p class="conto-synopsis">
-                      Sinopse breve do segundo conto. Mesma estrutura — o leitor
-                      deve sentir que cada conto é uma porta diferente para o
-                      mesmo universo onírico.
+                      Sinopse breve do segundo conto. Mesma estrutura —
+                      desperta curiosidade sem revelar tudo.
                     </p>
-                    <a href="https://hotmart.com/SEU-LINK-2" target="_blank" rel="noopener" class="btn-primary conto-btn">
-                      COMPRAR NA HOTMART
-                    </a>
+                    <span class="conto-hint">Clique para ver detalhes →</span>
                   </div>
                 </div>
               </article>
 
               <!-- ===== CONTO 3 ===== -->
-              <article class="carousel-slide">
+              <article class="carousel-slide"
+                data-number="03"
+                data-title="Título do Terceiro Conto"
+                data-synopsis-short="Sinopse breve do terceiro conto. Mantém o mesmo tom narrativo."
+                data-synopsis-long="Sinopse detalhada do terceiro conto. Desenvolve o sonho, o ambiente e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
+                data-cover="{{ url_for('static', filename='img/conto-3.jpg') }}"
+                data-buy="https://hotmart.com/SEU-LINK-3">
                 <div class="conto-card">
                   <div class="conto-cover">
                     <img src="{{ url_for('static', filename='img/conto-3.jpg') }}" alt="Capa do conto 3">
@@ -301,13 +312,10 @@
                     <span class="conto-number">03</span>
                     <h3 class="conto-title">Título do Terceiro Conto</h3>
                     <p class="conto-synopsis">
-                      Sinopse breve do terceiro conto. Mantém o mesmo tom
-                      narrativo — mistério, experiência vivida, atmosfera
-                      onírica.
+                      Sinopse breve do terceiro conto. Mantém o mesmo
+                      tom narrativo.
                     </p>
-                    <a href="https://hotmart.com/SEU-LINK-3" target="_blank" rel="noopener" class="btn-primary conto-btn">
-                      COMPRAR NA HOTMART
-                    </a>
+                    <span class="conto-hint">Clique para ver detalhes →</span>
                   </div>
                 </div>
               </article>
@@ -318,7 +326,7 @@
           <!-- Controlos -->
           <div class="carousel-controls">
             <button type="button" class="carousel-arrow" id="carousel-prev" aria-label="Conto anterior">
-              ←
+              <
             </button>
 
             <div class="carousel-counter">
@@ -334,7 +342,7 @@
             </div>
 
             <button type="button" class="carousel-arrow" id="carousel-next" aria-label="Próximo conto">
-              →
+              >
             </button>
           </div>
 
@@ -342,14 +350,40 @@
       </div>
     </section>
 
+
+    <!-- ============================================================
+     MODAL DE CONTO
+    ============================================================ -->
+    <div id="conto-modal" class="conto-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="conto-modal-backdrop" data-close-modal></div>
+
+      <div class="conto-modal-panel" role="document">
+        <button class="conto-modal-close" data-close-modal aria-label="Fechar">X</button>
+
+        <div class="conto-modal-content">
+          <div class="conto-modal-cover">
+            <img id="modal-cover" src="" alt="">
+          </div>
+          <div class="conto-modal-info">
+            <span class="conto-number" id="modal-number"></span>
+            <h3 class="conto-title" id="modal-title"></h3>
+            <p class="conto-synopsis" id="modal-synopsis"></p>
+            <a href="#" id="modal-buy" target="_blank" rel="noopener" class="btn-primary conto-modal-btn">
+              ADIQUIRIR O CONTO
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ============================================================
          6. CONTACTO
     ============================================================ -->
     <section id="contacto" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
       <div class="max-w-xl mx-auto">
-        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center">CONTACTO</h2>
+        <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">CONTACTO</h2>
         <p class="text-center text-2xl">.:.</p></br>
-        <form id="contact-form" class="space-y-4">
+        <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1">
           <input type="text"  name="nome"  placeholder="Nome"  required
                  class="form-input w-full px-4 py-3 text-sm rounded-sm">
           <input type="email" name="email" placeholder="Email" required
@@ -368,7 +402,7 @@
   <!-- ============================================================
        FOOTER
   ============================================================ -->
-  <footer class="bg-glass mt-12 border-t border-b border-deep py-10 px-4 sm:px-6">
+  <footer class="bg-glass mt-12 border-t border-b border-deep py-10 px-4 sm:px-6" data-anime="fade">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-dw">
       <span>© 2026 Dreamwalker. Todos os direitos reservados.</span>
       <div class="flex gap-6">

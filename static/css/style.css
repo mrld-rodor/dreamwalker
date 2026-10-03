@@ -232,9 +232,53 @@ body::before {
 
 
 /* ============================================================
+   ANIMAÇÕES DE ENTRADA (scroll reveal)
+============================================================ */
+
+/* Estado inicial — invisível e deslocado */
+[data-anime] {
+  opacity: 0;
+  transition:
+    opacity   0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+/* Variantes — a direção de onde o elemento vem */
+[data-anime="down"]  { transform: translateY(-40px); }
+[data-anime="up"]    { transform: translateY(40px);  }
+[data-anime="left"]  { transform: translateX(-40px); }
+[data-anime="right"] { transform: translateX(40px);  }
+[data-anime="fade"]  { transform: none;              }
+[data-anime="scale"] { transform: scale(0.9);        }
+
+/* Estado final — visível e na posição */
+[data-anime].is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Delays — para escalonar animações (efeito cascata) */
+[data-delay="1"] { transition-delay: 0.1s; }
+[data-delay="2"] { transition-delay: 0.2s; }
+[data-delay="3"] { transition-delay: 0.3s; }
+[data-delay="4"] { transition-delay: 0.4s; }
+[data-delay="5"] { transition-delay: 0.5s; }
+
+/* Acessibilidade — respeitar utilizadores que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  [data-anime] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+
+/* ============================================================
     ANIMAÇÕES (data-anime)
    ============================================================ */
-[data-anime] {
+/* [data-anime] {
     opacity: 0;
     transition: 1s;
 }
@@ -248,7 +292,7 @@ body::before {
 [data-anime].animate {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-}
+} */
 
 /* ============================================================
    NAVBAR
@@ -695,9 +739,7 @@ body::before {
 /* ============================================================
    CARROSSEL DE CONTOS
 ============================================================ */
-.carousel {
-  position: relative;
-}
+.carousel { position: relative; }
 
 .carousel-viewport {
   overflow: hidden;
@@ -713,10 +755,11 @@ body::before {
 .carousel-slide {
   flex: 0 0 100%;
   min-width: 0;
-  padding: 0 4px;   /* espaço para a borda respirar */
+  padding: 0 4px;
+  cursor: pointer;
 }
 
-/* ---------- Card do conto ---------- */
+/* ---------- Card ---------- */
 .conto-card {
   display: grid;
   grid-template-columns: 1fr;
@@ -727,17 +770,16 @@ body::before {
   border-radius: 8px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.conto-card:hover {
-  border-color: rgba(107, 104, 255, 0.5);
+.carousel-slide:hover .conto-card {
+  border-color: rgba(107, 104, 255, 0.55);
   box-shadow:
-    0 0 20px rgba(58, 54, 255, 0.2),
-    inset 0 0 30px rgba(6, 3, 180, 0.08);
+    0 0 24px rgba(58, 54, 255, 0.25),
+    inset 0 0 30px rgba(6, 3, 180, 0.1);
 }
 
-/* Desktop: capa + info lado a lado */
 @media (min-width: 768px) {
   .conto-card {
     grid-template-columns: 240px 1fr;
@@ -800,25 +842,27 @@ body::before {
   font-size: 14px;
   line-height: 1.8;
   color: var(--dw-gray);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   max-width: 520px;
 }
 
-.conto-btn {
-  align-self: flex-start;
-  font-size: 12px;
-  padding: 14px 28px;
+/* Hint "Clique para ver detalhes" */
+.conto-hint {
+  display: inline-block;
+  font-family: var(--font-orbitron);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--dw-blue-bright);
+  opacity: 0.7;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* Em mobile, o botão estica */
-@media (max-width: 640px) {
-  .conto-btn {
-    align-self: stretch;
-    text-align: center;
-  }
+.carousel-slide:hover .conto-hint {
+  opacity: 1;
+  transform: translateX(4px);
 }
 
-/* ---------- Controlos do carrossel ---------- */
+/* ---------- Controlos ---------- */
 .carousel-controls {
   display: flex;
   align-items: center;
@@ -849,9 +893,7 @@ body::before {
   box-shadow: 0 0 16px rgba(58, 54, 255, 0.4);
 }
 
-.carousel-arrow:active {
-  transform: scale(0.95);
-}
+.carousel-arrow:active { transform: scale(0.95); }
 
 .carousel-counter {
   display: flex;
@@ -876,25 +918,159 @@ body::before {
   border-radius: 4px;
   outline: none;
   transition: all 0.25s ease;
-  -moz-appearance: textfield;
+  appearance: textfield;
 }
-
-/* Esconde as setinhas default do number em Chrome/Safari */
 .carousel-input::-webkit-outer-spin-button,
-.carousel-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
+.carousel-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .carousel-input:focus {
   border-color: var(--dw-blue-bright);
   box-shadow: 0 0 10px rgba(107, 104, 255, 0.4);
 }
 
-.carousel-total {
-  color: var(--dw-gray);
-  opacity: 0.7;
+.carousel-total { color: var(--dw-gray); opacity: 0.7; }
+
+/* ============================================================
+   MODAL DE CONTO
+============================================================ */
+.conto-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
+
+.conto-modal.is-open {
+  display: flex;
+  animation: modal-fade-in 0.25s ease;
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.conto-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.conto-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: #0a0a14;
+  border: 1px solid rgba(107, 104, 255, 0.35);
+  border-radius: 12px;
+  box-shadow:
+    0 0 40px rgba(58, 54, 255, 0.3),
+    0 20px 60px rgba(0, 0, 0, 0.7);
+  animation: modal-slide-up 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modal-slide-up {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.conto-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--dw-gray);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.conto-modal-close:hover {
+  color: var(--dw-white);
+  border-color: var(--dw-blue-bright);
+  background: rgba(58, 54, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.conto-modal-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  padding: 32px;
+}
+
+@media (min-width: 768px) {
+  .conto-modal-content {
+    grid-template-columns: 260px 1fr;
+    gap: 40px;
+    padding: 40px;
+    align-items: start;
+  }
+}
+
+.conto-modal-cover {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  box-shadow:
+    0 0 30px rgba(58, 54, 255, 0.35),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.conto-modal-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.conto-modal-cover img:hover {
+  transform: scale(1.06);
+  transition: transform 0.3s ease;
+}
+
+.conto-modal-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.conto-modal-btn {
+  align-self: flex-start;
+  margin-top: 16px;
+  font-size: 13px;
+  padding: 16px 32px;
+}
+
+@media (max-width: 640px) {
+  .conto-modal-btn {
+    align-self: stretch;
+    text-align: center;
+  }
+  .conto-modal-content { padding: 24px; }
+}
+
+body.modal-open { overflow: hidden; }
 
 
 /* ============================================================
