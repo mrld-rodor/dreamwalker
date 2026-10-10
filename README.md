@@ -1,6 +1,6 @@
 # Dreamwalker
 
-Landing page do projeto **Dreamwalker** — uma coleção de contos baseados em sonhos lúcidos reais do autor.
+Landing page do projeto **Dreamwalker Tales** — uma coleção de contos baseados em sonhos lúcidos reais do autor.
 
 ## Sobre
 
@@ -19,7 +19,7 @@ Este repositório contém a landing page onde os leitores podem conhecer o proje
 
 ```
 dreamwalker/
-├── api/              # Backend Flask (funções serverless no Vercel)
+├── control/          # Arquivos do envio automatico de email
 ├── templates/        # HTMLs renderizados pelo Flask
 ├── static/           # Ficheiros estáticos (CSS, JS, imagens)
 ├── requirements.txt  # Dependências Python
@@ -29,4 +29,4 @@ dreamwalker/
 
 ## Autor
 
-**Dreamwalker** — projeto literário de Rodor Xes
+**Dreamwalker** — projeto literário de Rodor Xes(Dreamwalker)
