@@ -287,4 +287,128 @@ document.addEventListener('DOMContentLoaded', () => {
     animatedEls.forEach(el => el.classList.add('is-visible'));
   }
 
+  // ============================================================
+  // FORMULÁRIO DE CONTACTO + MODAL DE FEEDBACK
+  // ============================================================
+  const contactForm = document.getElementById('contact-form');
+
+  if (contactForm) {
+    const formStart       = document.getElementById('form-start');
+    const feedbackModal   = document.getElementById('feedback-modal');
+    const feedbackOverlay = document.getElementById('feedback-overlay');
+    const feedbackClose   = document.getElementById('feedback-close');
+    const feedbackTitle   = document.getElementById('feedback-title');
+    const feedbackMsg     = document.getElementById('feedback-message');
+
+    let autoCloseTimer = null;
+
+    // ------------------------------------------------------------
+    // Limpa o formulário completamente
+    // ------------------------------------------------------------
+    function clearForm() {
+      contactForm.reset();
+      contactForm.querySelectorAll('input:not([type="hidden"]), textarea').forEach(field => {
+        if (field.name !== 'website') {
+          field.value = '';
+        }
+      });
+      if (formStart) formStart.value = (Date.now() / 1000).toString();
+    }
+
+    // Limpa ao carregar a página (evita cache do browser)
+    clearForm();
+
+    // Limpa também quando a página volta do bfcache (botão "atrás")
+    window.addEventListener('pageshow', clearForm);
+
+    // ------------------------------------------------------------
+    // Modal de feedback
+    // ------------------------------------------------------------
+    function openFeedback(type, message) {
+      if (!feedbackModal) return;
+
+      feedbackModal.classList.remove('is-success', 'is-error');
+      feedbackModal.classList.add('is-open');
+      feedbackModal.classList.add(type === 'success' ? 'is-success' : 'is-error');
+      feedbackModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+
+      feedbackTitle.textContent = type === 'success'
+        ? 'Mensagem enviada!'
+        : 'Ops, algo falhou';
+      feedbackMsg.textContent = message || '';
+
+      // Reinicia a animação da barra de countdown
+      const bar = feedbackModal.querySelector('.feedback-timer-bar');
+      if (bar) {
+        bar.style.animation = 'none';
+        void bar.offsetWidth;
+        bar.style.animation = '';
+      }
+
+      // Auto-fecha em 5 segundos
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = setTimeout(closeFeedback, 5000);
+    }
+
+    function closeFeedback() {
+      if (!feedbackModal) return;
+      feedbackModal.classList.remove('is-open', 'is-success', 'is-error');
+      feedbackModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      clearTimeout(autoCloseTimer);
+    }
+
+    if (feedbackClose)   feedbackClose.addEventListener('click', closeFeedback);
+    if (feedbackOverlay) feedbackOverlay.addEventListener('click', closeFeedback);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && feedbackModal.classList.contains('is-open')) {
+        closeFeedback();
+      }
+    });
+
+    // ------------------------------------------------------------
+    // Submissão do formulário
+    // ------------------------------------------------------------
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : '';
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'A ENVIAR...';
+      }
+
+      try {
+        const formData = new FormData(contactForm);
+        
+
+        const response = await fetch('/enviar-contato', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          openFeedback('success', data.message);
+          clearForm();                    // 👈 limpa com a função completa
+        } else {
+          openFeedback('error', data.message || 'Erro ao enviar. Tente novamente.');
+        }
+      } catch (err) {
+        console.error('[Contact form]', err);
+        openFeedback('error', 'Erro de rede. Verifique a ligação e tente novamente.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
+    });
+  }
+
 });

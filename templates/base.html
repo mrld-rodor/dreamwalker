@@ -98,7 +98,7 @@
   <!-- ============================================================
        FOOTER
   ============================================================ -->
-  <footer class="site-footer mt-12" data-anime="fade">
+  <footer class="site-footer mt-12" >
     <div class="site-footer-inner">
 
       <!-- Coluna 1 — Marca -->
@@ -164,6 +164,38 @@
       </nav>
     </div>
   </footer>
+
+
+  <!-- ============================================================
+    MODAL DE FEEDBACK — envio de contacto
+  ============================================================ -->
+  <div id="feedback-modal" class="feedback-modal" aria-hidden="true" role="alertdialog" aria-modal="true">
+    <div id="feedback-overlay" class="feedback-overlay"></div>
+
+    <div class="feedback-panel">
+      <button id="feedback-close" class="feedback-close" aria-label="Fechar">X</button>
+
+      <!-- Cubo girando -->
+      <div class="feedback-cube-wrap">
+        <div class="cube-wrapper">
+          <div class="cube-container">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="feedback-title" class="feedback-title"></h3>
+      <p id="feedback-message" class="feedback-message"></p>
+
+      <!-- Barra de auto-close -->
+      <div class="feedback-timer"><div class="feedback-timer-bar"></div></div>
+    </div>
+  </div>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 

@@ -233,18 +233,31 @@
     <div class="max-w-xl mx-auto">
       <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">CONTACTO</h2>
       <p class="text-center text-2xl">.:.</p><br>
-      <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1">
+      <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1" autocomplete="off">
+
+        <!-- Honeypot: invisível para humanos, bots preenchem -->
+        <input type="text" name="website" tabindex="-1" autocomplete="off"
+              style="position:absolute; left:-9999px; opacity:0; pointer-events:none;"
+              aria-hidden="true">
+
+        <!-- Timestamp de abertura do form -->
+        <input type="hidden" name="form_start" id="form-start" value="">
+
         <input type="text"  name="nome"  placeholder="Nome"  required
-               class="form-input w-full px-4 py-3 text-sm rounded-sm">
+              class="form-input w-full px-4 py-3 text-sm rounded-sm" required autocomplete="off">
         <input type="email" name="email" placeholder="Email" required
-               class="form-input w-full px-4 py-3 text-sm rounded-sm">
+              class="form-input w-full px-4 py-3 text-sm rounded-sm" required autocomplete="off">
         <textarea name="mensagem" rows="5" placeholder="Mensagem" required
-                  class="form-input w-full px-4 py-3 text-sm rounded-sm resize-y"></textarea>
+                  class="form-input w-full px-4 py-3 text-sm rounded-sm resize-y" required autocomplete="off"></textarea>
+
         <div class="flex justify-center pt-2 contact-action">
           <button type="submit" class="btn-primary contact-btn font-orbitron">
             ENVIAR
           </button>
         </div>
+
+        <!-- Feedback para o utilizador -->
+        <p id="contact-feedback" class="text-center text-sm mt-2" aria-live="polite"></p>
       </form>
     </div>
   </section>
