@@ -926,7 +926,132 @@ body::before {
 .carousel-total { color: var(--dw-gray); opacity: 0.7; }
 
 /* ============================================================
-   MODAL DE CONTO
+   CARROSSEL — card do conto
+============================================================ */
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: 0 4px;
+  cursor: pointer;
+}
+
+.conto-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(6, 3, 180, 0.08);
+  border: 1px solid rgba(107, 104, 255, 0.25);
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carousel-slide:hover .conto-card {
+  border-color: rgba(107, 104, 255, 0.5);
+  box-shadow:
+    0 0 24px rgba(58, 54, 255, 0.25),
+    inset 0 0 30px rgba(6, 3, 180, 0.1);
+}
+
+/* Cover — mais pequena em mobile */
+.conto-cover {
+  width: 100%;
+  max-width: 160px;
+  margin: 0 auto;
+  aspect-ratio: 2 / 3;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  box-shadow:
+    0 0 20px rgba(58, 54, 255, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.conto-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Info — centrada em mobile */
+.conto-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.conto-number {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--dw-blue-bright);
+  text-shadow:
+    0 0 8px rgba(139, 136, 255, 0.6),
+    0 0 16px rgba(58, 54, 255, 0.3);
+}
+
+.conto-title {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.03em;
+  color: var(--dw-white);
+  line-height: 1.25;
+  margin: 0;
+}
+
+/* Botão VER DETALHES */
+.conto-detail-btn {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 10px 24px;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--dw-blue-bright);
+  background: transparent;
+  border: 1px solid var(--dw-blue-bright);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.conto-detail-btn:hover,
+.carousel-slide:hover .conto-detail-btn {
+  color: var(--dw-white);
+  background: rgba(58, 54, 255, 0.2);
+  box-shadow: 0 0 16px rgba(58, 54, 255, 0.4);
+}
+
+/* Desktop — layout lado a lado, mantém design original */
+@media (min-width: 768px) {
+  .conto-card {
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+    padding: 28px;
+    align-items: center;
+  }
+  .conto-cover {
+    max-width: 200px;
+  }
+  .conto-info {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .conto-title {
+    font-size: clamp(20px, 3vw, 26px);
+  }
+}
+
+/* ============================================================
+   MODAL DO CONTO — layout fixo em cima/baixo, sinopse com scroll
 ============================================================ */
 .conto-modal {
   position: fixed;
@@ -935,7 +1060,7 @@ body::before {
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 16px;
 }
 
 .conto-modal.is-open {
@@ -957,13 +1082,15 @@ body::before {
   cursor: pointer;
 }
 
+/* Painel — altura máxima fixa, flex column */
 .conto-modal-panel {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 900px;
-  max-height: calc(100vh - 48px);
-  overflow-y: auto;
+  max-width: 500px;
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
   background: #0a0a14;
   border: 1px solid rgba(107, 104, 255, 0.35);
   border-radius: 12px;
@@ -971,6 +1098,7 @@ body::before {
     0 0 40px rgba(58, 54, 255, 0.3),
     0 20px 60px rgba(0, 0, 0, 0.7);
   animation: modal-slide-up 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
 @keyframes modal-slide-up {
@@ -978,19 +1106,20 @@ body::before {
   to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
+/* Botão fechar — canto superior direito */
 .conto-modal-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 2;
-  width: 36px;
-  height: 36px;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--dw-gray);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(107, 104, 255, 0.3);
   border-radius: 50%;
   cursor: pointer;
@@ -1000,37 +1129,30 @@ body::before {
 .conto-modal-close:hover {
   color: var(--dw-white);
   border-color: var(--dw-blue-bright);
-  background: rgba(58, 54, 255, 0.2);
+  background: rgba(58, 54, 255, 0.3);
   transform: rotate(90deg);
 }
 
-.conto-modal-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  padding: 32px;
-}
-
-@media (min-width: 768px) {
-  .conto-modal-content {
-    grid-template-columns: 260px 1fr;
-    gap: 40px;
-    padding: 40px;
-    align-items: start;
-  }
+/* CABEÇALHO FIXO — capa + número + título */
+.conto-modal-header {
+  flex-shrink: 0;
+  padding: 32px 24px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(6, 3, 180, 0.35);
+  background: linear-gradient(180deg, #0a0a14 0%, #05051a 100%);
 }
 
 .conto-modal-cover {
   width: 100%;
-  max-width: 260px;
-  margin: 0 auto;
+  max-width: 140px;
+  margin: 0 auto 20px;
   aspect-ratio: 2 / 3;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(107, 104, 255, 0.3);
+  border: 1px solid rgba(107, 104, 255, 0.35);
   box-shadow:
-    0 0 30px rgba(58, 54, 255, 0.35),
-    0 10px 30px rgba(0, 0, 0, 0.5);
+    0 0 24px rgba(58, 54, 255, 0.35),
+    0 10px 24px rgba(0, 0, 0, 0.5);
 }
 
 .conto-modal-cover img {
@@ -1040,30 +1162,101 @@ body::before {
   display: block;
 }
 
-.conto-modal-cover img:hover {
-  transform: scale(1.06);
-  transition: transform 0.3s ease;
+.conto-modal-header .conto-number {
+  display: block;
+  margin-bottom: 6px;
 }
 
-.conto-modal-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
+.conto-modal-header .conto-title {
+  font-size: clamp(18px, 4vw, 22px);
+  line-height: 1.3;
+}
+
+/* CORPO SCROLLÁVEL — sinopse */
+.conto-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar mais discreta */
+.conto-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.conto-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.conto-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(58, 54, 255, 0.3);
+  border-radius: 3px;
+}
+.conto-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(58, 54, 255, 0.6);
+}
+
+.conto-modal-body .conto-synopsis {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--dw-gray);
+  margin: 0;
+}
+
+/* Espaçamento entre parágrafos da sinopse no modal */
+.conto-modal-body .conto-synopsis p {
+  margin-bottom: 16px;
+}
+
+.conto-modal-body .conto-synopsis p:last-child {
+  margin-bottom: 0;
+}
+
+/* Negrito e itálico dentro da sinopse (caso uses <strong> ou <em>) */
+.conto-modal-body .conto-synopsis strong {
+  color: var(--dw-white);
+  font-weight: 500;
+}
+
+.conto-modal-body .conto-synopsis em {
+  color: var(--dw-blue-bright);
+  font-style: italic;
+}
+
+/* RODAPÉ FIXO — botão comprar */
+.conto-modal-footer {
+  flex-shrink: 0;
+  padding: 16px 24px 20px;
+  border-top: 1px solid rgba(6, 3, 180, 0.35);
+  background: #05051a;
+  text-align: center;
 }
 
 .conto-modal-btn {
-  align-self: flex-start;
-  margin-top: 16px;
-  font-size: 13px;
-  padding: 16px 32px;
+  display: block;
+  width: 66%;
+  font-size: 16px;
+  padding: 16px 24px;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--dw-white);  
+  border: 1px solid rgba(107, 104, 255, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 auto;
 }
 
-@media (max-width: 640px) {
-  .conto-modal-btn {
-    align-self: stretch;
-    text-align: center;
+/* Desktop — painel um pouco maior */
+@media (min-width: 768px) {
+  .conto-modal-panel {
+    max-width: 560px;
   }
-  .conto-modal-content { padding: 24px; }
+  .conto-modal-cover {
+    max-width: 160px;
+  }
 }
 
 body.modal-open { overflow: hidden; }
@@ -1274,7 +1467,7 @@ body.modal-open { overflow: hidden; }
 
 /* Botão — mobile: largura total */
 .contact-btn {
-  width: 100%;
+  width: 66%;
   padding: 16px 24px;
   font-family: var(--font-orbitron);
   font-weight: 700;
@@ -1401,7 +1594,7 @@ body.modal-open { overflow: hidden; }
   font-family: var(--font-amatic);
   font-weight: 700;
   font-size: 22px;
-  color: var(--dw-blue-bright);
+  color: var(--dw-red);
   letter-spacing: 0.02em;
   line-height: 1.3;
 }

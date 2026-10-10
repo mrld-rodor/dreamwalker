@@ -149,20 +149,25 @@
             <!-- ===== CONTO 1 ===== -->
             <article class="carousel-slide"
               data-number="01"
-              data-title="Título do Primeiro Conto"
-              data-synopsis-short="Sinopse breve que aparece no card. Duas ou três frases que despertam curiosidade."
-              data-synopsis-long="Sinopse detalhada para o modal. Aqui podes desenvolver mais a história — o sonho que a originou, o que o leitor vai encontrar, a atmosfera. Três a cinco frases que criam imersão antes de convidar à compra."
+              data-title="O Grande Livro"
               data-cover="{{ url_for('static', filename='img/conto-1.jpg') }}"
               data-buy="https://hotmart.com/SEU-LINK-1">
+
+              <!-- Sinopse (usada pelo modal) -->
+              <div class="conto-synopsis-data" hidden>
+                <p>Em um campo de batalha esquecido pelo tempo — onde o céu deixou de existir e o solo pulsa com a memória de guerras ancestrais — um homem marcha em silêncio em direção a um galpão que desafia as leis da realidade. Lá dentro, sob o olhar impassível de um Capitão e diante de um Livro que parece conter o peso da eternidade, ele recebe quatro balas. Não como arma. Como fardo. A ordem que se segue é impossível: seguir para o campo de batalha sem fuzil, entregar a munição a quem já não tem, e enfrentar uma guerra que ninguém vê.</p>
+
+                <p>Mas naquele campo sem inimigos, onde só o silêncio responde às explosões distantes, a verdadeira batalha se revela outra — não contra um adversário de carne e osso, mas contra o isolamento que nos separa de nós mesmos. Cada soldado que se aproxima, cada bala entregue, tece uma corrente invisível de algo mais antigo do que a própria guerra: a união. E é esse abismo que o conto nos convida a atravessar — a descoberta silenciosa de que nenhum medo resiste à força que nasce quando duas almas decidem não caminhar sozinhas.</p>
+              </div>
+
               <div class="conto-card">
                 <div class="conto-cover">
                   <img src="{{ url_for('static', filename='img/conto-1.jpg') }}" alt="Capa do conto 1">
                 </div>
                 <div class="conto-info">
                   <span class="conto-number">01</span>
-                  <h3 class="conto-title">Título do Primeiro Conto</h3>
-                  <p class="conto-synopsis">Sinopse breve que aparece no card. Duas ou três frases que despertam curiosidade.</p>
-                  <span class="conto-hint">Clique para ver detalhes →</span>
+                  <h3 class="conto-title">O Grande Livro</h3>
+                  <button type="button" class="conto-detail-btn">VER DETALHES</button>
                 </div>
               </div>
             </article>
@@ -170,20 +175,25 @@
             <!-- ===== CONTO 2 ===== -->
             <article class="carousel-slide"
               data-number="02"
-              data-title="Título do Segundo Conto"
-              data-synopsis-short="Sinopse breve do segundo conto. Mesma estrutura — desperta curiosidade sem revelar tudo."
-              data-synopsis-long="Sinopse detalhada do segundo conto. Desenvolve o sonho que originou a história, o ambiente, e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
+              data-title="O Trem"
               data-cover="{{ url_for('static', filename='img/conto-2.jpg') }}"
               data-buy="https://hotmart.com/SEU-LINK-2">
+
+              <!-- Sinopse (usada pelo modal) -->
+              <div class="conto-synopsis-data" hidden>
+                <p>Há noites que começam familiares e terminam do outro lado da realidade. No bairro Pindorama, entre risos de amigos de infância e a calmaria do calçadão do Sr. Sapo, uma voz emerge das profundezas da terra — antiga, gutural, impossível. E com ela chega o Trem Negro: uma entidade de engrenagens ruidosas, runas fluorescentes e um silêncio que pesa mais do que qualquer grito. Quando o protagonista tenta correr, o mundo se recusa a obedecer — o chão cede, o tempo dobra, as balas desviam. E a rua que ele conhecia de olhos fechados já não é a sua rua.</p>
+
+                <p>Entre larvas que rastejam em uníssono e homens de terno que flutuam sobre elas como juízes sem rosto, cada amigo que cai é uma pergunta sem resposta. Porque é que ele sobrevive quando todos sucumbem? O que há nele que merece ser poupado? Quando finalmente chega a casa, encontra a família imóvel e um único homem à espera — com uma frase que parte o mundo em dois: "Você é um dos nossos." E ao acordar, ele compreende que aquilo não era sonho. Era uma revelação. A primeira de muitas.</p>
+              </div>
+
               <div class="conto-card">
                 <div class="conto-cover">
-                  <img src="{{ url_for('static', filename='img/conto-2.jpg') }}" alt="Capa do conto 2">
+                  <img src="{{ url_for('static', filename='img/conto-2.jpg') }}" alt="Capa do conto O Trem">
                 </div>
                 <div class="conto-info">
                   <span class="conto-number">02</span>
-                  <h3 class="conto-title">Título do Segundo Conto</h3>
-                  <p class="conto-synopsis">Sinopse breve do segundo conto. Mesma estrutura — desperta curiosidade sem revelar tudo.</p>
-                  <span class="conto-hint">Clique para ver detalhes →</span>
+                  <h3 class="conto-title">O Trem</h3>
+                  <button type="button" class="conto-detail-btn">VER DETALHES</button>
                 </div>
               </div>
             </article>
@@ -191,20 +201,25 @@
             <!-- ===== CONTO 3 ===== -->
             <article class="carousel-slide"
               data-number="03"
-              data-title="Título do Terceiro Conto"
-              data-synopsis-short="Sinopse breve do terceiro conto. Mantém o mesmo tom narrativo."
-              data-synopsis-long="Sinopse detalhada do terceiro conto. Desenvolve o sonho, o ambiente e o que o leitor vai encontrar. Três a cinco frases que criam imersão."
+              data-title="O Carnaval"
               data-cover="{{ url_for('static', filename='img/conto-3.jpg') }}"
               data-buy="https://hotmart.com/SEU-LINK-3">
+
+              <!-- Sinopse (usada pelo modal) -->
+              <div class="conto-synopsis-data" hidden>
+                <p>Era para ser um verão comum no bairro, até o carnaval começar. Mas quando as ruas se enchem de uma euforia excessiva, quase doentia, e um mendigo sussurra um aviso que ninguém mais parece ouvir, Onofre percebe que algo está errado — profundamente errado. E então eles aparecem: cães do tamanho de búfalos, com cabeças deformadas de bulldog e olhos em brasa, caminhando pelas ruas sem que nenhum folião se aperceba. Enquanto todos dançam e riem, Onofre corre para o único refúgio possível — um alçapão no meio da calçada que o leva a um submundo esquecido, onde velhos abandonados pelo mundo esperam, imóveis, por algo que não ousam nomear.</p>
+
+                <p>Mas o refúgio é apenas uma pausa. Ao espiar por entre as frestas do alçapão, Onofre vê o verdadeiro espetáculo: mulheres de látex conduzindo humanos acorrentados, uma pirâmide de corpos, e no topo dela, sobre um trono de pedra negra, a criatura que o mendigo anunciou. Uma única certeza surge então dentro dele — a de que a salvação está no cemitério. Mas quando duas gémeas enigmáticas o acompanham na fuga e lhe perguntam, com um sorriso, o que é um cemitério para quem já está morto, Onofre entende que a estrada que escolheu talvez não seja uma saída — mas uma travessia para algo ainda mais profundo. Um conto sobre os limites da realidade, a coragem de fugir do que nos adormece e a eterna dúvida sobre o que significa, verdadeiramente, estar vivo.</p>
+              </div>
+
               <div class="conto-card">
                 <div class="conto-cover">
-                  <img src="{{ url_for('static', filename='img/conto-3.jpg') }}" alt="Capa do conto 3">
+                  <img src="{{ url_for('static', filename='img/conto-3.jpg') }}" alt="Capa do conto O Carnaval">
                 </div>
                 <div class="conto-info">
                   <span class="conto-number">03</span>
-                  <h3 class="conto-title">Título do Terceiro Conto</h3>
-                  <p class="conto-synopsis">Sinopse breve do terceiro conto. Mantém o mesmo tom narrativo.</p>
-                  <span class="conto-hint">Clique para ver detalhes →</span>
+                  <h3 class="conto-title">O Carnaval</h3>
+                  <button type="button" class="conto-detail-btn">VER DETALHES</button>
                 </div>
               </div>
             </article>
@@ -263,28 +278,38 @@
   </section>
 
   <!-- ============================================================
-       MODAL DE CONTO
-  ============================================================ -->
+     MODAL DE CONTO
+============================================================ -->
   <div id="conto-modal" class="conto-modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="conto-modal-backdrop" data-close-modal></div>
 
     <div class="conto-modal-panel" role="document">
+
+      <!-- Botão fechar (canto superior direito) -->
       <button class="conto-modal-close" data-close-modal aria-label="Fechar">X</button>
 
-      <div class="conto-modal-content">
+      <!-- CABEÇALHO FIXO — capa + número + título -->
+      <div class="conto-modal-header">
         <div class="conto-modal-cover">
           <img id="modal-cover" src="" alt="">
         </div>
-        <div class="conto-modal-info">
-          <span class="conto-number" id="modal-number"></span>
-          <h3 class="conto-title" id="modal-title"></h3>
-          <p class="conto-synopsis" id="modal-synopsis"></p>
-          <a href="#" id="modal-buy" target="_blank" rel="noopener" class="btn-primary conto-modal-btn">
-            ADIQUIRIR O CONTO
-          </a>
-        </div>
+        <span class="conto-number" id="modal-number"></span>
+        <h3 class="conto-title" id="modal-title"></h3>
       </div>
+
+      <!-- CORPO SCROLLÁVEL — sinopse -->
+      <div class="conto-modal-body">
+        <div class="conto-synopsis" id="modal-synopsis"></div>      
+      </div>
+
+      <!-- RODAPÉ FIXO — botão comprar -->
+      <div class="conto-modal-footer">
+        <a href="#" id="modal-buy" target="_blank" rel="noopener" class="btn-primary conto-modal-btn">
+          Adquirir Conto
+        </a>
+      </div>
+
     </div>
-  </div>
+  </div>  
 
 {% endblock %}

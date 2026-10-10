@@ -201,29 +201,41 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================================
   // MODAL DE CONTO
   // ============================================================
-  if (modal) {
+    if (modal) {
     const modalCover    = document.getElementById('modal-cover');
     const modalNumber   = document.getElementById('modal-number');
     const modalTitle    = document.getElementById('modal-title');
     const modalSynopsis = document.getElementById('modal-synopsis');
     const modalBuy      = document.getElementById('modal-buy');
+    const body          = modal.querySelector('.conto-modal-body');
     const slides        = document.querySelectorAll('.carousel-slide');
 
     let lastFocused = null;
 
-    function openModal(slide) {
-      const num      = slide.dataset.number       || '';
-      const title    = slide.dataset.title        || '';
-      const synopsis = slide.dataset.synopsisLong || slide.dataset.synopsisShort || '';
-      const cover    = slide.dataset.cover        || '';
-      const buy      = slide.dataset.buy          || '#';
+        function openModal(slide) {
+      const num   = slide.dataset.number || '';
+      const title = slide.dataset.title  || '';
+      const cover = slide.dataset.cover  || '';
+      const buy   = slide.dataset.buy    || '#';
 
-      modalNumber.textContent   = num;
-      modalTitle.textContent    = title;
-      modalSynopsis.textContent = synopsis;
-      modalCover.src            = cover;
-      modalCover.alt            = `Capa de ${title}`;
-      modalBuy.href             = buy;
+      // Sinopse: procura primeiro o <div hidden>, depois o data-attribute (fallback)
+      const hiddenSynopsis = slide.querySelector('.conto-synopsis-data');
+
+      modalNumber.textContent = num;
+      modalTitle.textContent  = title;
+      modalCover.src          = cover;
+      modalCover.alt          = `Capa de ${title}`;
+      modalBuy.href           = buy;
+
+      // Aplica a sinopse (HTML se for div, texto se for data-attribute)
+      if (hiddenSynopsis) {
+        modalSynopsis.innerHTML = hiddenSynopsis.innerHTML;
+      } else {
+        modalSynopsis.textContent = slide.dataset.synopsisLong || '';
+      }
+
+      // Reset do scroll da sinopse
+      if (body) body.scrollTop = 0;
 
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
@@ -246,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.__carouselStartAutoplay) window.__carouselStartAutoplay();
     }
 
+    // Clique no card OU no botão "VER DETALHES" abre o modal
     slides.forEach(slide => {
       slide.addEventListener('click', (e) => {
         e.preventDefault();
