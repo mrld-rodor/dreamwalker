@@ -89,6 +89,7 @@ html {
   #contos,
   #autor,
   #comprar,
+  #doacao,        
   #contacto {
     scroll-margin-top: 70px;  /* altura do header fixo */
   }
@@ -1653,6 +1654,10 @@ body.modal-open { overflow: hidden; }
 .footer-brand-text {
   display: flex;
   flex-direction: column;
+}
+
+.footer-brand-tagline {
+  text-align: center !important;
 }
 
 @media (max-width: 767px) {
