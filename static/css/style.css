@@ -90,7 +90,7 @@ html {
   #autor,
   #comprar,
   #contacto {
-    scroll-margin-top: 115px;   
+    scroll-margin-top: 70px;  /* altura do header fixo */
   }
 }
 
@@ -570,35 +570,25 @@ body::before {
   margin: 0 auto 28px;
 }
 
+/* ============================================================
+   BOTÃO PAYPAL — herda o efeito do .btn-primary
+   Só ajusta layout (ícone + texto) e tamanho
+============================================================ */
 .donation-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  padding: 14px 32px;
-  font-family: var(--font-orbitron);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.08em;
-  color: var(--dw-white);
-  background: #0070BA;                      /* azul PayPal */
-  border: none;
-  border-radius: 8px;
+  width: 56%;
+  padding: 14px 24px;
+  font-size: 13px;
+  border-radius: 6px;
   text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.donation-btn:hover {
-  background: #005ea6;
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 20px rgba(0, 112, 186, 0.6),
-    0 0 40px rgba(0, 112, 186, 0.3);
 }
 
 .donation-btn-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
@@ -924,6 +914,29 @@ body::before {
 }
 
 .carousel-total { color: var(--dw-gray); opacity: 0.7; }
+
+
+/* ============================================================
+   SINOPSE CURTA NO CARD — só aparece em desktop
+============================================================ */
+
+/* Mobile: escondida (card fica limpo) */
+.conto-synopsis-short {
+  display: none;
+}
+
+/* Desktop: visível, com tipografia suave */
+@media (min-width: 768px) {
+  .conto-synopsis-short {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--dw-gray);
+    margin: 8px 0 20px;
+    max-width: 520px;
+  }
+}
 
 /* ============================================================
    CARROSSEL — card do conto
@@ -1511,11 +1524,7 @@ body.modal-open { overflow: hidden; }
   gap: 48px;
 }
 
-/* .footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-} */
+
 
 /* Mobile — centrado */
 .footer-brand {
@@ -1526,16 +1535,102 @@ body.modal-open { overflow: hidden; }
   gap: 16px;
 }
 
-/* Desktop — logo à esquerda, texto ao lado */
-@media (min-width: 768px) {
-  .footer-brand {
-    flex-direction: row;       /* lado a lado */
-    align-items: center;
-    text-align: left;
-    gap: 20px;
-  }
+/* Mobile — o wrapper comporta-se como se não existisse */
+.footer-brand-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
+/* ============================================================
+   DESKTOP — layout horizontal do footer
+============================================================ */
+@media (min-width: 768px) {
+
+  /* Contentor principal: flex em linha, 4 colunas distribuídas */
+  .site-footer-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    max-width: 1400px;
+    padding: 72px 40px 56px;
+    gap: 48px;
+  }
+
+  /* Grupo logo + texto — LADO A LADO, próximos */
+  .footer-brand-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;              /*espaço entre logo e texto */
+    flex-shrink: 0;
+  }
+
+  /* Logo destacado */
+  .footer-logo .logo-img {
+    height: 110px;
+    width: 110px;
+    border-radius: 50%;
+    box-shadow:
+      0 0 20px rgba(58, 54, 255, 0.6),
+      0 0 40px rgba(58, 54, 255, 0.35),
+      inset 0 0 20px rgba(107, 104, 255, 0.3),
+      0 8px 20px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Texto da marca — não quebra, largura automática */
+  .footer-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    flex-shrink: 0;
+    max-width: none;
+  }
+
+  .footer-brand-name {
+    font-size: 18px;
+    margin-bottom: 4px;
+    white-space: nowrap;   /* impede quebra do nome */
+  }
+
+  .footer-brand-tagline {
+    font-size: 20px;
+    line-height: 1.3;
+    white-space: nowrap;   /* opcional: mantém numa linha */
+  }
+
+  /* Navegação */
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+    text-align: left;
+  }
+
+  .footer-nav a {
+    font-size: 13px;
+    padding: 4px 0;
+  }
+
+  /* Redes sociais — na última coluna à direita */
+  .footer-social {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+    text-align: right;   /* alinha à direita */
+  }
+
+  .footer-social-icons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;   /* ícones encostados à direita */
+  }
+}
 
 /* Mobile — centrar tudo no footer */
 @media (max-width: 767px) {
@@ -1551,9 +1646,8 @@ body.modal-open { overflow: hidden; }
 }
 
 .footer-logo-img {
-  height: 56px;
   margin-bottom: 0;   /* já não é preciso */
-  flex-shrink: 0;     /* impede que o logo encolha em ecrãs estreitos */
+  flex-shrink: 0;     /* impede que o logo encolha em ecrãs estreitos */  
 }
 
 .footer-brand-text {
