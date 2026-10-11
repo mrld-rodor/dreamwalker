@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Página Perdida — Dreamwalker Tales</title>
+  <meta name="description" content="Esta página perdeu-se entre os sonhos.">
+  <meta name="robots" content="noindex">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon/favicon-96x96.png') }}" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon/favicon.svg') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon/favicon.ico') }}" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="site-body-404">
+
+    <main class="error-404-main">
+
+        <!-- Card translúcido -->
+        <div class="error-404-card">
+
+            <p class="error-404-code" data-anime="down">404</p>
+
+            <h1 class="hero-title text-4xl sm:text-5xl md:text-4xl mb-6" data-anime="fade" data-delay="1">
+            Esta página perdeu-se!
+            </h1>
+
+            <p class="hero-slogan text-xl sm:text-2xl md:text-3xl mb-0" data-anime="fade" data-delay="2">
+            Talvez nunca tenha existido. Talvez existisse — mas alguém esqueceu-se dela durante o sono.
+            </p>
+
+        </div>
+
+        <!-- Botões fora do card -->
+        <div class="error-404-actions" data-anime="up" data-delay="3">
+            <a href="/" class="btn-primary text-xs sm:text-sm px-8 py-4 rounded-sm">
+            VOLTAR AO INÍCIO
+            </a>
+            <a href="/#contos" class="btn-primary text-xs sm:text-sm px-8 py-4 rounded-sm">
+            VER OS CONTOS
+            </a>
+        </div>
+
+    </main>
+
+  <script>
+    // Ativa as animações de entrada
+    document.addEventListener('DOMContentLoaded', () => {
+      const els = document.querySelectorAll('[data-anime]');
+      if (els.length && 'IntersectionObserver' in window) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible');
+              obs.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        els.forEach(el => obs.observe(el));
+      } else {
+        els.forEach(el => el.classList.add('is-visible'));
+      }
+    });
+  </script>
+
+</body>
+</html>
