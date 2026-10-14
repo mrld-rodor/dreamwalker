@@ -1,8 +1,17 @@
-from flask import Flask, render_template
+import os
+
+from flask import Flask, flash, render_template
 
 import time
 from collections import defaultdict
 from flask import jsonify, request
+
+from datetime import datetime
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+
+from control.database import db, init_db
+from control.models import User, Visit
 
 from control.email_sender import (
     Contato,
@@ -17,6 +26,78 @@ app = Flask(
     template_folder=str("templates"),
     static_folder=str("static"),
 )
+
+
+# ============================================================
+# BASE DE DADOS
+# ============================================================
+init_db(app)
+
+# ============================================================
+# FLASK-LOGIN
+# ============================================================
+app.secret_key = os.getenv('SECRET_KEY')
+if not app.secret_key:
+    raise RuntimeError("SECRET_KEY não está definida no .env")
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'admin_login'   # nome da rota de login (Fase 4)
+login_manager.login_message = 'Precisas de fazer login para aceder ao painel.'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Diz ao Flask-Login qual é o utilizador com base no ID do cookie."""
+    return User.query.get(int(user_id))
+
+
+# ============================================================
+# CRIAR TABELAS + UTILIZADOR ADMIN INICIAL
+# ============================================================
+with app.app_context():
+    db.create_all()
+
+    # Cria o admin inicial se ainda não existir
+    admin_username = os.getenv('ADMIN_USER')
+    admin_password = os.getenv('ADMIN_PASS')
+
+    if admin_username and admin_password:
+        existing = User.query.filter_by(username=admin_username).first()
+        if not existing:
+            new_admin = User(username=admin_username)
+            new_admin.set_password(admin_password)
+            db.session.add(new_admin)
+            db.session.commit()
+            print(f"[INFO] Utilizador admin criado: {admin_username}")
+        else:
+            print(f"[INFO] Utilizador admin já existe: {admin_username}")
+
+
+# ============================================================
+# REGISTAR VISITAS — corre antes de cada pedido
+# ============================================================
+@app.before_request
+def log_visit():
+    # Só registamos visitas à página inicial
+    if request.endpoint == 'index':
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+
+        # Vercel fornece isto automaticamente em produção
+        city = request.headers.get('X-Vercel-IP-City')
+        country = request.headers.get('X-Vercel-IP-Country')
+
+        user_agent = request.headers.get('User-Agent', '')[:500]
+
+        new_visit = Visit(
+            ip_address=ip,
+            city=city,
+            country=country,
+            path=request.path,
+            user_agent=user_agent,
+        )
+        db.session.add(new_visit)
+        db.session.commit()
 
 
 # ============================================================
@@ -90,6 +171,65 @@ def privacidade():
 @app.route("/termos")
 def termos():
     return render_template("termos.html")
+
+# ============================================================
+# ADMIN — LOGIN
+# ============================================================
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    # Se já está autenticado, vai direto para o dashboard
+    if current_user.is_authenticated:
+        return redirect(url_for('admin_dashboard'))
+
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+
+        # Procura o utilizador
+        user = User.query.filter_by(username=username).first()
+
+        # Verifica se existe E se a password está correta
+        if user and user.check_password(password):
+            login_user(user)            
+
+            # Respeita o "next" (para onde ia antes de ser bloqueado)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('admin_dashboard'))
+
+        # Falha
+        flash('Credenciais inválidas.', 'error')
+
+    return render_template('admin_login.html')
+
+# ============================================================
+# ADMIN — LOGOUT
+# ============================================================
+@app.route('/admin/logout')
+@login_required
+def admin_logout():
+    logout_user()
+    flash('Sessão encerrada.', 'success')
+    return redirect(url_for('admin_login'))
+
+
+# ============================================================
+# ADMIN — DASHBOARD
+# ============================================================
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    # Últimas 500 visitas, mais recentes primeiro
+    visits = Visit.query.order_by(Visit.timestamp.desc()).limit(500).all()
+
+    # Estatísticas rápidas
+    total_visits = Visit.query.count()
+
+    return render_template(
+        'admin_dashboard.html',
+        visits=visits,
+        total_visits=total_visits,
+        current_user_name=current_user.username,
+    )
 
 @app.errorhandler(404)
 def page_not_found(e):

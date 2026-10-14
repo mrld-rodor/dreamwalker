@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Dreamwalker Tales</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon/favicon-96x96.png') }}" sizes="96x96" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="admin-body-dashboard">
+
+  <!-- Barra superior -->
+  <header class="admin-topbar">
+    <div class="admin-topbar-inner">
+      <div class="admin-topbar-brand">
+        <img src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}" alt="" class="admin-topbar-logo">
+        <span class="admin-topbar-title">DREAMWALKER · ADMIN</span>
+      </div>
+
+      <div class="admin-topbar-actions">
+        <span class="admin-topbar-user">{{ current_user_name }}</span>
+        <a href="{{ url_for('admin_logout') }}" class="admin-logout-btn">SAIR</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-content">
+
+    <!-- Título + total -->
+    <div class="admin-head">
+      <h1 class="admin-title">Estatísticas de Visitas</h1>
+      <p class="admin-subtitle">
+        Total registado: <strong>{{ total_visits }}</strong> visitas
+      </p>
+    </div>
+
+    <!-- Tabela -->
+    <div class="admin-table-wrap">
+      {% if visits %}
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Data/Hora (UTC)</th>
+              <th>País</th>
+              <th>Cidade</th>
+              <th>IP</th>
+              <th>Página</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for visit in visits %}
+              <tr>
+                <td class="admin-cell-mono">{{ visit.timestamp.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td>{{ visit.country or '—' }}</td>
+                <td>{{ visit.city or '—' }}</td>
+                <td class="admin-cell-mono">{{ visit.ip_address or '—' }}</td>
+                <td class="admin-cell-mono">{{ visit.path }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="admin-empty">
+          <p>Ainda não há visitas registadas.</p>
+          <p class="admin-empty-hint">Visita a página inicial para gerar o primeiro registo.</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </main>
+
+</body>
+</html>

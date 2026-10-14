@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Dreamwalker Tales</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon/favicon-96x96.png') }}" sizes="96x96" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon/favicon.ico') }}" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="admin-body">
+
+  <main class="admin-login-wrap">
+
+    <div class="admin-login-card">
+
+      <!-- Logo -->
+      <div class="admin-login-logo">
+        <img
+          src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}"
+          alt="Dreamwalker Tales"
+          class="logo-img">
+      </div>
+
+      <h1 class="admin-login-title">Acesso Restrito</h1>
+      <p class="admin-login-subtitle">Painel de administração</p>
+
+      <!-- Mensagens flash (erros/sucessos) -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="admin-flash admin-flash-{{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Formulário -->
+      <form method="POST" action="{{ url_for('admin_login') }}" class="admin-login-form" autocomplete="off">
+
+        <div class="admin-field">
+          <label for="username">Utilizador</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            autocomplete="off"
+            autofocus>
+        </div>
+
+        <div class="admin-field">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn-primary admin-login-btn">
+          ENTRAR
+        </button>
+
+      </form>
+
+      <p class="admin-login-footer">Dreamwalker Tales &copy; 2026</p>
+
+    </div>
+
+  </main>
+    <script>
+        // Flash desaparece ao fim de 4 segundos
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashes = document.querySelectorAll('.admin-flash');
+            flashes.forEach(flash => {
+            setTimeout(() => {
+                flash.classList.add('is-hiding');
+                // Remove do DOM após a transição terminar
+                setTimeout(() => flash.remove(), 600);
+                }, 4000);
+            });
+        });
+    </script>
+</body>
+</html>

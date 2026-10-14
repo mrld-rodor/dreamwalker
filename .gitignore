@@ -9,6 +9,7 @@ env/
 .env.local
 
 # Base de dados local
+local.db
 *.db
 *.sqlite
 *.sqlite3
