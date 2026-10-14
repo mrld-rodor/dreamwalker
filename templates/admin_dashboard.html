@@ -31,12 +31,97 @@
 
   <main class="admin-content">
 
-    <!-- Título + total -->
+    <!-- Título -->
     <div class="admin-head">
       <h1 class="admin-title">Estatísticas de Visitas</h1>
-      <p class="admin-subtitle">
-        Total registado: <strong>{{ total_visits }}</strong> visitas
-      </p>
+      <p class="admin-subtitle">Últimos dados recolhidos</p>
+    </div>
+
+    <!-- Contadores -->
+    <div class="admin-counters">
+
+      <div class="admin-counter-card">
+        <span class="admin-counter-number">{{ counters.today }}</span>
+        <span class="admin-counter-label">Hoje</span>
+      </div>
+
+      <div class="admin-counter-card">
+        <span class="admin-counter-number">{{ counters.week }}</span>
+        <span class="admin-counter-label">7 dias</span>
+      </div>
+
+      <div class="admin-counter-card">
+        <span class="admin-counter-number">{{ counters.month }}</span>
+        <span class="admin-counter-label">30 dias</span>
+      </div>
+
+      <div class="admin-counter-card admin-counter-highlight">
+        <span class="admin-counter-number">{{ counters.total }}</span>
+        <span class="admin-counter-label">Total</span>
+      </div>
+
+    </div>
+
+    <!-- Top Cidades + Top Países -->
+    <div class="admin-tops">
+
+    <div class="admin-top-card">
+        <h3 class="admin-top-title">Top Cidades</h3>
+        {% if top_cities %}
+        <ul class="admin-top-list">
+            {% for city, count in top_cities %}
+            <li>
+                <span class="admin-top-name">{{ city }}</span>
+                <span class="admin-top-count">{{ count }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="admin-top-empty">Sem dados ainda.</p>
+        {% endif %}
+    </div>
+
+    <div class="admin-top-card">
+        <h3 class="admin-top-title">Top Países</h3>
+        {% if top_countries %}
+        <ul class="admin-top-list">
+            {% for country, count in top_countries %}
+            <li>
+                <span class="admin-top-name">{{ country }}</span>
+                <span class="admin-top-count">{{ count }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="admin-top-empty">Sem dados ainda.</p>
+        {% endif %}
+    </div>
+
+    </div>
+
+    <!-- Filtros -->
+    <div class="admin-filters">
+
+      <a href="{{ url_for('admin_dashboard', period='all') }}"
+         class="admin-filter {% if current_period == 'all' %}is-active{% endif %}">
+        Todos
+      </a>
+
+      <a href="{{ url_for('admin_dashboard', period='today') }}"
+         class="admin-filter {% if current_period == 'today' %}is-active{% endif %}">
+        Hoje
+      </a>
+
+      <a href="{{ url_for('admin_dashboard', period='week') }}"
+         class="admin-filter {% if current_period == 'week' %}is-active{% endif %}">
+        7 dias
+      </a>
+
+      <a href="{{ url_for('admin_dashboard', period='month') }}"
+         class="admin-filter {% if current_period == 'month' %}is-active{% endif %}">
+        30 dias
+      </a>
+
     </div>
 
     <!-- Tabela -->
@@ -66,8 +151,8 @@
         </table>
       {% else %}
         <div class="admin-empty">
-          <p>Ainda não há visitas registadas.</p>
-          <p class="admin-empty-hint">Visita a página inicial para gerar o primeiro registo.</p>
+          <p>Nenhuma visita neste período.</p>
+          <p class="admin-empty-hint">Tenta outro filtro ou visita a página inicial.</p>
         </div>
       {% endif %}
     </div>

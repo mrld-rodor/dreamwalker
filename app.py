@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, flash, render_template
+from urllib.parse import unquote
 
 import time
 from collections import defaultdict
@@ -79,13 +80,18 @@ with app.app_context():
 # ============================================================
 @app.before_request
 def log_visit():
-    # Só registamos visitas à página inicial
     if request.endpoint == 'index':
         ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
-        # Vercel fornece isto automaticamente em produção
+        # Vercel fornece isto automaticamente em produção — DESCODIFICADO
         city = request.headers.get('X-Vercel-IP-City')
         country = request.headers.get('X-Vercel-IP-Country')
+
+        # Descodifica %20 → espaço, %C3%A3 → ã, etc.
+        if city:
+            city = unquote(city)
+        if country:
+            country = unquote(country)
 
         user_agent = request.headers.get('User-Agent', '')[:500]
 
@@ -98,7 +104,6 @@ def log_visit():
         )
         db.session.add(new_visit)
         db.session.commit()
-
 
 # ============================================================
 # Rate limiting simples (em memória)
@@ -215,21 +220,75 @@ def admin_logout():
 # ============================================================
 # ADMIN — DASHBOARD
 # ============================================================
+# ============================================================
+# ADMIN — DASHBOARD
+# ============================================================
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
-    # Últimas 500 visitas, mais recentes primeiro
-    visits = Visit.query.order_by(Visit.timestamp.desc()).limit(500).all()
+    from datetime import datetime, timedelta
 
-    # Estatísticas rápidas
-    total_visits = Visit.query.count()
+    # Marcadores de tempo
+    now = datetime.utcnow()
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = now - timedelta(days=7)
+    month_start = now - timedelta(days=30)
+
+    # Contadores (sempre calculados, independentes do filtro)
+    counters = {
+        'total': Visit.query.count(),
+        'today': Visit.query.filter(Visit.timestamp >= today_start).count(),
+        'week':  Visit.query.filter(Visit.timestamp >= week_start).count(),
+        'month': Visit.query.filter(Visit.timestamp >= month_start).count(),
+    }
+
+    # Filtro ativo (vindo da URL: ?period=today)
+    period = request.args.get('period', 'all')
+
+    # Base da query
+    query = Visit.query
+
+    if period == 'today':
+        query = query.filter(Visit.timestamp >= today_start)
+    elif period == 'week':
+        query = query.filter(Visit.timestamp >= week_start)
+    elif period == 'month':
+        query = query.filter(Visit.timestamp >= month_start)
+    # 'all' → sem filtro
+
+    visits = query.order_by(Visit.timestamp.desc()).limit(500).all()
+
+        # Top 5 cidades (ignora NULLs)
+    top_cities = (
+        db.session.query(Visit.city, db.func.count(Visit.city).label('total'))
+        .filter(Visit.city.isnot(None))
+        .group_by(Visit.city)
+        .order_by(db.func.count(Visit.city).desc())
+        .limit(5)
+        .all()
+    )
+
+    # Top 5 países (ignora NULLs)
+    top_countries = (
+        db.session.query(Visit.country, db.func.count(Visit.country).label('total'))
+        .filter(Visit.country.isnot(None))
+        .group_by(Visit.country)
+        .order_by(db.func.count(Visit.country).desc())
+        .limit(5)
+        .all()
+    )
 
     return render_template(
         'admin_dashboard.html',
         visits=visits,
-        total_visits=total_visits,
+        counters=counters,
+        current_period=period,
         current_user_name=current_user.username,
+        top_cities=top_cities,          
+        top_countries=top_countries,    
     )
+
+    
 
 @app.errorhandler(404)
 def page_not_found(e):

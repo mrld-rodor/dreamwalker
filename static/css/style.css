@@ -2360,3 +2360,191 @@ body.modal-open { overflow: hidden; }
     min-width: 640px;
   }
 }
+
+/* ============================================================
+   PAINEL ADMIN — contadores
+============================================================ */
+.admin-counters {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+  .admin-counters {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.admin-counter-card {
+  background: rgba(6, 3, 180, 0.06);
+  border: 1px solid rgba(107, 104, 255, 0.25);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.admin-counter-card:hover {
+  border-color: rgba(107, 104, 255, 0.5);
+  box-shadow: 0 0 20px rgba(58, 54, 255, 0.2);
+}
+
+.admin-counter-highlight {
+  background: rgba(6, 3, 180, 0.12);
+  border-color: rgba(107, 104, 255, 0.45);
+}
+
+.admin-counter-number {
+  display: block;
+  font-family: var(--font-orbitron);
+  font-weight: 900;
+  font-size: clamp(24px, 4vw, 36px);
+  letter-spacing: 0.05em;
+  color: var(--dw-white);
+  line-height: 1;
+  margin-bottom: 8px;
+  text-shadow:
+    0 0 10px rgba(139, 136, 255, 0.5),
+    0 0 20px rgba(58, 54, 255, 0.3);
+}
+
+.admin-counter-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dw-gray);
+}
+
+/* ============================================================
+   PAINEL ADMIN — filtros
+============================================================ */
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.admin-filter {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 6px;
+  color: var(--dw-gray);
+  background: transparent;
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.admin-filter:hover {
+  color: var(--dw-white);
+  border-color: var(--dw-blue-bright);
+  background: rgba(58, 54, 255, 0.1);
+}
+
+.admin-filter.is-active {
+  color: var(--dw-white);
+  background: rgba(6, 3, 180, 0.3);
+  border-color: var(--dw-blue-bright);
+  box-shadow:
+    0 0 12px rgba(58, 54, 255, 0.4),
+    inset 0 0 12px rgba(107, 104, 255, 0.15);
+}
+
+
+/* ============================================================
+   PAINEL ADMIN — top cidades e países
+============================================================ */
+.admin-tops {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+  .admin-tops {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.admin-top-card {
+  background: rgba(6, 3, 180, 0.06);
+  border: 1px solid rgba(107, 104, 255, 0.25);
+  border-radius: 12px;
+  padding: 24px;
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.admin-top-card:hover {
+  border-color: rgba(107, 104, 255, 0.5);
+  box-shadow: 0 0 20px rgba(58, 54, 255, 0.2);
+}
+
+.admin-top-title {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dw-blue-bright);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(107, 104, 255, 0.2);
+}
+
+.admin-top-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-top-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(107, 104, 255, 0.08);
+  font-size: 14px;
+}
+
+.admin-top-list li:last-child {
+  border-bottom: none;
+}
+
+.admin-top-name {
+  color: var(--dw-gray-light);
+  letter-spacing: 0.02em;
+}
+
+.admin-top-count {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--dw-blue-bright);
+  letter-spacing: 0.1em;
+  text-shadow:
+    0 0 6px rgba(139, 136, 255, 0.5),
+    0 0 12px rgba(58, 54, 255, 0.3);
+}
+
+.admin-top-empty {
+  color: var(--dw-gray);
+  font-size: 13px;
+  font-style: italic;
+  padding: 12px 0;
+}
