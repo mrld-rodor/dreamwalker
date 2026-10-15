@@ -37,3 +37,16 @@ class Visit(db.Model):
 
     def __repr__(self):
         return f'<Visit {self.timestamp} {self.city}/{self.country}>'
+
+
+class DonationClick(db.Model):
+    __tablename__ = 'donation_clicks'
+
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    ip_address = db.Column(db.String(45), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    country = db.Column(db.String(100), nullable=True)
+
+    def __repr__(self):
+        return f'<DonationClick {self.timestamp} {self.city}/{self.country}>'

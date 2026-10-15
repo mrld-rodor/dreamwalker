@@ -31,133 +31,185 @@
 
   <main class="admin-content">
 
-    <!-- Título -->
-    <div class="admin-head">
-      <h1 class="admin-title">Estatísticas de Visitas</h1>
-      <p class="admin-subtitle">Últimos dados recolhidos</p>
-    </div>
+  <div class="admin-head">
+    <h1 class="admin-title">Estatísticas de Visitas</h1>
+    <p class="admin-subtitle">Últimos dados recolhidos</p>
+  </div>
 
-    <!-- Contadores -->
-    <div class="admin-counters">
+  <!-- Área principal (2 colunas no desktop, empilhado no mobile) -->
+  <div class="admin-main-area">
 
-      <div class="admin-counter-card">
-        <span class="admin-counter-number">{{ counters.today }}</span>
-        <span class="admin-counter-label">Hoje</span>
-      </div>
+    <!-- COLUNA ESQUERDA — estatísticas -->
+    <div class="admin-col-left">
 
-      <div class="admin-counter-card">
-        <span class="admin-counter-number">{{ counters.week }}</span>
-        <span class="admin-counter-label">7 dias</span>
-      </div>
-
-      <div class="admin-counter-card">
-        <span class="admin-counter-number">{{ counters.month }}</span>
-        <span class="admin-counter-label">30 dias</span>
-      </div>
-
-      <div class="admin-counter-card admin-counter-highlight">
-        <span class="admin-counter-number">{{ counters.total }}</span>
-        <span class="admin-counter-label">Total</span>
-      </div>
-
-    </div>
-
-    <!-- Top Cidades + Top Países -->
-    <div class="admin-tops">
-
-    <div class="admin-top-card">
-        <h3 class="admin-top-title">Top Cidades</h3>
-        {% if top_cities %}
-        <ul class="admin-top-list">
-            {% for city, count in top_cities %}
-            <li>
-                <span class="admin-top-name">{{ city }}</span>
-                <span class="admin-top-count">{{ count }}</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="admin-top-empty">Sem dados ainda.</p>
-        {% endif %}
-    </div>
-
-    <div class="admin-top-card">
-        <h3 class="admin-top-title">Top Países</h3>
-        {% if top_countries %}
-        <ul class="admin-top-list">
-            {% for country, count in top_countries %}
-            <li>
-                <span class="admin-top-name">{{ country }}</span>
-                <span class="admin-top-count">{{ count }}</span>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="admin-top-empty">Sem dados ainda.</p>
-        {% endif %}
-    </div>
-
-    </div>
-
-    <!-- Filtros -->
-    <div class="admin-filters">
-
-      <a href="{{ url_for('admin_dashboard', period='all') }}"
-         class="admin-filter {% if current_period == 'all' %}is-active{% endif %}">
-        Todos
-      </a>
-
-      <a href="{{ url_for('admin_dashboard', period='today') }}"
-         class="admin-filter {% if current_period == 'today' %}is-active{% endif %}">
-        Hoje
-      </a>
-
-      <a href="{{ url_for('admin_dashboard', period='week') }}"
-         class="admin-filter {% if current_period == 'week' %}is-active{% endif %}">
-        7 dias
-      </a>
-
-      <a href="{{ url_for('admin_dashboard', period='month') }}"
-         class="admin-filter {% if current_period == 'month' %}is-active{% endif %}">
-        30 dias
-      </a>
-
-    </div>
-
-    <!-- Tabela -->
-    <div class="admin-table-wrap">
-      {% if visits %}
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Data/Hora (UTC)</th>
-              <th>País</th>
-              <th>Cidade</th>
-              <th>IP</th>
-              <th>Página</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for visit in visits %}
-              <tr>
-                <td class="admin-cell-mono">{{ visit.timestamp.strftime('%d/%m/%Y %H:%M') }}</td>
-                <td>{{ visit.country or '—' }}</td>
-                <td>{{ visit.city or '—' }}</td>
-                <td class="admin-cell-mono">{{ visit.ip_address or '—' }}</td>
-                <td class="admin-cell-mono">{{ visit.path }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <div class="admin-empty">
-          <p>Nenhuma visita neste período.</p>
-          <p class="admin-empty-hint">Tenta outro filtro ou visita a página inicial.</p>
+      <div class="admin-counters">
+        <div class="admin-counter-card">
+          <span class="admin-counter-number">{{ counters.today }}</span>
+          <span class="admin-counter-label">Hoje</span>
         </div>
-      {% endif %}
-    </div>
+        <div class="admin-counter-card">
+          <span class="admin-counter-number">{{ counters.week }}</span>
+          <span class="admin-counter-label">7 dias</span>
+        </div>
+        <div class="admin-counter-card">
+          <span class="admin-counter-number">{{ counters.month }}</span>
+          <span class="admin-counter-label">30 dias</span>
+        </div>
+        <div class="admin-counter-card admin-counter-highlight">
+          <span class="admin-counter-number">{{ counters.total }}</span>
+          <span class="admin-counter-label">Total</span>
+        </div>
+      </div>
 
-  </main>
+      <div class="admin-tops">
+        <div class="admin-top-card">
+          <h3 class="admin-top-title">Top Cidades</h3>
+          {% if top_cities %}
+            <ul class="admin-top-list">
+              {% for city, count in top_cities %}
+                <li>
+                  <span class="admin-top-name">{{ city }}</span>
+                  <span class="admin-top-count">{{ count }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="admin-top-empty">Sem dados ainda.</p>
+          {% endif %}
+        </div>
+
+        <div class="admin-top-card">
+          <h3 class="admin-top-title">Top Países</h3>
+          {% if top_countries %}
+            <ul class="admin-top-list">
+              {% for country, count in top_countries %}
+                <li>
+                  <span class="admin-top-name">{{ country }}</span>
+                  <span class="admin-top-count">{{ count }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="admin-top-empty">Sem dados ainda.</p>
+          {% endif %}
+        </div>
+      </div>      
+
+      <!-- Tabela — SÓ MOBILE (escondida no desktop via CSS) -->
+
+      <!-- Secção doação -->
+      <div class="admin-section">
+        <h2 class="admin-section-title">Cliques no Botão PayPal</h2>
+
+        <div class="admin-counters">
+          <div class="admin-counter-card">
+            <span class="admin-counter-number">{{ donation_counters.today }}</span>
+            <span class="admin-counter-label">Hoje</span>
+          </div>
+          <div class="admin-counter-card">
+            <span class="admin-counter-number">{{ donation_counters.week }}</span>
+            <span class="admin-counter-label">7 dias</span>
+          </div>
+          <div class="admin-counter-card">
+            <span class="admin-counter-number">{{ donation_counters.month }}</span>
+            <span class="admin-counter-label">30 dias</span>
+          </div>
+          <div class="admin-counter-card admin-counter-highlight">
+            <span class="admin-counter-number">{{ donation_counters.total }}</span>
+            <span class="admin-counter-label">Total</span>
+          </div>
+        </div>
+
+        {% if counters.total > 0 %}
+          {% set taxa = (donation_counters.total / counters.total * 100) | round(1) %}
+          <p class="admin-conversion">
+            Taxa de conversão: <strong>{{ taxa }}%</strong>
+            <span class="admin-conversion-hint">(cliques / visitas totais)</span>
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="admin-table-wrap">
+        {% if visits %}
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Data/Hora (UTC)</th>
+                <th>País</th>
+                <th>Cidade</th>
+                <th>IP</th>
+                <th>Página</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for visit in visits %}
+                <tr>
+                  <td class="admin-cell-mono">{{ visit.timestamp.strftime('%d/%m/%Y %H:%M') }}</td>
+                  <td>{{ visit.country or '—' }}</td>
+                  <td>{{ visit.city or '—' }}</td>
+                  <td class="admin-cell-mono">{{ visit.ip_address or '—' }}</td>
+                  <td class="admin-cell-mono">{{ visit.path }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="admin-empty">
+            <p>Nenhuma visita neste período.</p>
+            <p class="admin-empty-hint">Tenta outro filtro ou visita a página inicial.</p>
+          </div>
+        {% endif %}
+      </div>
+      
+
+    </div><!-- /.admin-col-left -->
+
+    <!-- COLUNA DIREITA — visitantes (SÓ DESKTOP) -->
+    <aside class="admin-visitors-aside">
+
+      <div class="admin-filters">
+        <a href="{{ url_for('admin_dashboard', period='all') }}"
+           class="admin-filter {% if current_period == 'all' %}is-active{% endif %}">Todos</a>
+        <a href="{{ url_for('admin_dashboard', period='today') }}"
+           class="admin-filter {% if current_period == 'today' %}is-active{% endif %}">Hoje</a>
+        <a href="{{ url_for('admin_dashboard', period='week') }}"
+           class="admin-filter {% if current_period == 'week' %}is-active{% endif %}">7 dias</a>
+        <a href="{{ url_for('admin_dashboard', period='month') }}"
+           class="admin-filter {% if current_period == 'month' %}is-active{% endif %}">30 dias</a>
+      </div>
+
+      <div class="admin-visitors-card">
+
+        <div class="admin-visitors-header">
+          <h3>Visitantes Recentes</h3>
+          <span class="admin-visitors-count">{{ visits|length }} registos</span>
+        </div>
+
+        <div class="admin-visitors-list">
+          {% if visits %}
+            {% for visit in visits %}
+              <div class="admin-visitor-item">
+                <div class="admin-visitor-item-top">
+                  <span class="admin-visitor-city">{{ visit.city or '—' }}</span>
+                  <span class="admin-visitor-date">{{ visit.timestamp.strftime('%d/%m %H:%M') }}</span>
+                </div>
+                <div class="admin-visitor-item-bottom">
+                  <span class="admin-visitor-ip">{{ visit.ip_address or '—' }}</span>
+                  <span class="admin-visitor-country">{{ visit.country or '—' }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="admin-visitors-empty">Sem visitas neste período.</div>
+          {% endif %}
+        </div>
+
+      </div>
+    </aside>
+
+  </div><!-- /.admin-main-area -->
+
+</main>
 
 </body>
 </html>

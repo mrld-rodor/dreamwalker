@@ -424,4 +424,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ============================================================
+  // RASTREAR CLIQUES NO BOTÃO DE DOAÇÃO
+  // ============================================================
+  const donationButtons = document.querySelectorAll('.donation-btn');
+
+  donationButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Dispara em background, não bloqueia a abertura do PayPal
+      fetch('/api/donation-click', {
+        method: 'POST',
+        keepalive: true,   // garante envio mesmo se a página fechar
+      }).catch(err => {
+        // Silencioso — não queremos incomodar o utilizador com erros
+        console.warn('[donation-click] falhou:', err);
+      });
+    });
+  });
+
 });

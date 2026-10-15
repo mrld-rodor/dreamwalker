@@ -13,6 +13,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 
 from control.database import db, init_db
 from control.models import User, Visit
+from control.models import User, Visit, DonationClick
 
 from control.email_sender import (
     Contato,
@@ -220,9 +221,6 @@ def admin_logout():
 # ============================================================
 # ADMIN — DASHBOARD
 # ============================================================
-# ============================================================
-# ADMIN — DASHBOARD
-# ============================================================
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
@@ -278,16 +276,49 @@ def admin_dashboard():
         .all()
     )
 
+    # Contadores de cliques na doação
+    donation_counters = {
+        'total': DonationClick.query.count(),
+        'today': DonationClick.query.filter(DonationClick.timestamp >= today_start).count(),
+        'week':  DonationClick.query.filter(DonationClick.timestamp >= week_start).count(),
+        'month': DonationClick.query.filter(DonationClick.timestamp >= month_start).count(),
+    }
+
     return render_template(
         'admin_dashboard.html',
         visits=visits,
         counters=counters,
+        donation_counters=donation_counters,
         current_period=period,
         current_user_name=current_user.username,
         top_cities=top_cities,          
         top_countries=top_countries,    
     )
 
+
+# ============================================================
+# API — registar clique no botão de doação
+# ============================================================
+@app.route('/api/donation-click', methods=['POST'])
+def donation_click():
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    city = request.headers.get('X-Vercel-IP-City')
+    country = request.headers.get('X-Vercel-IP-Country')
+
+    if city:
+        city = unquote(city)
+    if country:
+        country = unquote(country)
+
+    click = DonationClick(
+        ip_address=ip,
+        city=city,
+        country=country,
+    )
+    db.session.add(click)
+    db.session.commit()
+
+    return jsonify({'status': 'ok'}), 200
     
 
 @app.errorhandler(404)
