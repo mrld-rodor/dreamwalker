@@ -196,3 +196,207 @@ def send_email(contato):
         print(f"[ERROR] Erro ao enviar email: {e}")
         print(traceback.format_exc())
         raise EmailDeliveryError("Erro inesperado ao enviar email") from e
+
+# ============================================================
+# EMAILS DE SUBSCRIÇÃO
+# ============================================================
+
+def _build_verification_html(name, verify_url):
+    nome = escape(name) if name else 'sonhador'
+    return f"""
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirma a tua subscrição — Dreamwalker Tales</title>
+</head>
+<body style="margin:0; padding:0; background-color:#000000; color:#FFFFFF; font-family:'Roboto Mono', 'Courier New', monospace;">
+
+  <div style="background: radial-gradient(circle at top, #0a0a2e 0%, #000000 70%); padding: 32px 16px;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+           style="max-width: 620px; margin: 0 auto; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 0;">
+          <div style="border: 1px solid rgba(107, 104, 255, 0.35); background: #0a0a14; border-radius: 12px; overflow: hidden; box-shadow: 0 0 40px rgba(58, 54, 255, 0.25);">
+
+            <div style="padding: 36px 28px 28px; border-bottom: 1px solid rgba(6, 3, 180, 0.4); text-align: center; background: linear-gradient(180deg, #0a0a14 0%, #04041a 100%);">
+              <div style="display: inline-block; padding: 8px 18px; border: 1px solid rgba(107, 104, 255, 0.5); border-radius: 9999px; color: #6B68FF; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; background: rgba(6, 3, 180, 0.15);">
+                ✦ Confirmação
+              </div>
+              <h1 style="margin: 20px 0 0; color: #FFFFFF; font-family: 'Orbitron', 'Arial Black', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 0.2em;">
+                DREAMWALKER TALES
+              </h1>
+            </div>
+
+            <div style="padding: 36px 32px;">
+              <p style="color: #FFFFFF; font-size: 16px; font-family: 'Orbitron', 'Arial Black', sans-serif; letter-spacing: 0.05em; margin: 0 0 16px;">
+                Olá, {nome}!
+              </p>
+
+              <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 24px;">
+                Recebemos um pedido para te inscreveres nas novidades do
+                <strong style="color: #6B68FF;">Dreamwalker Tales</strong>.
+              </p>
+
+              <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 32px;">
+                Para confirmares e começares a receber contos novos, avisos
+                e novidades — clica no botão abaixo:
+              </p>
+
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="{verify_url}"
+                   style="display: inline-block; padding: 16px 40px; background: #0603B4; color: #FFFFFF; text-decoration: none; border-radius: 6px; font-family: 'Orbitron', 'Arial Black', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; border: 1px solid rgba(107, 104, 255, 0.5); box-shadow: 0 0 20px rgba(58, 54, 255, 0.5);">
+                  Confirmar subscrição
+                </a>
+              </div>
+
+              <p style="color: #9CA3AF; font-size: 12px; line-height: 1.6; margin: 24px 0 0;">
+                Se não pediste esta subscrição, ignora este email — nada será
+                ativado até clicares no link.
+              </p>
+            </div>
+
+            <div style="padding: 22px 28px; text-align: center; border-top: 1px solid rgba(6, 3, 180, 0.3); background: rgba(6, 3, 180, 0.05); color: #9CA3AF; font-size: 11px;">
+              <div style="margin-bottom: 6px;">✦ Dreamwalker Tales</div>
+              <div style="color: #6B68FF; letter-spacing: 0.2em; text-transform: uppercase;">Histórias nascidas dos sonhos</div>
+            </div>
+
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+</html>
+    """.strip()
+
+
+def _build_welcome_html(name, unsubscribe_url):
+    nome = escape(name) if name else 'sonhador'
+    return f"""
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Bem-vindo — Dreamwalker Tales</title>
+</head>
+<body style="margin:0; padding:0; background-color:#000000; color:#FFFFFF; font-family:'Roboto Mono', 'Courier New', monospace;">
+  <div style="background: radial-gradient(circle at top, #0a0a2e 0%, #000000 70%); padding: 32px 16px;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 620px; margin: 0 auto;">
+      <tr>
+        <td style="padding: 0;">
+          <div style="border: 1px solid rgba(107, 104, 255, 0.35); background: #0a0a14; border-radius: 12px; overflow: hidden; box-shadow: 0 0 40px rgba(58, 54, 255, 0.25);">
+
+            <div style="padding: 36px 28px 28px; border-bottom: 1px solid rgba(6, 3, 180, 0.4); text-align: center;">
+              <div style="display: inline-block; padding: 8px 18px; border: 1px solid rgba(107, 104, 255, 0.5); border-radius: 9999px; color: #6B68FF; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; background: rgba(6, 3, 180, 0.15);">
+                ✦ Bem-vindo
+              </div>
+              <h1 style="margin: 20px 0 0; color: #FFFFFF; font-family: 'Orbitron', 'Arial Black', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 0.2em;">
+                DREAMWALKER TALES
+              </h1>
+            </div>
+
+            <div style="padding: 36px 32px;">
+              <p style="color: #FFFFFF; font-size: 16px; font-family: 'Orbitron', 'Arial Black', sans-serif; letter-spacing: 0.05em; margin: 0 0 20px;">
+                Bem-vindo, {nome}.
+              </p>
+
+              <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 20px;">
+                A tua subscrição está confirmada. A partir de agora vais receber,
+                com pouca frequência, avisos sobre novos contos e novidades do projeto.
+              </p>
+
+              <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 32px;">
+                Não enviamos spam. Nunca. Se um dia quiseres sair,
+                podes cancelar com um clique no link abaixo.
+              </p>
+
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="https://dreamwalkertales.online/#contos"
+                   style="display: inline-block; padding: 14px 36px; background: #0603B4; color: #FFFFFF; text-decoration: none; border-radius: 6px; font-family: 'Orbitron', 'Arial Black', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; border: 1px solid rgba(107, 104, 255, 0.5);">
+                  Ver os contos
+                </a>
+              </div>
+            </div>
+
+            <div style="padding: 22px 28px; text-align: center; border-top: 1px solid rgba(6, 3, 180, 0.3); background: rgba(6, 3, 180, 0.05); color: #9CA3AF; font-size: 11px;">
+              <div style="margin-bottom: 10px;">✦ Dreamwalker Tales</div>
+              <a href="{unsubscribe_url}" style="color: #9CA3AF; text-decoration: underline; font-size: 11px;">
+                Cancelar subscrição
+              </a>
+            </div>
+
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
+    """.strip()
+
+
+def send_verification_email(email, name, verify_url):
+    """Envia o email de verificação (duplo opt-in)."""
+    if not email_api_key or not email_sender:
+        raise EmailDeliveryError("Configuração de email incompleta.")
+
+    try:
+        response = requests.post(
+            email_api_url,
+            headers={
+                'Authorization': f'Bearer {email_api_key}',
+                'Content-Type': 'application/json',
+            },
+            json={
+                'from': email_sender,
+                'to': [email],
+                'subject': 'Confirma a tua subscrição — Dreamwalker Tales',
+                'html': _build_verification_html(name, verify_url),
+                'text': f"Confirma a tua subscrição clicando aqui: {verify_url}",
+            },
+            timeout=email_api_timeout,
+        )
+        response.raise_for_status()
+        return 202
+    except requests.exceptions.HTTPError as e:
+        body = e.response.text if e.response is not None else ''
+        print(f"[ERROR] Resend (verificação): {body}")
+        raise EmailDeliveryError('Falha ao enviar email de verificação.') from e
+    except Exception as e:
+        print(f"[ERROR] Verificação: {e}")
+        raise EmailDeliveryError('Erro inesperado.') from e
+
+
+def send_welcome_email(email, name, unsubscribe_url):
+    """Envia o email de boas-vindas após verificação."""
+    if not email_api_key or not email_sender:
+        raise EmailDeliveryError("Configuração de email incompleta.")
+
+    try:
+        response = requests.post(
+            email_api_url,
+            headers={
+                'Authorization': f'Bearer {email_api_key}',
+                'Content-Type': 'application/json',
+            },
+            json={
+                'from': email_sender,
+                'to': [email],
+                'subject': 'Bem-vindo ao Dreamwalker Tales',
+                'html': _build_welcome_html(name, unsubscribe_url),
+                'text': f"Bem-vindo ao Dreamwalker Tales! Cancela aqui: {unsubscribe_url}",
+            },
+            timeout=email_api_timeout,
+        )
+        response.raise_for_status()
+        return 202
+    except requests.exceptions.HTTPError as e:
+        body = e.response.text if e.response is not None else ''
+        print(f"[ERROR] Resend (boas-vindas): {body}")
+        raise EmailDeliveryError('Falha ao enviar email de boas-vindas.') from e
+    except Exception as e:
+        print(f"[ERROR] Boas-vindas: {e}")
+        raise EmailDeliveryError('Erro inesperado.') from e

@@ -2770,3 +2770,394 @@ body.modal-open { overflow: hidden; }
     font-style: italic;
   }
 }
+
+/* ============================================================
+   MODAL DE LOGIN — Google
+============================================================ */
+.login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-modal.is-open {
+  display: flex;
+  animation: login-fade 0.25s ease;
+}
+
+@keyframes login-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.login-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.login-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  padding: 40px 32px 32px;
+  text-align: center;
+  background: #0a0a14;
+  border: 1px solid rgba(107, 104, 255, 0.4);
+  border-radius: 16px;
+  box-shadow:
+    0 0 40px rgba(58, 54, 255, 0.3),
+    0 20px 60px rgba(0, 0, 0, 0.7);
+  animation: login-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes login-pop {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.login-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: var(--dw-gray);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.login-modal-close:hover {
+  color: var(--dw-white);
+  border-color: var(--dw-blue-bright);
+  background: rgba(58, 54, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.login-modal-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.login-modal-logo .logo-img {
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 20px rgba(58, 54, 255, 0.6),
+    0 0 40px rgba(58, 54, 255, 0.3);
+}
+
+.login-modal-title {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.1em;
+  color: var(--dw-white);
+  margin-bottom: 12px;
+  text-shadow:
+    0 0 8px rgba(139, 136, 255, 0.5),
+    0 0 20px rgba(58, 54, 255, 0.3);
+}
+
+.login-modal-text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--dw-gray);
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+/* Checkbox */
+.login-modal-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background: rgba(6, 3, 180, 0.08);
+  border: 1px solid rgba(107, 104, 255, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.25s ease;
+}
+
+.login-modal-consent:hover {
+  border-color: rgba(107, 104, 255, 0.45);
+}
+
+.login-modal-consent input[type="checkbox"] {
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--dw-blue-bright);
+  cursor: pointer;
+}
+
+.login-modal-consent span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--dw-gray-light);
+}
+
+/* Botão Google */
+.login-modal-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.login-modal-btn svg {
+  flex-shrink: 0;
+}
+
+.login-modal-hint {
+  margin-top: 18px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--dw-gray);
+  opacity: 0.7;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .login-modal-panel {
+    padding: 32px 22px 26px;
+  }
+  .login-modal-title {
+    font-size: 18px;
+  }
+}
+
+/* ============================================================
+   RETOMAR AÇÃO APÓS LOGIN — pulsação + toast
+============================================================ */
+
+/* Pulsação no botão */
+@keyframes pending-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(107, 104, 255, 0.8),
+      0 0 20px rgba(58, 54, 255, 0.6);
+  }
+  70% {
+    box-shadow:
+      0 0 0 18px rgba(107, 104, 255, 0),
+      0 0 30px rgba(58, 54, 255, 0.8);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(107, 104, 255, 0),
+      0 0 20px rgba(58, 54, 255, 0.6);
+  }
+}
+
+.is-pending-action {
+  animation: pending-pulse 1.8s infinite;
+  position: relative;
+  z-index: 5;
+}
+
+/* Toast flutuante */
+.pending-action-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 28px;
+  background: rgba(6, 3, 180, 0.95);
+  color: var(--dw-white);
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-align: center;
+  border: 1px solid var(--dw-blue-bright);
+  border-radius: 8px;
+  box-shadow:
+    0 0 30px rgba(58, 54, 255, 0.6),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 400;
+  max-width: calc(100vw - 48px);
+  animation: toast-slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.pending-action-toast.is-hiding {
+  opacity: 0;
+  transform: translateX(-50%) translateY(12px);
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .pending-action-toast {
+    bottom: 16px;
+    padding: 12px 20px;
+    font-size: 11px;
+  }
+}
+
+
+/* ============================================================
+   FLASH MESSAGES — sistema de notificações
+============================================================ */
+.flash-container {
+  position: fixed;
+  top: 90px;              /* abaixo do header */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 250;
+  width: calc(100% - 32px);
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;   /* não bloqueia cliques fora */
+}
+
+.flash-message {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  background: rgba(10, 10, 20, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(107, 104, 255, 0.4);
+  box-shadow:
+    0 0 24px rgba(58, 54, 255, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: flash-slide-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.flash-message.is-hiding {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes flash-slide-in {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.flash-text {
+  flex: 1;
+  color: var(--dw-gray-light);
+}
+
+/* Sucesso */
+.flash-success {
+  border-color: rgba(107, 104, 255, 0.6);
+}
+
+.flash-success .flash-text {
+  color: var(--dw-white);
+  text-shadow:
+    0 0 6px rgba(139, 136, 255, 0.4),
+    0 0 14px rgba(58, 54, 255, 0.2);
+}
+
+/* Erro */
+.flash-error {
+  border-color: rgba(255, 107, 107, 0.5);
+  background: rgba(26, 10, 10, 0.95);
+}
+
+.flash-error .flash-text {
+  color: #FF9B9B;
+}
+
+/* Aviso (opcional, se um dia usares) */
+.flash-warning {
+  border-color: rgba(255, 200, 87, 0.5);
+}
+
+.flash-warning .flash-text {
+  color: #FFC857;
+}
+
+/* Botão fechar */
+.flash-close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--dw-gray);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.flash-close:hover {
+  color: var(--dw-white);
+  background: rgba(107, 104, 255, 0.15);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .flash-container {
+    top: 78px;
+    max-width: calc(100% - 24px);
+  }
+  .flash-message {
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+}

@@ -10,6 +10,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const menu   = document.getElementById('mobile-menu');
 
   // ============================================================
+  // HELPERS DE LOGIN — definidos cedo para estarem acessíveis
+  // ============================================================
+  function isSubscriberLoggedIn() {
+    return document.body.dataset.subscriber === 'true';
+  }
+
+  function openLoginModal(pendingAction) {
+    const loginModal = document.getElementById('login-modal');
+    if (!loginModal) return;
+
+    if (pendingAction) {
+      try {
+        sessionStorage.setItem('dw_pending_action', JSON.stringify(pendingAction));
+      } catch (err) {
+        console.warn('[login-modal] sessionStorage bloqueado:', err);
+      }
+    }
+
+    loginModal.classList.add('is-open');
+    loginModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeLoginModal() {
+    const loginModal = document.getElementById('login-modal');
+    if (!loginModal) return;
+    loginModal.classList.remove('is-open');
+    loginModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+
+  // ============================================================
   // MENU MOBILE — abrir/fechar
   // ============================================================
   if (toggle && menu) {
@@ -201,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================================
   // MODAL DE CONTO
   // ============================================================
-    if (modal) {
+  if (modal) {
     const modalCover    = document.getElementById('modal-cover');
     const modalNumber   = document.getElementById('modal-number');
     const modalTitle    = document.getElementById('modal-title');
@@ -212,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lastFocused = null;
 
-        function openModal(slide) {
+    function openModal(slide) {
       const num   = slide.dataset.number || '';
       const title = slide.dataset.title  || '';
       const cover = slide.dataset.cover  || '';
@@ -266,6 +298,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    // Botão "Comprar" dentro do modal do conto → requer login
+    if (modalBuy) {
+      modalBuy.addEventListener('click', (e) => {
+        if (!isSubscriberLoggedIn()) {
+          e.preventDefault();
+          openLoginModal({
+            type: 'hotmart',
+            url: modalBuy.href
+          });
+        }
+      });
+    }
+
     modal.querySelectorAll('[data-close-modal]').forEach(el => {
       el.addEventListener('click', closeModal);
     });
@@ -276,6 +321,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+    // ============================================================
+  // FLASH MESSAGES — auto-fade
+  // ============================================================
+  const flashMessages = document.querySelectorAll('.flash-message');
+
+  flashMessages.forEach(msg => {
+    setTimeout(() => {
+      msg.classList.add('is-hiding');
+      setTimeout(() => msg.remove(), 500);
+    }, 6000);   // 6 segundos
+  });
 
   // ============================================================
   // ANIMAÇÕES DE ENTRADA — IntersectionObserver
@@ -385,6 +442,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Submissão do formulário
     // ------------------------------------------------------------
     contactForm.addEventListener('submit', async (e) => {
+      // Bloqueia se não estiver autenticado
+      if (!isSubscriberLoggedIn()) {
+        e.preventDefault();
+
+        // Guarda os dados do formulário para retomar depois do login
+        const formData = new FormData(contactForm);
+        const data = {};
+        formData.forEach((v, k) => {
+          if (k !== 'website' && k !== 'form_start') data[k] = v;
+        });
+
+        openLoginModal({ type: 'contact', formData: data });
+        return;
+      }
+
+      // A partir daqui, é o comportamento normal (utilizador autenticado)
       e.preventDefault();
 
       const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -397,7 +470,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const formData = new FormData(contactForm);
-        
 
         const response = await fetch('/enviar-contato', {
           method: 'POST',
@@ -408,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.success) {
           openFeedback('success', data.message);
-          clearForm();                    // 👈 limpa com a função completa
+          clearForm();
         } else {
           openFeedback('error', data.message || 'Erro ao enviar. Tente novamente.');
         }
@@ -430,16 +502,141 @@ document.addEventListener('DOMContentLoaded', () => {
   const donationButtons = document.querySelectorAll('.donation-btn');
 
   donationButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Dispara em background, não bloqueia a abertura do PayPal
-      fetch('/api/donation-click', {
-        method: 'POST',
-        keepalive: true,   // garante envio mesmo se a página fechar
-      }).catch(err => {
-        // Silencioso — não queremos incomodar o utilizador com erros
-        console.warn('[donation-click] falhou:', err);
-      });
+    btn.addEventListener('click', (e) => {
+      // Se não está autenticado, abre o modal de login
+      if (!isSubscriberLoggedIn()) {
+        e.preventDefault();
+        openLoginModal({ type: 'donation' });
+        return;
+      }
+
+      // Autenticado → deixa clicar normalmente + tracking
+      fetch('/api/donation-click', { method: 'POST', keepalive: true })
+        .catch(err => console.warn('[donation-click] falhou:', err));
     });
   });
+
+  // ============================================================
+  // SISTEMA DE LOGIN — Modal + Retomar ação
+  // ============================================================
+  const loginModal    = document.getElementById('login-modal');
+  const loginConsent  = document.getElementById('login-consent');
+  const loginGoogleBtn = document.getElementById('login-google-btn');
+
+  if (loginModal) {
+    // Fechar (botão ✕ ou clique no backdrop)
+    loginModal.querySelectorAll('[data-close-login]').forEach(el => {
+      el.addEventListener('click', closeLoginModal);
+    });
+
+    // Fechar com ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && loginModal.classList.contains('is-open')) {
+        closeLoginModal();
+      }
+    });
+
+    // Botão "Entrar com Google"
+    if (loginGoogleBtn) {
+      loginGoogleBtn.addEventListener('click', () => {
+        const consent = loginConsent && loginConsent.checked ? '1' : '0';
+        window.location.href = `/auth/google?consent=${consent}`;
+      });
+    }
+  }
+
+  // ------------------------------------------------------------
+  // Retomar ação após login
+  // ------------------------------------------------------------
+  function showContinueToast(message) {
+    // Remove se já existir
+    const existing = document.querySelector('.pending-action-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'pending-action-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    // Auto-remove após 8 segundos
+    setTimeout(() => {
+      toast.classList.add('is-hiding');
+      setTimeout(() => toast.remove(), 400);
+    }, 8000);
+  }
+
+  function highlightPendingButton(btn) {
+    if (!btn) return;
+    btn.classList.add('is-pending-action');
+    setTimeout(() => btn.classList.remove('is-pending-action'), 8000);
+  }
+
+  if (isSubscriberLoggedIn()) {
+    const pendingRaw = sessionStorage.getItem('dw_pending_action');
+
+    if (pendingRaw) {
+      sessionStorage.removeItem('dw_pending_action');
+
+      try {
+        const pending = JSON.parse(pendingRaw);
+
+        setTimeout(() => {
+
+          // // ---- DOAÇÃO ----
+          // if (pending.type === 'donation') {
+          //   const btn = document.querySelector('.donation-btn');
+          //   if (btn) {
+          //     btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          //     highlightPendingButton(btn);
+          //     showContinueToast('Sessão iniciada! Clica novamente para continuar.');
+          //   }
+          // }
+
+          // ---- HOTMART ----
+          if (pending.type === 'hotmart') {
+            const btn = document.querySelector('.btn-primary.conto-modal-btn')
+                     || document.getElementById('modal-buy');
+            if (btn) {
+              btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              highlightPendingButton(btn);
+              showContinueToast('Sessão iniciada! Clica novamente para comprar.');
+            }
+          }
+
+          // ---- CONTACTO ----
+          else if (pending.type === 'contact') {
+            const form = document.getElementById('contact-form');
+            if (form && pending.formData) {
+              ['nome', 'email', 'mensagem'].forEach(field => {
+                const input = form.querySelector(`[name="${field}"]`);
+                if (input && pending.formData[field]) {
+                  input.value = pending.formData[field];
+                }
+              });
+
+              const contactSection = document.getElementById('contacto');
+              if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth' });
+              }
+
+              showContinueToast('Sessão iniciada! Clica em ENVIAR para completar.');
+
+              const submitBtn = form.querySelector('button[type="submit"]');
+              if (submitBtn) {
+                setTimeout(() => {
+                  highlightPendingButton(submitBtn);
+                  submitBtn.focus();
+                }, 600);
+              }
+            }
+          }
+
+        }, 400);
+
+      } catch (err) {
+        console.warn('[login-resume] falhou:', err);
+      }
+    }
+  }
 
 });
