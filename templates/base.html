@@ -271,10 +271,10 @@
     </div>
   </div>
 
-  <!-- ============================================================
-     BOTÃO FLUTUANTE — Subscrever (com cubo)
-  ============================================================ -->
-  <button type="button" id="subscribe-fab" class="subscribe-fab" aria-label="Subscrever novidades">
+  {% if not session.get('subscriber_id') %}
+
+  <!-- BOTÃO FLUTUANTE -->
+  <button type="button" id="subscribe-fab" class="subscribe-fab" aria-label="Entrar ou Registar">
     <div class="cube-wrapper fab-cube">
       <div class="cube-container">
         <div class="face front"></div>
@@ -285,33 +285,25 @@
         <div class="face bottom"></div>
       </div>
     </div>
-    <span class="subscribe-fab-tooltip">Registar!</span>
+    <span class="subscribe-fab-tooltip">Entrar / Registar</span>
   </button>
 
-  <!-- ============================================================
-     MODAL DE SUBSCRIÇÃO
-  ============================================================ -->
+  <!-- MODAL DE ENTRADA/REGISTO -->
   <div id="subscribe-modal" class="subscribe-modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="subscribe-modal-backdrop" data-close-subscribe></div>
-
     <div class="subscribe-modal-panel">
 
       <button class="subscribe-modal-close" data-close-subscribe aria-label="Fechar">✕</button>
 
       <div class="subscribe-modal-logo">
-        <img
-          src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}"
-          alt="Dreamwalker Tales"
-          class="logo-img">
+        <img src="{{ url_for('static', filename='img/amiraldo_logo_black.png') }}" alt="Dreamwalker" class="logo-img">
       </div>
 
-      <h2 class="subscribe-modal-title">Registo</h2>
+      <h2 class="subscribe-modal-title">Junta-te ao Dreamwalker</h2>
       <p class="subscribe-modal-text">
-        Regista-te para receber avisos sobre novos contos e novidades
-        do Dreamwalker Tales. Sem spam — Nunca enviaremos spam, só o que importa.
+        Entra na tua conta existente ou cria uma nova para apoiares o projeto e receberes as novidades.
       </p>
 
-      <!-- Opção 1: Google -->
       <a href="{{ url_for('auth_google') }}?consent=1" class="btn-primary subscribe-google-btn">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           <path fill="#FFFFFF" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -322,34 +314,26 @@
         <span>CONTINUAR COM GOOGLE</span>
       </a>
 
-      <!-- Separador "ou" -->
-      <div class="subscribe-separator">
-        <span>ou regista-te com email</span>
-      </div>
+      <div class="subscribe-separator"><span>ou usa o teu email</span></div>
 
-      <!-- Opção 2: Email -->
       <form id="subscribe-form" class="subscribe-form" autocomplete="off">
         <input type="text" name="name" placeholder="O teu nome" required autocomplete="off" class="form-input">
         <input type="email" name="email" placeholder="O teu email" required autocomplete="off" class="form-input">
-
         <label class="subscribe-consent">
-          <input type="checkbox" name="consent" required>
+          <input type="checkbox" name="consent" value="1" required>
           <span>Aceito receber comunicações do Dreamwalker Tales por email. Posso cancelar quando quiser.</span>
         </label>
-
-        <button type="submit" class="btn-primary subscribe-btn">
-          REGISTAR
-        </button>
+        <button type="submit" class="btn-primary subscribe-btn">ENTRAR / SUBSCREVER</button>
       </form>
 
       <p class="subscribe-modal-hint">
-        Ao continuar, aceitas os
-        <a href="/termos">Termos de Uso</a> e a
-        <a href="/privacidade">Política de Privacidade</a>.
+        Se já tens conta, enviaremos um link de acesso. Se és novo, enviaremos um email de confirmação.
       </p>
 
     </div>
   </div>
+
+  {% endif %}
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 

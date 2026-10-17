@@ -710,11 +710,19 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(data.message);
           }
         } else {
-          alert(data.message || 'Erro ao subscrever. Tente novamente.');
+          if (typeof showFlash === 'function') {
+            showFlash('error', data.message || 'Erro ao subscrever. Tente novamente.');
+          } else {
+            alert(data.message || 'Erro ao subscrever. Tente novamente.');
+          }
         }
       } catch (err) {
         console.error('[subscribe]', err);
-        alert('Erro de rede. Verifique a ligação e tente novamente.');
+        if (typeof showFlash === 'function') {
+          showFlash('error', 'Erro de rede. Verifique a ligação e tente novamente.');
+        } else {
+          alert('Erro de rede. Verifique a ligação e tente novamente.');
+        }
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;

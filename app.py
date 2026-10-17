@@ -15,7 +15,7 @@ from control.models import User, Visit, DonationClick, Subscriber
 from control.email_sender import (
     Contato, EmailDeliveryError, EmailNetworkError, 
     send_email, send_verification_email, send_welcome_email,
-    send_campaign_email,
+    send_campaign_email, send_login_email
 )
 
 app = Flask(
@@ -32,6 +32,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 init_db(app)
 
 app.secret_key = os.getenv('SECRET_KEY')
+app.permanent_session_lifetime = timedelta(days=30)
 if not app.secret_key:
     raise RuntimeError("SECRET_KEY não está definida no .env")
 
@@ -159,85 +160,160 @@ def api_subscribe():
 
     name = (request.form.get('name') or '').strip()
     email = (request.form.get('email') or '').strip().lower()
-    consent = request.form.get('consent') == '1'
+    consent = request.form.get('consent') in ['1', 'true', 'on', 'yes']
 
     if not name or not email or not consent:
         return jsonify({'success': False, 'message': 'Preenche todos os campos e aceita os termos.'}), 400
+
+    if '@' not in email or '.' not in email.split('@')[-1]:
+        return jsonify({'success': False, 'message': 'Email inválido.'}), 400
 
     city = unquote(request.headers.get('X-Vercel-IP-City')) if request.headers.get('X-Vercel-IP-City') else None
     country = unquote(request.headers.get('X-Vercel-IP-Country')) if request.headers.get('X-Vercel-IP-Country') else None
 
     existing = Subscriber.query.filter_by(email=email).first()
 
-    # BLOQUEIO: Verifica se está bloqueado antes de qualquer ação
+    # ─── BLOQUEIO ───
     if existing and existing.blocked:
         return jsonify({'success': False, 'message': 'Este email está bloqueado.'}), 403
 
+    # ─── CASO 1: Utilizador JÁ EXISTE e está VERIFICADO → LOGIN ───
+    if existing and existing.email_verified:
+        # Reativa o consentimento caso tenha cancelado antes
+        existing.consent_marketing = True
+        existing.consent_date = datetime.utcnow()
+        existing.unsubscribed = False
+        existing.unsubscribed_at = None
+        existing.verification_token = uuid.uuid4().hex
+        existing.verification_sent_at = datetime.utcnow()
+        db.session.commit()
+
+        login_url = url_for('auth_verify', token=existing.verification_token, _external=True)
+
+        try:
+            send_login_email(existing.email, existing.name or name, login_url)
+        except Exception as e:
+            return jsonify({'success': False, 'message': f'Erro ao enviar email: {str(e)}'}), 500
+
+        return jsonify({
+            'success': True,
+            'message': f'Já tens conta! Enviámos um link de acesso para {email}. Verifica a tua caixa de entrada.'
+        })
+
+    # ─── CASO 2: Utilizador EXISTE mas NÃO VERIFICADO → Reenvia verificação ───
     if existing:
-        if existing.email_verified and existing.consent_marketing and not existing.unsubscribed:
-            return jsonify({'success': True, 'message': 'Já estás subscrito.'})
-        
         existing.verification_token = uuid.uuid4().hex
         existing.verification_sent_at = datetime.utcnow()
         existing.consent_marketing = True
+        existing.consent_date = datetime.utcnow()
         existing.unsubscribed = False
         db.session.commit()
 
+        verify_url = url_for('auth_verify', token=existing.verification_token, _external=True)
+
         try:
-            verify_url = url_for('auth_verify', token=existing.verification_token, _external=True)
-            send_verification_email(email, existing.name or name, verify_url)
+            send_verification_email(existing.email, existing.name or name, verify_url)
         except Exception as e:
             return jsonify({'success': False, 'message': str(e)}), 500
-        return jsonify({'success': True, 'message': 'Enviamos um novo link de confirmação.'})
 
+        return jsonify({
+            'success': True,
+            'message': f'Enviamos um novo link de confirmação para {email}. Clica nele para ativar a conta.'
+        })
+
+    # ─── CASO 3: Utilizador NOVO → Cria registo pendente ───
     token = uuid.uuid4().hex
+
     new_sub = Subscriber(
-        subscribed_via='email', email=email, name=name, ip_address=ip, city=city, country=country,
-        consent_marketing=True, consent_date=datetime.utcnow(), email_verified=False,
-        verification_token=token, verification_sent_at=datetime.utcnow(),
+        subscribed_via='email', email=email, name=name, 
+        ip_address=ip, city=city, country=country,
+        consent_marketing=True, consent_date=datetime.utcnow(), 
+        email_verified=False, verification_token=token, 
+        verification_sent_at=datetime.utcnow(),
     )
     db.session.add(new_sub)
     db.session.commit()
 
+    verify_url = url_for('auth_verify', token=token, _external=True)
+
     try:
-        verify_url = url_for('auth_verify', token=token, _external=True)
         send_verification_email(email, name, verify_url)
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
-    return jsonify({'success': True, 'message': 'Verifica o teu email para confirmares.'})
+    return jsonify({
+        'success': True,
+        'message': f'Conta criada! Enviámos um email para {email}. Clica no link para confirmares o registo.'
+    })
+
 
 @app.route('/auth/verify/<token>')
 def auth_verify(token):
     sub = Subscriber.query.filter_by(verification_token=token).first()
     if not sub:
-        flash('Link inválido.', 'error')
+        flash('Link inválido ou expirado. Tenta novamente.', 'error')
         return redirect(url_for('index'))
-    
-    if not sub.email_verified:
-        sub.email_verified = True
+
+    if sub.blocked:
+        flash('Este utilizador foi bloqueado.', 'error')
+        return redirect(url_for('index'))
+
+    # ─── JÁ ESTAVA VERIFICADO → É LOGIN ───
+    if sub.email_verified:
         sub.last_login = datetime.utcnow()
+        sub.verification_token = None  # Invalida o link (uso único)
         db.session.commit()
-        
-        try:
-            send_welcome_email(sub.email, sub.name, url_for('auth_unsubscribe', token=token, _external=True))
-        except:
-            pass
-            
-        flash(f'Subscrição confirmada, {sub.name}!', 'success')
-    else:
-        flash('Este email já foi confirmado.', 'success')
-        
+
+        session['subscriber_id'] = sub.id
+        session.permanent = True
+
+        flash(f'Bem-vindo de volta, {sub.name.split()[0]}! Sessão iniciada com sucesso.', 'success')
+        return redirect(url_for('index'))
+
+    # ─── PRIMEIRA VEZ → É REGISTO ───
+    sub.email_verified = True
+    sub.last_login = datetime.utcnow()
+    sub.verification_token = None  # Invalida o link (uso único)
+    db.session.commit()
+
+    # Envia email de boas-vindas
+    unsub_url = url_for('auth_unsubscribe', token=sub.verification_token or sub.id, _external=True)
+    try:
+        # Precisa de um token válido para unsubscribe; se foi invalidado, usa o id
+        unsub_token = sub.verification_token or str(sub.id)
+        unsub_url = url_for('auth_unsubscribe', token=unsub_token, _external=True)
+        send_welcome_email(sub.email, sub.name, unsub_url)
+    except Exception as e:
+        print(f"[WARN] Falha no email de boas-vindas: {e}")
+
+    session['subscriber_id'] = sub.id
+    session.permanent = True
+
+    flash(f'Subscreveste com sucesso, {sub.name.split()[0]}! Vê o teu email de boas-vindas.', 'success')
     return redirect(url_for('index'))
 
 @app.route('/auth/unsubscribe/<token>')
 def auth_unsubscribe(token):
+    # Procura por token OU por id (fallback)
     sub = Subscriber.query.filter_by(verification_token=token).first()
-    if sub:
-        sub.unsubscribed = True
-        sub.consent_marketing = False
-        db.session.commit()
-        flash('Subscrição cancelada.', 'success')
+    if not sub and token.isdigit():
+        sub = Subscriber.query.get(int(token))
+
+    if not sub:
+        flash('Link inválido.', 'error')
+        return redirect(url_for('index'))
+
+    if sub.unsubscribed:
+        flash('Esta subscrição já estava cancelada.', 'success')
+        return redirect(url_for('index'))
+
+    sub.unsubscribed = True
+    sub.unsubscribed_at = datetime.utcnow()
+    sub.consent_marketing = False
+    db.session.commit()
+
+    session.pop('subscriber_id', None)
+    flash('Subscrição cancelada. Não voltarás a receber comunicações.', 'success')
     return redirect(url_for('index'))
 
 @app.route('/auth/google')
@@ -250,26 +326,32 @@ def auth_google():
 def auth_google_callback():
     try:
         token = oauth.google.authorize_access_token()
-    except Exception:
-        flash('Não foi possível autenticar.', 'error')
+    except Exception as e:
+        print(f"[ERROR] OAuth: {e}")
+        flash('Não foi possível autenticar com o Google. Tenta novamente.', 'error')
         return redirect(url_for('index'))
 
     user_info = token.get('userinfo')
-    google_id = user_info.get('sub')
-    email = user_info.get('email')
-    name = user_info.get('name')
-
-    if not google_id or not email:
-        flash('Dados incompletos.', 'error')
+    if not user_info:
+        flash('Falha ao obter informações do Google.', 'error')
         return redirect(url_for('index'))
 
-    # BLOQUEIO: Verifica se o ID ou Email está bloqueado
+    google_id = user_info.get('sub')
+    email = user_info.get('email')
+    name = user_info.get('name') or 'Sonhador'
+    picture = user_info.get('picture')
+
+    if not google_id or not email:
+        flash('Dados incompletos do Google.', 'error')
+        return redirect(url_for('index'))
+
+    # ─── BLOQUEIO ───
     blocked_sub = Subscriber.query.filter(
         (Subscriber.google_id == google_id) | (Subscriber.email == email)
     ).first()
 
     if blocked_sub and blocked_sub.blocked:
-        flash('O teu acesso foi bloqueado.', 'error')
+        flash('O teu acesso foi bloqueado. Contacta o administrador.', 'error')
         return redirect(url_for('index'))
 
     consent = session.pop('pending_consent', False)
@@ -277,28 +359,59 @@ def auth_google_callback():
     city = unquote(request.headers.get('X-Vercel-IP-City')) if request.headers.get('X-Vercel-IP-City') else None
     country = unquote(request.headers.get('X-Vercel-IP-Country')) if request.headers.get('X-Vercel-IP-Country') else None
 
+    # Tenta encontrar por google_id OU por email (caso se tenha registado por email antes)
     subscriber = Subscriber.query.filter_by(google_id=google_id).first()
+    if not subscriber:
+        subscriber = Subscriber.query.filter_by(email=email).first()
 
+    # ─── CASO 1: UTILIZADOR EXISTENTE → LOGIN ───
     if subscriber:
+        # Liga o google_id se ainda não estava associado
+        if not subscriber.google_id:
+            subscriber.google_id = google_id
+
+        if picture and not subscriber.picture_url:
+            subscriber.picture_url = picture
+
         subscriber.last_login = datetime.utcnow()
-        if not subscriber.email_verified:
-            subscriber.email_verified = True
-        if consent and not subscriber.consent_marketing:
+        subscriber.email_verified = True  # Google já verificou
+
+        if consent:
             subscriber.consent_marketing = True
+            subscriber.consent_date = datetime.utcnow()
             subscriber.unsubscribed = False
+            subscriber.unsubscribed_at = None
+
         db.session.commit()
         session['subscriber_id'] = subscriber.id
-        flash(f'Bem-vindo de volta, {name.split()[0]}!', 'success')
+        session.permanent = True
+
+        primeiro_nome = name.split()[0]
+        flash(f'Bem-vindo de volta, {primeiro_nome}! Sessão iniciada.', 'success')
+
+    # ─── CASO 2: UTILIZADOR NOVO → REGISTO ───
     else:
         subscriber = Subscriber(
-            subscribed_via='google', google_id=google_id, email=email, name=name, picture_url=user_info.get('picture'),
-            ip_address=ip, city=city, country=country, consent_marketing=consent,
-            consent_date=datetime.utcnow() if consent else None, email_verified=True
+            subscribed_via='google',
+            google_id=google_id,
+            email=email,
+            name=name,
+            picture_url=picture,
+            ip_address=ip,
+            city=city,
+            country=country,
+            consent_marketing=consent,
+            consent_date=datetime.utcnow() if consent else None,
+            email_verified=True,
         )
         db.session.add(subscriber)
         db.session.commit()
+
         session['subscriber_id'] = subscriber.id
-        flash(f'Subscreveste com sucesso, {name.split()[0]}!', 'success')
+        session.permanent = True
+
+        primeiro_nome = name.split()[0]
+        flash(f'Conta criada com sucesso, {primeiro_nome}! Bem-vindo ao Dreamwalker.', 'success')
 
     return redirect(url_for('index'))
 
