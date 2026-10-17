@@ -639,4 +639,121 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+    // ============================================================
+  // BOTÃO FLUTUANTE + MODAL DE SUBSCRIÇÃO
+  // ============================================================
+  const subscribeFab       = document.getElementById('subscribe-fab');
+  const subscribeModal     = document.getElementById('subscribe-modal');
+  const subscribeForm      = document.getElementById('subscribe-form');
+
+  function openSubscribeModal() {
+    if (!subscribeModal) return;
+    subscribeModal.classList.add('is-open');
+    subscribeModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeSubscribeModal() {
+    if (!subscribeModal) return;
+    subscribeModal.classList.remove('is-open');
+    subscribeModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+
+  if (subscribeFab && subscribeModal) {
+    subscribeFab.addEventListener('click', openSubscribeModal);
+
+    subscribeModal.querySelectorAll('[data-close-subscribe]').forEach(el => {
+      el.addEventListener('click', closeSubscribeModal);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && subscribeModal.classList.contains('is-open')) {
+        closeSubscribeModal();
+      }
+    });
+  }
+
+  // Submissão do formulário de subscrição (email)
+  if (subscribeForm) {
+    subscribeForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = subscribeForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'SUBSCREVER';
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'A ENVIAR...';
+      }
+
+      try {
+        const formData = new FormData(subscribeForm);
+
+        const response = await fetch('/api/subscribe', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Mostra a flash message no topo
+          closeSubscribeModal();
+          subscribeForm.reset();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // Usa a mesma função de flash que já tens no sistema
+          if (typeof showFlash === 'function') {
+            showFlash('success', data.message);
+          } else {
+            alert(data.message);
+          }
+        } else {
+          alert(data.message || 'Erro ao subscrever. Tente novamente.');
+        }
+      } catch (err) {
+        console.error('[subscribe]', err);
+        alert('Erro de rede. Verifique a ligação e tente novamente.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
+    });
+  }
+
+    // ============================================================
+  // HELPER — mostrar flash dinamicamente (sem reload)
+  // ============================================================
+  function showFlash(type, message) {
+    let container = document.getElementById('flash-container');
+
+    // Se não existir, cria
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'flash-container';
+      container.className = 'flash-container';
+      document.body.appendChild(container);
+    }
+
+    const flash = document.createElement('div');
+    flash.className = `flash-message flash-${type}`;
+    flash.innerHTML = `
+      <span class="flash-text">${message}</span>
+      <button type="button" class="flash-close" aria-label="Fechar">✕</button>
+    `;
+
+    flash.querySelector('.flash-close').addEventListener('click', () => flash.remove());
+
+    container.appendChild(flash);
+
+    // Auto-fade após 6 segundos
+    setTimeout(() => {
+      flash.classList.add('is-hiding');
+      setTimeout(() => flash.remove(), 500);
+    }, 6000);
+  }
+
 });

@@ -2623,7 +2623,7 @@ body.modal-open { overflow: hidden; }
   }
 
   /* Tabela desaparece no desktop (substituída pela lista lateral) */
-  .admin-table-wrap {
+  .admin-col-left .admin-table-wrap {
     display: none;
   }
 
@@ -3160,4 +3160,457 @@ body.modal-open { overflow: hidden; }
     padding: 12px 14px;
     font-size: 12px;
   }
+}
+
+/* ============================================================
+   BOTÃO FLUTUANTE — Subscrever (com cubo)
+============================================================ */
+.subscribe-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 90;
+
+  /* Aumentado de 56px para 80px */
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Fundo preto */
+  background: var(--dw-black);
+  border: 1px solid rgba(107, 104, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+
+  /* Glow em volta do botão */
+  box-shadow:
+    0 0 20px rgba(58, 54, 255, 0.6),
+    0 0 40px rgba(58, 54, 255, 0.3),
+    0 8px 20px rgba(0, 0, 0, 0.6);
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fab-pulse 3s ease-in-out infinite;
+}
+
+.subscribe-fab:hover {
+  background: #05051a; /* preto ligeiramente azulado */
+  border-color: var(--dw-blue-bright);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow:
+    0 0 30px rgba(58, 54, 255, 0.8),
+    0 0 60px rgba(58, 54, 255, 0.4),
+    0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+/* Cubo dentro do botão — garante que fica centrado e no tamanho certo */
+.subscribe-fab .fab-cube {
+  /* O cubo do Hero tem 50px, cabe bem nos 80px do botão */
+  transform: scale(0.7);
+  pointer-events: none; /* cliques vão para o botão, não para as faces */
+}
+
+/* Tooltip */
+.subscribe-fab-tooltip {
+  position: absolute;
+  right: calc(100% + 16px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 14px;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--dw-white);
+  background: rgba(10, 10, 20, 0.95);
+  border: 1px solid rgba(107, 104, 255, 0.4);
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.subscribe-fab:hover .subscribe-fab-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-4px);
+}
+
+/* Pulsação */
+@keyframes fab-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 20px rgba(58, 54, 255, 0.6),
+      0 0 40px rgba(58, 54, 255, 0.3),
+      0 8px 20px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 30px rgba(58, 54, 255, 0.8),
+      0 0 60px rgba(58, 54, 255, 0.5),
+      0 8px 20px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .subscribe-fab {
+    width: 90px !important;
+    height: 90px !important;
+    bottom: 16px;
+    right: 16px;
+  }
+  .subscribe-fab .fab-cube {
+    transform: scale(0.7);
+  }
+  .subscribe-fab-tooltip {
+    display: none;
+  }
+}
+
+
+.subscribe-fab svg {
+  flex-shrink: 0;
+}
+
+/* Tooltip (aparece ao passar o rato) */
+.subscribe-fab-tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 14px;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--dw-white);
+  background: rgba(10, 10, 20, 0.95);
+  border: 1px solid rgba(107, 104, 255, 0.4);
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.subscribe-fab:hover .subscribe-fab-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-4px);
+}
+
+/* Pulsação suave */
+@keyframes fab-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 20px rgba(58, 54, 255, 0.5),
+      0 0 40px rgba(58, 54, 255, 0.2),
+      0 8px 20px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 28px rgba(58, 54, 255, 0.7),
+      0 0 60px rgba(58, 54, 255, 0.35),
+      0 8px 20px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .subscribe-fab {
+    width: 48px;
+    height: 48px;
+    bottom: 16px;
+    right: 16px;
+  }
+  .subscribe-fab-tooltip {
+    display: none;   /* sem tooltip em mobile */
+  }
+}
+
+/* ============================================================
+   MODAL DE SUBSCRIÇÃO
+============================================================ */
+.subscribe-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.subscribe-modal.is-open {
+  display: flex;
+  animation: subscribe-fade 0.25s ease;
+}
+
+@keyframes subscribe-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.subscribe-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.subscribe-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 40px 32px 32px;
+  text-align: center;
+  background: #0a0a14;
+  border: 1px solid rgba(107, 104, 255, 0.4);
+  border-radius: 16px;
+  box-shadow:
+    0 0 40px rgba(58, 54, 255, 0.3),
+    0 20px 60px rgba(0, 0, 0, 0.7);
+  animation: subscribe-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes subscribe-pop {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.subscribe-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: var(--dw-gray);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.subscribe-modal-close:hover {
+  color: var(--dw-white);
+  border-color: var(--dw-blue-bright);
+  background: rgba(58, 54, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.subscribe-modal-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.subscribe-modal-logo .logo-img {
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 20px rgba(58, 54, 255, 0.6),
+    0 0 40px rgba(58, 54, 255, 0.3);
+}
+
+.subscribe-modal-title {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.1em;
+  color: var(--dw-white);
+  margin-bottom: 12px;
+  text-shadow:
+    0 0 8px rgba(139, 136, 255, 0.5),
+    0 0 20px rgba(58, 54, 255, 0.3);
+}
+
+.subscribe-modal-text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--dw-gray);
+  margin-bottom: 24px;
+}
+
+/* Botão Google */
+.subscribe-google-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+/* Separador "ou" */
+.subscribe-separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+  color: var(--dw-gray);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.subscribe-separator::before,
+.subscribe-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(107, 104, 255, 0.3),
+    transparent
+  );
+}
+
+/* Formulário email */
+.subscribe-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.subscribe-form .form-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+.subscribe-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-top: 4px;
+  background: rgba(6, 3, 180, 0.08);
+  border: 1px solid rgba(107, 104, 255, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.subscribe-consent:hover {
+  border-color: rgba(107, 104, 255, 0.45);
+}
+
+.subscribe-consent input[type="checkbox"] {
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--dw-blue-bright);
+  cursor: pointer;
+}
+
+.subscribe-consent span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dw-gray-light);
+}
+
+.subscribe-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.subscribe-modal-hint {
+  margin-top: 20px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--dw-gray);
+  opacity: 0.7;
+  line-height: 1.6;
+}
+
+.subscribe-modal-hint a {
+  color: var(--dw-blue-bright);
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .subscribe-modal-panel {
+    padding: 32px 22px 26px;
+  }
+  .subscribe-modal-title {
+    font-size: 18px;
+  }
+}
+
+/* Scroll horizontal garantido para tabelas grandes no dashboard */
+.admin-table-wrap--subscribers {
+  overflow-x: auto;
+}
+
+/* ============================================================
+   AÇÕES CRUD NO DASHBOARD
+============================================================ */
+.admin-actions-cell {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.admin-action-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(107, 104, 255, 0.3);
+  border-radius: 4px;
+  color: var(--dw-gray);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.admin-action-btn:hover { transform: translateY(-2px); }
+
+.admin-action-btn.edit:hover {
+  color: var(--dw-blue-bright);
+  border-color: var(--dw-blue-bright);
+  box-shadow: 0 0 10px rgba(58, 54, 255, 0.3);
+}
+
+.admin-action-btn.delete:hover {
+  color: #FF6B6B;
+  border-color: #FF6B6B;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.admin-action-btn.block:hover {
+  color: #FFC857;
+  border-color: #FFC857;
+  box-shadow: 0 0 10px rgba(255, 200, 87, 0.3);
 }

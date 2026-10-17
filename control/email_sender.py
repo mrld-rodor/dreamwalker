@@ -400,3 +400,68 @@ def send_welcome_email(email, name, unsubscribe_url):
     except Exception as e:
         print(f"[ERROR] Boas-vindas: {e}")
         raise EmailDeliveryError('Erro inesperado.') from e
+
+
+def send_campaign_email(email, name, subject, message_body):
+    """Envia um email de campanha (marketing/aviso) com o layout do site."""
+    if not email_api_key or not email_sender:
+        raise EmailDeliveryError("Configuração de email incompleta.")
+
+    # Substitui as tags {name} pelo nome real
+    safe_name = escape(name) if name else 'Sonhador'
+    safe_body = escape(message_body).replace('\n', '<br>')
+    
+    # Layout base do email
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="pt">
+    <body style="margin:0; padding:0; background-color:#000000; color:#FFFFFF; font-family:'Roboto Mono', monospace;">
+      <div style="background: radial-gradient(circle at top, #0a0a2e 0%, #000000 70%); padding: 32px 16px;">
+        <table role="presentation" width="100%" style="max-width: 620px; margin: 0 auto;">
+          <tr>
+            <td>
+              <div style="border: 1px solid rgba(107, 104, 255, 0.35); background: #0a0a14; border-radius: 12px; overflow: hidden; box-shadow: 0 0 40px rgba(58, 54, 255, 0.25);">
+                <div style="padding: 36px 28px; border-bottom: 1px solid rgba(6, 3, 180, 0.4); text-align: center;">
+                  <h1 style="margin: 0; color: #FFFFFF; font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 0.2em;">
+                    DREAMWALKER TALES
+                  </h1>
+                </div>
+                <div style="padding: 36px 32px;">
+                  <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 20px;">
+                    Olá, <strong style="color: #6B68FF;">{safe_name}</strong>,
+                  </p>
+                  <div style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 32px;">
+                    {safe_body}
+                  </div>
+                </div>
+                <div style="padding: 22px 28px; text-align: center; border-top: 1px solid rgba(6, 3, 180, 0.3); background: rgba(6, 3, 180, 0.05); color: #9CA3AF; font-size: 11px;">
+                  <div style="margin-bottom: 10px;">✦ Dreamwalker Tales</div>
+                  <a href="https://dreamwalkertales.online/auth/unsubscribe/{email}" style="color: #9CA3AF; text-decoration: underline;">Cancelar subscrição</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </body>
+    </html>
+    """
+
+    try:
+        response = requests.post(
+            email_api_url,
+            headers={'Authorization': f'Bearer {email_api_key}', 'Content-Type': 'application/json'},
+            json={
+                'from': email_sender,
+                'to': [email],
+                'subject': subject,
+                'html': html,
+                'text': f"Olá {name},\n\n{message_body}"
+            },
+            timeout=email_api_timeout,
+        )
+        response.raise_for_status()
+        return 202
+    except Exception as e:
+        print(f"[ERROR] Campanha para {email}: {e}")
+        raise EmailDeliveryError(f"Erro ao enviar para {email}")

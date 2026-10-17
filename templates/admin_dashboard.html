@@ -95,8 +95,6 @@
         </div>
       </div>      
 
-      <!-- Tabela — SÓ MOBILE (escondida no desktop via CSS) -->
-
       <!-- Secção doação -->
       <div class="admin-section">
         <h2 class="admin-section-title">Cliques no Botão PayPal</h2>
@@ -160,7 +158,6 @@
           </div>
         {% endif %}
       </div>
-      
 
     </div><!-- /.admin-col-left -->
 
@@ -209,7 +206,375 @@
 
   </div><!-- /.admin-main-area -->
 
+
+  <!-- ============================================================
+       TABELA DE SUBSCRITORES E ENVIO DE EMAILS
+  ============================================================ -->
+  <div class="admin-section" style="margin-top: 48px;">
+    
+    <!-- Título + Dropdown + Botão -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 16px;">
+      <h2 class="admin-section-title" style="margin-bottom: 0; border-bottom: none;">Subscritores</h2>
+      
+      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <select id="email-template-select" class="form-input" style="padding: 10px 14px; font-size: 13px; cursor: pointer; border-radius: 6px; background-color: var(--dw-black); color: var(--dw-white); border-color: rgba(107, 104, 255, 0.4);">
+          <option value="">Escolher modelo...</option>
+          <option value="agradecimento_compra">Agradecimento - Compra</option>
+          <option value="agradecimento_doacao">Agradecimento - Doação</option>
+          <option value="lancamento_conto">Lançamento de Conto</option>
+          <option value="promocao">Promoção</option>
+        </select>
+        
+        <button type="button" id="open-email-composer" class="btn-primary" style="padding: 10px 20px; font-size: 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; height: 42px;">
+          ✉️ ENVIAR MENSAGEM
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="admin-table-wrap admin-table-wrap--subscribers">
+      {% if subscribers %}
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;">
+                <input type="checkbox" id="select-all-subs" style="accent-color: var(--dw-blue-bright); width: 16px; height: 16px; cursor: pointer;">
+              </th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Data Registo</th>
+              <th>Último Login</th>
+              <th>IP</th>
+              <th>País</th>
+              <th>Cidade</th>
+              <th>Estado</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in subscribers %}
+              <tr>
+                <td style="text-align: center;">
+                  <input type="checkbox" class="sub-checkbox" value="{{ sub.id }}" style="accent-color: var(--dw-blue-bright); width: 16px; height: 16px; cursor: pointer;">
+                </td>
+                <td>{{ sub.name or '—' }}</td>
+                <td class="admin-cell-mono">{{ sub.email }}</td>
+                <td class="admin-cell-mono">{{ sub.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td class="admin-cell-mono">{{ sub.last_login.strftime('%d/%m/%Y %H:%M') if sub.last_login else '—' }}</td>
+                <td class="admin-cell-mono">{{ sub.ip_address or '—' }}</td>
+                <td>{{ sub.country or '—' }}</td>
+                <td>{{ sub.city or '—' }}</td>
+                <td>
+                  {% if sub.blocked %}
+                    <span class="admin-badge admin-badge-danger">Bloqueado</span>
+                  {% else %}
+                    <span class="admin-badge admin-badge-success">Ativo</span>
+                  {% endif %}
+                </td>
+                <td class="admin-actions-cell">
+                  <button class="admin-action-btn edit" title="Editar" 
+                          data-id="{{ sub.id }}" 
+                          data-name="{{ sub.name or '' }}" 
+                          data-email="{{ sub.email }}">✎</button>
+
+                  <button class="admin-action-btn block" title="Bloquear/Desbloquear" 
+                          data-id="{{ sub.id }}">
+                    {% if sub.blocked %}🔓{% else %}🔒{% endif %}
+                  </button>
+
+                  <button class="admin-action-btn delete" title="Eliminar" 
+                          data-id="{{ sub.id }}">✕</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="admin-empty"><p>Ainda não há subscritores.</p></div>
+      {% endif %}
+    </div>
+  </div>
 </main>
 
+<!-- MODAL DE EDIÇÃO -->
+<div id="edit-subscriber-modal" class="subscribe-modal" aria-hidden="true" role="dialog">
+  <div class="subscribe-modal-backdrop" onclick="closeEditModal()"></div>
+  <div class="subscribe-modal-panel" style="max-width: 400px;">
+    <button class="subscribe-modal-close" onclick="closeEditModal()">✕</button>
+    <h2 class="subscribe-modal-title" style="margin-bottom: 20px;">Editar Subscritor</h2>
+    <form id="edit-sub-form" class="subscribe-form">
+      <input type="hidden" id="edit-sub-id">
+      <label class="text-sm text-gray-dw text-left mb-1 block">Nome</label>
+      <input type="text" id="edit-sub-name" required class="form-input w-full mb-3">
+      <label class="text-sm text-gray-dw text-left mb-1 block">Email</label>
+      <input type="email" id="edit-sub-email" required class="form-input w-full mb-4">
+      <button type="submit" class="btn-primary admin-login-btn">GUARDAR</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE ALERTA (Sucesso/Erro) -->
+<div id="custom-alert-modal" class="subscribe-modal" aria-hidden="true" role="dialog">
+  <div class="subscribe-modal-backdrop" onclick="closeAlert()"></div>
+  <div class="subscribe-modal-panel" style="text-align: center; max-width: 400px;">
+    <h2 id="alert-title" class="subscribe-modal-title" style="margin-bottom: 10px;"></h2>
+    <p id="alert-message" class="subscribe-modal-text"></p>
+    <button type="button" class="btn-primary admin-login-btn" style="margin-top: 10px;" onclick="closeAlert()">OK</button>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO (Sim/Não) -->
+<div id="custom-confirm-modal" class="subscribe-modal" aria-hidden="true" role="dialog">
+  <div class="subscribe-modal-backdrop"></div>
+  <div class="subscribe-modal-panel" style="text-align: center; max-width: 400px;">
+    <h2 class="subscribe-modal-title" style="margin-bottom: 10px; color: #FFC857;">Atenção</h2>
+    <p id="confirm-message" class="subscribe-modal-text"></p>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
+      <button type="button" class="admin-logout-btn" style="border-color: var(--dw-gray);" onclick="closeConfirm()">Cancelar</button>
+      <button type="button" id="confirm-yes-btn" class="btn-primary subscribe-btn" style="width: auto; padding: 10px 24px;">Sim, continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE COMPOSIÇÃO DE EMAIL -->
+<div id="compose-email-modal" class="subscribe-modal" aria-hidden="true" role="dialog" style="z-index: 400;">
+  <div class="subscribe-modal-backdrop" onclick="closeEmailComposer()"></div>
+  <div class="subscribe-modal-panel" style="max-width: 700px; text-align: left;">
+    <button class="subscribe-modal-close" onclick="closeEmailComposer()">✕</button>
+    
+    <h2 class="subscribe-modal-title" style="margin-bottom: 20px; text-align: center;">Compor Mensagem</h2>
+    
+    <div style="margin-bottom: 16px;">
+      <label class="text-sm text-gray-dw mb-1 block">Assunto</label>
+      <input type="text" id="email-subject" class="form-input w-full" placeholder="Ex: Novidade no Dreamwalker Tales">
+    </div>
+    
+    <div style="margin-bottom: 16px;">
+      <label class="text-sm text-gray-dw mb-1 block">Mensagem (usa <strong>{name}</strong> para personalizar)</label>
+      <textarea id="email-body" class="form-input w-full" rows="10" style="resize: vertical;"></textarea>
+    </div>
+    
+    <div id="email-send-feedback" class="text-center text-sm mb-4" style="color: var(--dw-blue-bright);"></div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 12px;">
+      <button type="button" class="admin-logout-btn" onclick="closeEmailComposer()">Cancelar</button>
+      <button type="button" id="send-email-btn" class="btn-primary" style="padding: 10px 32px; border-radius: 6px;">ENVIAR AOS SELECIONADOS</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // AUXILIARES DE ALERTA E CONFIRMAÇÃO
+  // ============================================================
+  function showAlert(message, isError = false) {
+    document.getElementById('alert-title').textContent = isError ? 'Erro' : 'Sucesso';
+    document.getElementById('alert-title').style.color = isError ? '#FF6B6B' : 'var(--dw-blue-bright)';
+    document.getElementById('alert-message').textContent = message;
+    document.getElementById('custom-alert-modal').classList.add('is-open');
+  }
+
+  function closeAlert() {
+    document.getElementById('custom-alert-modal').classList.remove('is-open');
+  }
+
+  function showConfirm(message, callback) {
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('custom-confirm-modal').classList.add('is-open');
+    
+    const yesBtn = document.getElementById('confirm-yes-btn');
+    const newYesBtn = yesBtn.cloneNode(true);
+    yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+    
+    newYesBtn.addEventListener('click', () => {
+      closeConfirm();
+      callback();
+    });
+  }
+
+  function closeConfirm() {
+    document.getElementById('custom-confirm-modal').classList.remove('is-open');
+  }
+
+  // ============================================================
+  // FUNÇÕES CRUD
+  // ============================================================
+  function openEditModal(id, name, email) {
+    document.getElementById('edit-sub-id').value = id;
+    document.getElementById('edit-sub-name').value = name;
+    document.getElementById('edit-sub-email').value = email;
+    document.getElementById('edit-subscriber-modal').classList.add('is-open');
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-subscriber-modal').classList.remove('is-open');
+  }
+
+  document.getElementById('edit-sub-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('edit-sub-id').value;
+    const name = document.getElementById('edit-sub-name').value;
+    const email = document.getElementById('edit-sub-email').value;
+
+    const res = await fetch(`/admin/subscribers/${id}/edit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ name, email })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      window.location.reload();
+    } else {
+      showAlert(data.message, true);
+    }
+  });
+
+  async function deleteSubscriber(id) {
+    showConfirm('Tens a certeza que queres eliminar este subscritor? Esta ação é irreversível.', async () => {
+      const res = await fetch(`/admin/subscribers/${id}/delete`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        showAlert(data.message, true);
+      }
+    });
+  }
+
+  async function toggleBlock(id) {
+    showConfirm('Queres alterar o estado de bloqueio deste utilizador?', async () => {
+      const res = await fetch(`/admin/subscribers/${id}/block`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        showAlert(data.message, true);
+      }
+    });
+  }
+
+  // ============================================================
+  // ENVIO DE EMAILS EM MASSA
+  // ============================================================
+  const selectAllCheckbox = document.getElementById('select-all-subs');
+  const subCheckboxes = document.querySelectorAll('.sub-checkbox');
+  const templateSelect = document.getElementById('email-template-select');
+  const composeModal = document.getElementById('compose-email-modal');
+
+  const templates = {
+    'agradecimento_compra': {
+      subject: 'Obrigado por adquirires um conto!',
+      body: 'Olá {name},\n\nMuito obrigado por apoiares o Dreamwalker Tales e adquirires um dos nossos contos. Espero que a viagem tenha valido a pena.\n\nFica atento às novidades.\n\n— DreamWalker'
+    },
+    'agradecimento_doacao': {
+      subject: 'Obrigado pelo teu apoio!',
+      body: 'Olá {name},\n\nO teu contributo é fundamental para manter este portal vivo. Muito obrigado por acreditares no projeto.\n\n— DreamWalker'
+    },
+    'lancamento_conto': {
+      subject: 'Novo conto disponível no Dreamwalker Tales',
+      body: 'Olá {name},\n\nUm novo sonho foi revelado! Já está disponível um novo conto no site.\n\nVem descobrir: https://dreamwalkertales.online\n\n— DreamWalker'
+    },
+    'promocao': {
+      subject: 'Promoção especial Dreamwalker Tales',
+      body: 'Olá {name},\n\nTemos uma surpresa para ti. Durante os próximos dias, os contos estão com uma condição especial.\n\nAproveita agora: https://dreamwalkertales.online\n\n— DreamWalker'
+    }
+  };
+
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', (e) => {
+      subCheckboxes.forEach(cb => cb.checked = e.target.checked);
+    });
+  }
+
+  function openEmailComposer() {
+    const selectedIds = Array.from(subCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    if (selectedIds.length === 0) {
+      showAlert('Seleciona pelo menos um subscritor na tabela.', true);
+      return;
+    }
+
+    const selectedTemplate = templateSelect.value;
+    if (selectedTemplate && templates[selectedTemplate]) {
+      document.getElementById('email-subject').value = templates[selectedTemplate].subject;
+      document.getElementById('email-body').value = templates[selectedTemplate].body;
+    } else {
+      document.getElementById('email-subject').value = '';
+      document.getElementById('email-body').value = '';
+    }
+
+    document.getElementById('email-send-feedback').textContent = '';
+    composeModal.classList.add('is-open');
+  }
+
+  function closeEmailComposer() {
+    composeModal.classList.remove('is-open');
+  }
+
+  document.getElementById('open-email-composer').addEventListener('click', openEmailComposer);
+
+  document.getElementById('send-email-btn').addEventListener('click', async () => {
+    const selectedIds = Array.from(subCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    const subject = document.getElementById('email-subject').value;
+    const message = document.getElementById('email-body').value;
+    const feedback = document.getElementById('email-send-feedback');
+    const btn = document.getElementById('send-email-btn');
+
+    if (!subject || !message) {
+      feedback.textContent = 'Preenche o assunto e a mensagem.';
+      feedback.style.color = '#FF6B6B';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'A ENVIAR...';
+    feedback.textContent = 'A processar envios...';
+    feedback.style.color = 'var(--dw-gray)';
+
+    try {
+      const res = await fetch('/admin/subscribers/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedIds, subject: subject, message: message })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        feedback.textContent = data.message;
+        feedback.style.color = 'var(--dw-blue-bright)';
+        setTimeout(() => {
+          closeEmailComposer();
+          window.location.reload();
+        }, 3000);
+      } else {
+        feedback.textContent = data.message;
+        feedback.style.color = '#FF6B6B';
+      }
+    } catch (err) {
+      feedback.textContent = 'Erro de rede. Tenta novamente.';
+      feedback.style.color = '#FF6B6B';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'ENVIAR AOS SELECIONADOS';
+    }
+  });
+
+  // ============================================================
+  // LIGAÇÃO DOS BOTÕES CRUD
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.admin-action-btn.edit').forEach(btn => {
+      btn.addEventListener('click', () => openEditModal(btn.dataset.id, btn.dataset.name, btn.dataset.email));
+    });
+
+    document.querySelectorAll('.admin-action-btn.block').forEach(btn => {
+      btn.addEventListener('click', () => toggleBlock(btn.dataset.id));
+    });
+
+    document.querySelectorAll('.admin-action-btn.delete').forEach(btn => {
+      btn.addEventListener('click', () => deleteSubscriber(btn.dataset.id));
+    });
+  });
+</script>
 </body>
 </html>

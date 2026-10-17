@@ -1,4 +1,3 @@
-# control/models.py
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -83,6 +82,10 @@ class Subscriber(db.Model):
     email_verified = db.Column(db.Boolean, default=False, nullable=False)
     verification_token = db.Column(db.String(64), nullable=True, index=True)
     verification_sent_at = db.Column(db.DateTime, nullable=True)
+
+    # Bloqueio (impede login e subscrição)
+    blocked = db.Column(db.Boolean, default=False, nullable=False)
+    blocked_at = db.Column(db.DateTime, nullable=True)
 
     # Metadados
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
