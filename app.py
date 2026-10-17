@@ -267,7 +267,9 @@ def auth_verify(token):
         session['subscriber_id'] = sub.id
         session.permanent = True
 
-        flash(f'Bem-vindo de volta, {sub.name.split()[0]}! Sessão iniciada com sucesso.', 'success')
+        # CORREÇÃO APLICADA AQUI:
+        primeiro_nome = (sub.name or 'Sonhador').split()[0]
+        flash(f'Bem-vindo de volta, {primeiro_nome}! Sessão iniciada com sucesso.', 'success')
         return redirect(url_for('index'))
 
     # ─── PRIMEIRA VEZ → É REGISTO ───
@@ -289,7 +291,9 @@ def auth_verify(token):
     session['subscriber_id'] = sub.id
     session.permanent = True
 
-    flash(f'Subscreveste com sucesso, {sub.name.split()[0]}! Vê o teu email de boas-vindas.', 'success')
+    # CORREÇÃO APLICADA AQUI:
+    primeiro_nome = (sub.name or 'Sonhador').split()[0]
+    flash(f'Subscreveste com sucesso, {primeiro_nome}! Vê o teu email de boas-vindas.', 'success')
     return redirect(url_for('index'))
 
 @app.route('/auth/unsubscribe/<token>')
@@ -386,7 +390,7 @@ def auth_google_callback():
         session['subscriber_id'] = subscriber.id
         session.permanent = True
 
-        primeiro_nome = name.split()[0]
+        primeiro_nome = (name or 'Sonhador').split()[0]
         flash(f'Bem-vindo de volta, {primeiro_nome}! Sessão iniciada.', 'success')
 
     # ─── CASO 2: UTILIZADOR NOVO → REGISTO ───
@@ -410,7 +414,7 @@ def auth_google_callback():
         session['subscriber_id'] = subscriber.id
         session.permanent = True
 
-        primeiro_nome = name.split()[0]
+        primeiro_nome = (name or 'Sonhador').split()[0]
         flash(f'Conta criada com sucesso, {primeiro_nome}! Bem-vindo ao Dreamwalker.', 'success')
 
     return redirect(url_for('index'))
