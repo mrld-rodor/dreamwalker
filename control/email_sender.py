@@ -304,7 +304,7 @@ def _build_welcome_html(name, unsubscribe_url):
               </p>
 
               <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 20px;">
-                A tua subscrição está confirmada. A partir de agora vais receber avisos sobre novos contos e novidades do projeto.
+                A tua subscrição está confirmada. A partir de agora, vais receber avisos sobre novos contos e novidades do projeto.
               </p>
 
               <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 32px;">
