@@ -3167,48 +3167,52 @@ body.modal-open { overflow: hidden; }
 ============================================================ */
 .subscribe-fab {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  top: 0; 
+  left: 0;
   z-index: 90;
 
-  /* Aumentado de 56px para 80px */
   width: 90px;
   height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  /* Fundo preto */
   background: var(--dw-black);
   border: 1px solid rgba(107, 104, 255, 0.5);
   border-radius: 50%;
-  cursor: pointer;
+  cursor: grab;
+  
+  /* Desativa o scroll e seleção de texto durante o arrasto no mobile */
+  touch-action: none; 
+  user-select: none;
+  -webkit-user-select: none;
 
-  /* Glow em volta do botão */
   box-shadow:
     0 0 20px rgba(58, 54, 255, 0.6),
     0 0 40px rgba(58, 54, 255, 0.3),
     0 8px 20px rgba(0, 0, 0, 0.6);
 
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fab-pulse 3s ease-in-out infinite;
+  /* Remove a animação de pulsação constante para não atrapalhar o arrasto */
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.subscribe-fab:active {
+  cursor: grabbing;
 }
 
 .subscribe-fab:hover {
-  background: #05051a; /* preto ligeiramente azulado */
+  background: #05051a;
   border-color: var(--dw-blue-bright);
-  transform: translateY(-3px) scale(1.05);
   box-shadow:
     0 0 30px rgba(58, 54, 255, 0.8),
     0 0 60px rgba(58, 54, 255, 0.4),
     0 12px 28px rgba(0, 0, 0, 0.7);
 }
 
-/* Cubo dentro do botão — garante que fica centrado e no tamanho certo */
+/* Cubo dentro do botão */
 .subscribe-fab .fab-cube {
-  /* O cubo do Hero tem 50px, cabe bem nos 80px do botão */
   transform: scale(0.7);
-  pointer-events: none; /* cliques vão para o botão, não para as faces */
+  pointer-events: none;
 }
 
 /* Tooltip */
@@ -3236,6 +3240,13 @@ body.modal-open { overflow: hidden; }
 .subscribe-fab:hover .subscribe-fab-tooltip {
   opacity: 1;
   transform: translateY(-50%) translateX(-4px);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .subscribe-fab-tooltip {
+    display: none;
+  }
 }
 
 /* Pulsação */

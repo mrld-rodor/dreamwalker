@@ -639,8 +639,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-    // ============================================================
-  // BOTÃO FLUTUANTE + MODAL DE SUBSCRIÇÃO
+  // ============================================================
+  // BOTÃO FLUTUANTE + MODAL DE SUBSCRIÇÃO (COM ARRASTO)
   // ============================================================
   const subscribeFab       = document.getElementById('subscribe-fab');
   const subscribeModal     = document.getElementById('subscribe-modal');
@@ -661,8 +661,116 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (subscribeFab && subscribeModal) {
-    subscribeFab.addEventListener('click', openSubscribeModal);
+    // 1. Definir posição inicial
+    const defaultOffset = window.innerWidth <= 480 ? 16 : 24;
+    
+    if (!localStorage.getItem('fab_x') || !localStorage.getItem('fab_y')) {
+      // Se não houver posição guardada, coloca no canto inferior direito
+      const initX = window.innerWidth - subscribeFab.offsetWidth - defaultOffset;
+      const initY = window.innerHeight - subscribeFab.offsetHeight - defaultOffset;
+      subscribeFab.style.transform = `translate(${initX}px, ${initY}px)`;
+    } else {
+      // Recupera a posição guardada
+      subscribeFab.style.transform = `translate(${localStorage.getItem('fab_x')}px, ${localStorage.getItem('fab_y')}px)`;
+    }
 
+    // 2. Lógica de Arrasto (Drag)
+    let isDragging = false;
+    let hasMoved = false;
+    let startX, startY;
+    let currentX = 0, currentY = 0;
+    let initialX, initialY;
+
+    subscribeFab.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return; // Apenas botão esquerdo
+      isDragging = true;
+      hasMoved = false;
+
+      // Extrai os valores atuais do transform
+      const transform = window.getComputedStyle(subscribeFab).transform;
+      if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        currentX = matrix.m41;
+        currentY = matrix.m42;
+      }
+
+      startX = e.clientX;
+      startY = e.clientY;
+      initialX = currentX;
+      initialY = currentY;
+
+      subscribeFab.setPointerCapture(e.pointerId);
+    });
+
+    subscribeFab.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      // Se moveu mais de 5px, consideramos que é um arrasto
+      if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+        hasMoved = true;
+      }
+
+      let newX = initialX + deltaX;
+      let newY = initialY + deltaY;
+
+      // Limites do ecrã
+      const maxX = window.innerWidth - subscribeFab.offsetWidth;
+      const maxY = window.innerHeight - subscribeFab.offsetHeight;
+
+      // Aplica os limites
+      newX = Math.max(0, Math.min(newX, maxX));
+      newY = Math.max(0, Math.min(newY, maxY));
+
+      currentX = newX;
+      currentY = newY;
+
+      subscribeFab.style.transform = `translate(${currentX}px, ${currentY}px)`;
+    });
+
+    subscribeFab.addEventListener('pointerup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      subscribeFab.releasePointerCapture(e.pointerId);
+
+      // Guarda a posição para a próxima visita
+      localStorage.setItem('fab_x', currentX);
+      localStorage.setItem('fab_y', currentY);
+
+      // Se não se moveu, foi um clique!
+      if (!hasMoved) {
+        openSubscribeModal();
+      }
+    });
+
+    // Cancela o clique se foi um arrasto (para não abrir o modal sem querer)
+    subscribeFab.addEventListener('click', (e) => {
+      if (hasMoved) {
+        e.preventDefault();
+        e.stopPropagation();
+        hasMoved = false; // reset
+      }
+    });
+
+    // Ajustar posição se a janela for redimensionada
+    window.addEventListener('resize', () => {
+      const maxX = window.innerWidth - subscribeFab.offsetWidth;
+      const maxY = window.innerHeight - subscribeFab.offsetHeight;
+      
+      let storedX = parseFloat(localStorage.getItem('fab_x') || currentX);
+      let storedY = parseFloat(localStorage.getItem('fab_y') || currentY);
+      
+      if (storedX > maxX) storedX = maxX;
+      if (storedY > maxY) storedY = maxY;
+      
+      subscribeFab.style.transform = `translate(${storedX}px, ${storedY}px)`;
+      localStorage.setItem('fab_x', storedX);
+      localStorage.setItem('fab_y', storedY);
+    });
+
+    // Resto dos eventos de fechar o modal
     subscribeModal.querySelectorAll('[data-close-subscribe]').forEach(el => {
       el.addEventListener('click', closeSubscribeModal);
     });
@@ -670,64 +778,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && subscribeModal.classList.contains('is-open')) {
         closeSubscribeModal();
-      }
-    });
-  }
-
-  // Submissão do formulário de subscrição (email)
-  if (subscribeForm) {
-    subscribeForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const submitBtn = subscribeForm.querySelector('button[type="submit"]');
-      const originalText = submitBtn ? submitBtn.textContent : 'SUBSCREVER';
-
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'A ENVIAR...';
-      }
-
-      try {
-        const formData = new FormData(subscribeForm);
-
-        const response = await fetch('/api/subscribe', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          // Mostra a flash message no topo
-          closeSubscribeModal();
-          subscribeForm.reset();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-
-          // Usa a mesma função de flash que já tens no sistema
-          if (typeof showFlash === 'function') {
-            showFlash('success', data.message);
-          } else {
-            alert(data.message);
-          }
-        } else {
-          if (typeof showFlash === 'function') {
-            showFlash('error', data.message || 'Erro ao subscrever. Tente novamente.');
-          } else {
-            alert(data.message || 'Erro ao subscrever. Tente novamente.');
-          }
-        }
-      } catch (err) {
-        console.error('[subscribe]', err);
-        if (typeof showFlash === 'function') {
-          showFlash('error', 'Erro de rede. Verifique a ligação e tente novamente.');
-        } else {
-          alert('Erro de rede. Verifique a ligação e tente novamente.');
-        }
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
-        }
       }
     });
   }
