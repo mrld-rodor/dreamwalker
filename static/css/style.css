@@ -3167,8 +3167,8 @@ body.modal-open { overflow: hidden; }
 ============================================================ */
 .subscribe-fab {
   position: fixed;
-  top: 0; 
-  left: 0;
+  right: 24px;
+  bottom: 24px;
   z-index: 90;
 
   width: 90px;

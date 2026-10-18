@@ -625,73 +625,73 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (subscribeFab && subscribeModal) {
-    // 1. Definir posição inicial
-    const defaultOffset = window.innerWidth <= 480 ? 16 : 24;
-    
-    if (!localStorage.getItem('fab_x') || !localStorage.getItem('fab_y')) {
-      // Se não houver posição guardada, coloca no canto inferior direito
-      const initX = window.innerWidth - subscribeFab.offsetWidth - defaultOffset;
-      const initY = window.innerHeight - subscribeFab.offsetHeight - defaultOffset;
-      subscribeFab.style.transform = `translate(${initX}px, ${initY}px)`;
-    } else {
-      // Recupera a posição guardada
-      subscribeFab.style.transform = `translate(${localStorage.getItem('fab_x')}px, ${localStorage.getItem('fab_y')}px)`;
+    // 1. Tentar restaurar a posição (se existir e for válida)
+    const storedX = localStorage.getItem('fab_x');
+    const storedY = localStorage.getItem('fab_y');
+
+    if (storedX !== null && storedY !== null) {
+      const px = parseFloat(storedX);
+      const py = parseFloat(storedY);
+      
+      // Só aplica se os valores forem reais (não NaN) e estiverem dentro do ecrã
+      if (!isNaN(px) && !isNaN(py) && px > 0 && py > 0 && px < window.innerWidth && py < window.innerHeight) {
+        subscribeFab.style.transform = `translate(${px}px, ${py}px)`;
+        subscribeFab.style.bottom = 'auto';
+        subscribeFab.style.right = 'auto';
+      } else {
+        localStorage.removeItem('fab_x');
+        localStorage.removeItem('fab_y');
+      }
     }
 
     // 2. Lógica de Arrasto (Drag)
     let isDragging = false;
     let hasMoved = false;
     let startX, startY;
-    let currentX = 0, currentY = 0;
-    let initialX, initialY;
+    let startLeft, startTop; // Posição onde o dedo tocou
 
     subscribeFab.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 && e.pointerType === 'mouse') return; // Apenas botão esquerdo
-      isDragging = true;
-      hasMoved = false;
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      
+      // Pega a posição exata do botão no ecrã naquele milissegundo
+      const rect = subscribeFab.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop = rect.top;
 
-      // Extrai os valores atuais do transform
-      const transform = window.getComputedStyle(subscribeFab).transform;
-      if (transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        currentX = matrix.m41;
-        currentY = matrix.m42;
-      }
+      // Fixa o botão nessa posição para começar a arrastar
+      subscribeFab.style.transform = `translate(${startLeft}px, ${startTop}px)`;
+      subscribeFab.style.bottom = 'auto';
+      subscribeFab.style.right = 'auto';
 
       startX = e.clientX;
       startY = e.clientY;
-      initialX = currentX;
-      initialY = currentY;
 
+      isDragging = true;
+      hasMoved = false;
       subscribeFab.setPointerCapture(e.pointerId);
     });
 
     subscribeFab.addEventListener('pointermove', (e) => {
       if (!isDragging) return;
-      
+
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
 
-      // Se moveu mais de 5px, consideramos que é um arrasto
       if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
         hasMoved = true;
       }
 
-      let newX = initialX + deltaX;
-      let newY = initialY + deltaY;
+      let newX = startLeft + deltaX;
+      let newY = startTop + deltaY;
 
-      // Limites do ecrã
+      // Limites (para não sair do ecrã)
       const maxX = window.innerWidth - subscribeFab.offsetWidth;
       const maxY = window.innerHeight - subscribeFab.offsetHeight;
 
-      // Aplica os limites
       newX = Math.max(0, Math.min(newX, maxX));
       newY = Math.max(0, Math.min(newY, maxY));
 
-      currentX = newX;
-      currentY = newY;
-
-      subscribeFab.style.transform = `translate(${currentX}px, ${currentY}px)`;
+      subscribeFab.style.transform = `translate(${newX}px, ${newY}px)`;
     });
 
     subscribeFab.addEventListener('pointerup', (e) => {
@@ -699,46 +699,30 @@ document.addEventListener('DOMContentLoaded', () => {
       isDragging = false;
       subscribeFab.releasePointerCapture(e.pointerId);
 
-      // Guarda a posição para a próxima visita
-      localStorage.setItem('fab_x', currentX);
-      localStorage.setItem('fab_y', currentY);
+      // Guarda a posição final onde o utilizador soltou o dedo
+      const finalRect = subscribeFab.getBoundingClientRect();
+      localStorage.setItem('fab_x', finalRect.left);
+      localStorage.setItem('fab_y', finalRect.top);
 
-      // Se não se moveu, foi um clique!
+      // Se foi apenas um clique (e não um arrasto), abre o modal
       if (!hasMoved) {
         openSubscribeModal();
       }
     });
 
-    // Cancela o clique se foi um arrasto (para não abrir o modal sem querer)
+    // Impede a abertura do modal se foi um arrasto
     subscribeFab.addEventListener('click', (e) => {
       if (hasMoved) {
         e.preventDefault();
         e.stopPropagation();
-        hasMoved = false; // reset
+        hasMoved = false;
       }
     });
 
-    // Ajustar posição se a janela for redimensionada
-    window.addEventListener('resize', () => {
-      const maxX = window.innerWidth - subscribeFab.offsetWidth;
-      const maxY = window.innerHeight - subscribeFab.offsetHeight;
-      
-      let storedX = parseFloat(localStorage.getItem('fab_x') || currentX);
-      let storedY = parseFloat(localStorage.getItem('fab_y') || currentY);
-      
-      if (storedX > maxX) storedX = maxX;
-      if (storedY > maxY) storedY = maxY;
-      
-      subscribeFab.style.transform = `translate(${storedX}px, ${storedY}px)`;
-      localStorage.setItem('fab_x', storedX);
-      localStorage.setItem('fab_y', storedY);
-    });
-
-    // Resto dos eventos de fechar o modal
+    // Resto dos eventos (modal)
     subscribeModal.querySelectorAll('[data-close-subscribe]').forEach(el => {
       el.addEventListener('click', closeSubscribeModal);
     });
-
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && subscribeModal.classList.contains('is-open')) {
         closeSubscribeModal();
@@ -746,7 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-    // ============================================================
+  // ============================================================
   // HELPER — mostrar flash dinamicamente (sem reload)
   // ============================================================
   function showFlash(type, message) {
