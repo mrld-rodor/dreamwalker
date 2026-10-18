@@ -3751,3 +3751,19 @@ body.modal-open { overflow: hidden; }
   font-size: 14px;
   text-shadow: 0 0 6px rgba(139, 136, 255, 0.6);
 }
+
+/* ============================================================
+   CAMPOS BLOQUEADOS (READONLY) NO FORMULÁRIO
+============================================================ */
+.form-input.is-readonly {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(107, 104, 255, 0.2);
+  pointer-events: none; /* Impede o utilizador de clicar e tentar editar */
+}
+
+.form-input.is-readonly:focus {
+  box-shadow: none;
+  border-color: rgba(107, 104, 255, 0.2);
+}

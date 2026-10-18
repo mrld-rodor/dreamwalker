@@ -271,7 +271,6 @@
       {% if current_subscriber %}
         <p class="text-center text-sm mb-8" style="color: var(--dw-gray);">
           Sessão iniciada como <strong style="color: var(--dw-blue-bright);">{{ current_subscriber.name }}</strong>.
-          <a href="{{ url_for('auth_logout') }}" style="color: #FF6B6B; text-decoration: underline;">Terminar sessão</a>
         </p>
       {% else %}
         <p class="text-center text-2xl">.:.</p><br>
@@ -287,7 +286,7 @@
         <!-- Timestamp -->
         <input type="hidden" name="form_start" id="form-start" value="">
 
-        <!-- Nome -->
+                <!-- Nome -->
         <input type="text" name="nome" placeholder="Nome" required
               value="{{ current_subscriber.name if current_subscriber else '' }}"
               {% if current_subscriber %}readonly{% endif %}

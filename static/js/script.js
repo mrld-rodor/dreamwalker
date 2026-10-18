@@ -17,9 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openLoginModal(pendingAction) {
-    const loginModal = document.getElementById('login-modal');
-    if (!loginModal) return;
-
     if (pendingAction) {
       try {
         sessionStorage.setItem('dw_pending_action', JSON.stringify(pendingAction));
@@ -28,18 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    loginModal.classList.add('is-open');
-    loginModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
+    // Em vez de abrir o modal antigo, abre o modal completo de subscrição
+    openSubscribeModal();
   }
 
-  function closeLoginModal() {
-    const loginModal = document.getElementById('login-modal');
-    if (!loginModal) return;
-    loginModal.classList.remove('is-open');
-    loginModal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('modal-open');
-  }
 
   // ============================================================
   // MENU MOBILE — abrir/fechar
@@ -376,12 +365,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Limpa o formulário completamente
     // ------------------------------------------------------------
     function clearForm() {
-      contactForm.reset();
+      // Não usamos o contactForm.reset() para não apagar os campos já preenchidos
+      
       contactForm.querySelectorAll('input:not([type="hidden"]), textarea').forEach(field => {
-        if (field.name !== 'website') {
+        // Se não for o honeypot E não for um campo bloqueado, limpa
+        if (field.name !== 'website' && !field.hasAttribute('readonly')) {
           field.value = '';
         }
       });
+      
       if (formStart) formStart.value = (Date.now() / 1000).toString();
     }
 
@@ -516,35 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ============================================================
-  // SISTEMA DE LOGIN — Modal + Retomar ação
-  // ============================================================
-  const loginModal    = document.getElementById('login-modal');
-  const loginConsent  = document.getElementById('login-consent');
-  const loginGoogleBtn = document.getElementById('login-google-btn');
-
-  if (loginModal) {
-    // Fechar (botão ✕ ou clique no backdrop)
-    loginModal.querySelectorAll('[data-close-login]').forEach(el => {
-      el.addEventListener('click', closeLoginModal);
-    });
-
-    // Fechar com ESC
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && loginModal.classList.contains('is-open')) {
-        closeLoginModal();
-      }
-    });
-
-    // Botão "Entrar com Google"
-    if (loginGoogleBtn) {
-      loginGoogleBtn.addEventListener('click', () => {
-        const consent = loginConsent && loginConsent.checked ? '1' : '0';
-        window.location.href = `/auth/google?consent=${consent}`;
-      });
-    }
-  }
-
+  
   // ------------------------------------------------------------
   // Retomar ação após login
   // ------------------------------------------------------------
