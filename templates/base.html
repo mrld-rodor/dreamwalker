@@ -72,28 +72,30 @@
         {% endif %}
       </ul>
 
-      <!-- Ações Mobile: Logout + Avatar + Hambúrguer -->
-      <div class="flex md:hidden items-center gap-4">
+      <!-- Ações Mobile: Logout + Avatar/Menu -->
+      <div class="flex md:hidden items-center gap-3">
         
         {% if session.get('subscriber_id') %}
-          <!-- Link SAIR no mobile -->
           <a href="{{ url_for('auth_logout') }}" class="nav-logout" style="font-size: 11px; margin: 0;">SAIR</a>
-          
-          <!-- Avatar no mobile -->
-          {% if current_subscriber %}
-            {% if current_subscriber.picture_url %}
-              <img src="{{ current_subscriber.picture_url }}" alt="Perfil" class="user-avatar" style="width: 30px; height: 30px;" referrerpolicy="no-referrer">
-            {% else %}
-              <div class="user-avatar user-avatar-empty" style="width: 30px; height: 30px; font-size: 12px;">{{ current_subscriber.name[0]|upper }}</div>
-            {% endif %}
-          {% endif %}
         {% endif %}
 
-        <!-- Botão do Menu Hamburguer -->
-        <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">
-          <span></span>
-          <span></span>
-          <span></span>
+        <!-- Botão do Menu: Se logado é o Avatar, se deslogado são as 3 linhas -->
+        <button id="menu-toggle" class="menu-toggle {% if session.get('subscriber_id') %}has-avatar{% endif %}" aria-label="Abrir menu">
+          
+          {% if session.get('subscriber_id') and current_subscriber %}
+            <!-- Avatar para clicar -->
+            {% if current_subscriber.picture_url %}
+              <img src="{{ current_subscriber.picture_url }}" alt="Menu" class="user-avatar" style="width: 36px; height: 36px; margin: 0;" referrerpolicy="no-referrer">
+            {% else %}
+              <div class="user-avatar user-avatar-empty" style="width: 36px; height: 36px; margin: 0;">{{ current_subscriber.name[0]|upper }}</div>
+            {% endif %}
+          {% else %}
+            <!-- Hambúrguer para quem não está logado -->
+            <span></span>
+            <span></span>
+            <span></span>
+          {% endif %}
+          
         </button>
       </div>
     </nav>

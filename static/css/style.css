@@ -3767,3 +3767,57 @@ body.modal-open { overflow: hidden; }
   box-shadow: none;
   border-color: rgba(107, 104, 255, 0.2);
 }
+
+/* ============================================================
+   AJUSTE DO HEADER NO MOBILE (Para não sobrepor)
+============================================================ */
+@media (max-width: 767px) {
+  
+  /* 1. Diminui a fonte do texto "DREAMWALKER TALES" */
+  .navbar-logo-text {
+    font-size: 13px !important;       /* Em vez de ~16px */
+    letter-spacing: 0.05em !important; /* Aproxima um pouco as letras */
+    line-height: 1.1;
+  }
+
+  /* 2. Diminui o espaço entre a imagem do logo e o texto */
+  .navbar-logo {
+    gap: 8px !important; /* Em vez dos 20px do desktop */
+  }
+
+  /* 3. Diminui o espaço entre SAIR, Avatar e Hamburger */
+  .md\:hidden.items-center.gap-4 {
+    gap: 8px !important; /* Em vez de 16px */
+  }
+
+  /* 4. Reduz o espaçamento interno da barra de navegação */
+  .navbar-inner {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+/* ============================================================
+   HEADER MOBILE: AJUSTES DE ESPAÇO E AVATAR COMO MENU
+============================================================ */
+
+@media (max-width: 767px) {
+  
+  /* Reduz o texto do logo para não sobrepor */
+  .navbar-logo-text {
+    font-size: 12px !important;
+    letter-spacing: 0.05em !important;
+    line-height: 1.1;
+  }
+
+  /* Aproxima a imagem do logo ao texto */
+  .navbar-logo {
+    gap: 8px !important;
+  }
+
+  /* Se o botão do menu tiver o avatar, tira o padding de hambúrguer */
+  .menu-toggle.has-avatar {
+    padding: 0;
+    gap: 0;
+  }  
+}
