@@ -240,6 +240,7 @@
               <th style="width: 40px; text-align: center;">
                 <input type="checkbox" id="select-all-subs" style="accent-color: var(--dw-blue-bright); width: 16px; height: 16px; cursor: pointer;">
               </th>
+              <th>Avatar</th> 
               <th>Nome</th>
               <th>Email</th>
               <th>Data Registo</th>
@@ -256,6 +257,15 @@
               <tr>
                 <td style="text-align: center;">
                   <input type="checkbox" class="sub-checkbox" value="{{ sub.id }}" style="accent-color: var(--dw-blue-bright); width: 16px; height: 16px; cursor: pointer;">
+                </td>
+                <td class="admin-cell-photo">
+                  {% if sub.picture_url %}
+                    <img src="{{ sub.picture_url }}" alt="Avatar" class="admin-avatar" referrerpolicy="no-referrer">
+                  {% else %}
+                    <div class="admin-avatar admin-avatar-empty">
+                      {{ sub.name[0]|upper if sub.name else '?' }}
+                    </div>
+                  {% endif %}
                 </td>
                 <td>{{ sub.name or '—' }}</td>
                 <td class="admin-cell-mono">{{ sub.email }}</td>

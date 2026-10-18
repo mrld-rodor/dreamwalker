@@ -58,6 +58,20 @@
         <li><a href="/#doacao" class="nav-link">Apoiar</a></li>
         <li><a href="/#contacto" class="nav-link">Contacto</a></li>
         <li><a href="/#contos"   class="btn-primary nav-cta">COMPRAR</a></li>
+        {% if session.get('subscriber_id') %}
+          <li class="flex items-center gap-3">
+            <a href="{{ url_for('auth_logout') }}" class="nav-logout">SAIR</a>
+            
+            <!-- Avatar do Utilizador -->
+            {% if current_subscriber %}
+              {% if current_subscriber.picture_url %}
+                <img src="{{ current_subscriber.picture_url }}" alt="Perfil" class="user-avatar" referrerpolicy="no-referrer">
+              {% else %}
+                <div class="user-avatar user-avatar-empty">{{ current_subscriber.name[0]|upper }}</div>
+              {% endif %}
+            {% endif %}
+          </li>
+        {% endif %}
       </ul>
 
       <!-- Hamburguer mobile -->
@@ -77,6 +91,20 @@
       <li><a href="/#doacao" class="nav-link">Apoiar</a></li>
       <li><a href="/#contacto" class="mobile-link">Contacto</a></li>
       <li><a href="/#contos"   class="btn-primary nav-cta">COMPRAR</a></li>
+      {% if session.get('subscriber_id') %}
+        <li class="flex flex-col items-center gap-2 mt-2 w-full border-t border-deep-30 pt-4">
+          <a href="{{ url_for('auth_logout') }}" class="mobile-link" style="color: #FF6B6B;">Sair</a>
+          
+          <!-- Avatar do Utilizador -->
+          {% if current_subscriber %}
+            {% if current_subscriber.picture_url %}
+              <img src="{{ current_subscriber.picture_url }}" alt="Perfil" class="user-avatar" referrerpolicy="no-referrer">
+            {% else %}
+              <div class="user-avatar user-avatar-empty">{{ current_subscriber.name[0]|upper }}</div>
+            {% endif %}
+          {% endif %}
+        </li>
+      {% endif %}
 
       <!-- Cubo giratório -->
       <li class="mt-12 mb-6">

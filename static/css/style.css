@@ -3625,3 +3625,129 @@ body.modal-open { overflow: hidden; }
   border-color: #FFC857;
   box-shadow: 0 0 10px rgba(255, 200, 87, 0.3);
 }
+
+/* ============================================================
+   BOTÃO SAIR (HEADER)
+============================================================ */
+.nav-logout {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: #FF6B6B;
+  text-decoration: none;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+  margin-left: 8px;
+}
+
+.nav-logout:hover {
+  color: #FF9B9B;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+/* ============================================================
+   INPUTS BLOQUEADOS (READONLY)
+============================================================ */
+.form-input.is-readonly {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: rgba(107, 104, 255, 0.2);
+  background: rgba(6, 3, 180, 0.05);
+}
+
+.form-input.is-readonly:focus {
+  box-shadow: none;
+  border-color: rgba(107, 104, 255, 0.2);
+}
+
+/* ============================================================
+   AVATAR DO UTILIZADOR (HEADER)
+============================================================ */
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(107, 104, 255, 0.4);
+  box-shadow: 0 0 10px rgba(58, 54, 255, 0.3);
+  transition: transform 0.25s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+.user-avatar-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 3, 180, 0.2);
+  color: var(--dw-white);
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 14px;
+  text-shadow: 0 0 6px rgba(139, 136, 255, 0.6);
+}
+
+/* ============================================================
+   AVATAR DO UTILIZADOR (HEADER)
+============================================================ */
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(107, 104, 255, 0.4);
+  box-shadow: 0 0 10px rgba(58, 54, 255, 0.3);
+  transition: transform 0.25s ease;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+.user-avatar-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 3, 180, 0.2);
+  color: var(--dw-white);
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 14px;
+  text-shadow: 0 0 6px rgba(139, 136, 255, 0.6);
+}
+
+/* ============================================================
+   AVATAR NA TABELA DO PAINEL ADMIN
+============================================================ */
+.admin-cell-photo {
+  width: 60px;
+  padding: 8px 16px !important;
+  text-align: center;
+}
+
+.admin-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(107, 104, 255, 0.4);
+  box-shadow: 0 0 8px rgba(58, 54, 255, 0.3);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.admin-avatar-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 3, 180, 0.3);
+  color: var(--dw-white);
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 14px;
+  text-shadow: 0 0 6px rgba(139, 136, 255, 0.6);
+}

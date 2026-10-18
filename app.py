@@ -45,6 +45,15 @@ login_manager.login_message = 'Precisas de fazer login para aceder ao painel.'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.context_processor
+def inject_current_subscriber():
+    # Se houver um subscriber na sessão, vai buscá-lo à base de dados
+    if session.get('subscriber_id'):
+        sub = Subscriber.query.get(session['subscriber_id'])
+        if sub and not sub.blocked:
+            return dict(current_subscriber=sub)
+    return dict(current_subscriber=None)
+
 # ============================================================
 # OAUTH — GOOGLE
 # ============================================================
@@ -106,7 +115,12 @@ def is_rate_limited(ip):
 # ============================================================
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # Procura o utilizador na base de dados se a sessão existir
+    subscriber = None
+    if session.get('subscriber_id'):
+        subscriber = Subscriber.query.get(session['subscriber_id'])
+        
+    return render_template("index.html", current_subscriber=subscriber)
 
 @app.route("/privacidade")
 def privacidade():

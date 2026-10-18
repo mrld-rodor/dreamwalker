@@ -265,24 +265,43 @@
   ============================================================ -->
   <section id="contacto" class="section-bg mt-12 py-16 sm:py-24 md:py-32 px-4 sm:px-6 border-t border-b border-deep-30">
     <div class="max-w-xl mx-auto">
-      <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-8 text-center" data-anime="down">CONTACTO</h2>
-      <p class="text-center text-2xl">.:.</p><br>
-      <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1" autocomplete="off">
+      <h2 class="section-title text-2xl sm:text-3xl md:text-4xl mb-4 text-center" data-anime="down">CONTACTO</h2>
+      
+      <!-- Aviso de sessão iniciada e botão de logout -->
+      {% if current_subscriber %}
+        <p class="text-center text-sm mb-8" style="color: var(--dw-gray);">
+          Sessão iniciada como <strong style="color: var(--dw-blue-bright);">{{ current_subscriber.name }}</strong>.
+          <a href="{{ url_for('auth_logout') }}" style="color: #FF6B6B; text-decoration: underline;">Terminar sessão</a>
+        </p>
+      {% else %}
+        <p class="text-center text-2xl">.:.</p><br>
+      {% endif %}
 
-        <!-- Honeypot: invisível para humanos, bots preenchem -->
+      <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1" autocomplete="off">
+        
+        <!-- Honeypot -->
         <input type="text" name="website" tabindex="-1" autocomplete="off"
               style="position:absolute; left:-9999px; opacity:0; pointer-events:none;"
               aria-hidden="true">
 
-        <!-- Timestamp de abertura do form -->
+        <!-- Timestamp -->
         <input type="hidden" name="form_start" id="form-start" value="">
 
-        <input type="text"  name="nome"  placeholder="Nome"  required
-              class="form-input w-full px-4 py-3 text-sm rounded-sm" required autocomplete="off">
+        <!-- Nome -->
+        <input type="text" name="nome" placeholder="Nome" required
+              value="{{ current_subscriber.name if current_subscriber else '' }}"
+              {% if current_subscriber %}readonly{% endif %}
+              class="form-input w-full px-4 py-3 text-sm rounded-sm {% if current_subscriber %}is-readonly{% endif %}" autocomplete="off">
+
+        <!-- Email -->
         <input type="email" name="email" placeholder="Email" required
-              class="form-input w-full px-4 py-3 text-sm rounded-sm" required autocomplete="off">
+              value="{{ current_subscriber.email if current_subscriber else '' }}"
+              {% if current_subscriber %}readonly{% endif %}
+              class="form-input w-full px-4 py-3 text-sm rounded-sm {% if current_subscriber %}is-readonly{% endif %}" autocomplete="off">
+
+        <!-- Mensagem -->
         <textarea name="mensagem" rows="5" placeholder="Mensagem" required
-                  class="form-input w-full px-4 py-3 text-sm rounded-sm resize-y" required autocomplete="off"></textarea>
+                  class="form-input w-full px-4 py-3 text-sm rounded-sm resize-y" autocomplete="off"></textarea>
 
         <div class="flex justify-center pt-2 contact-action">
           <button type="submit" class="btn-primary contact-btn font-orbitron">
@@ -290,7 +309,6 @@
           </button>
         </div>
 
-        <!-- Feedback para o utilizador -->
         <p id="contact-feedback" class="text-center text-sm mt-2" aria-live="polite"></p>
       </form>
     </div>
