@@ -339,10 +339,6 @@ def auth_google():
     consent = request.args.get('consent', '0') == '1'
     session['pending_consent'] = consent
     redirect_uri = url_for('auth_google_callback', _external=True)
-    print("=" * 50)
-    print(f"[DEBUG] GOOGLE_CLIENT_ID: '{os.getenv('GOOGLE_CLIENT_ID')}'")
-    print(f"[DEBUG] Redirect URI: {redirect_uri}")
-    print("=" * 50)
     return oauth.google.authorize_redirect(redirect_uri)
 
 @app.route('/auth/google/callback')
