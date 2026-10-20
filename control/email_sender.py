@@ -538,3 +538,63 @@ def send_login_email(email, name, login_url):
     except Exception as e:
         print(f"[ERROR] Login email: {e}")
         raise EmailDeliveryError("Erro ao enviar email de login.")
+
+def _build_reset_password_html(name, reset_url):
+    nome = escape(name) if name else 'sonhador'
+    return f"""
+<!DOCTYPE html>
+<html lang="pt">
+<body style="margin:0; padding:0; background-color:#000000; color:#FFFFFF; font-family:'Roboto Mono', monospace;">
+  <div style="background: radial-gradient(circle at top, #0a0a2e 0%, #000000 70%); padding: 32px 16px;">
+    <table role="presentation" width="100%" style="max-width: 620px; margin: 0 auto;">
+      <tr><td>
+        <div style="border: 1px solid rgba(107, 104, 255, 0.35); background: #0a0a14; border-radius: 12px; overflow: hidden; box-shadow: 0 0 40px rgba(58, 54, 255, 0.25);">
+          <div style="padding: 36px 28px; border-bottom: 1px solid rgba(6, 3, 180, 0.4); text-align: center;">
+            <h1 style="margin: 0; color: #FFFFFF; font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 0.2em;">
+              DREAMWALKER TALES
+            </h1>
+          </div>
+          <div style="padding: 36px 32px;">
+            <p style="color: #FFFFFF; font-size: 16px; font-family: 'Orbitron', sans-serif; margin: 0 0 16px;">
+              Olá, {nome}!
+            </p>
+            <p style="color: #D3D3D3; font-size: 14px; line-height: 1.8; margin: 0 0 24px;">
+              Recebemos um pedido para redefinir a password da tua conta no Dreamwalker Tales.
+            </p>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="{reset_url}" style="display: inline-block; padding: 16px 40px; background: #0603B4; color: #FFFFFF; text-decoration: none; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; border: 1px solid rgba(107, 104, 255, 0.5);">
+                Redefinir Password
+              </a>
+            </div>
+            <p style="color: #9CA3AF; font-size: 12px; margin: 24px 0 0;">
+              Este link expira em 1 hora. Se não pediste isto, ignora este email.
+            </p>
+          </div>
+        </div>
+      </td></tr>
+    </table>
+  </div>
+</body>
+</html>
+    """.strip()
+
+def send_reset_password_email(email, name, reset_url):
+    if not email_api_key or not email_sender:
+        raise EmailDeliveryError("Configuração de email incompleta.")
+    try:
+        response = requests.post(
+            email_api_url,
+            headers={'Authorization': f'Bearer {email_api_key}', 'Content-Type': 'application/json'},
+            json={
+                'from': email_sender, 'to': [email],
+                'subject': 'Redefinir a tua password — Dreamwalker Tales',
+                'html': _build_reset_password_html(name, reset_url),
+                'text': f"Olá {name}, redefine a tua password: {reset_url}",
+            },
+            timeout=email_api_timeout,
+        )
+        response.raise_for_status()
+        return 202
+    except Exception as e:
+        print(f"[ERROR] Reset email: {e}")
+        raise EmailDeliveryError("Erro ao enviar email de recuperação.")

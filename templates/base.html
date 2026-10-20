@@ -341,19 +341,26 @@
 
         <div class="subscribe-separator"><span>ou usa a tua password</span></div>
 
-        <form id="login-form" class="subscribe-form">
+        <!-- Formulário de Login Normal -->
+        <form id="login-form" class="subscribe-form" style="display: flex;">
           <input type="email" name="email" placeholder="O teu email" required class="form-input">
-          <div class="password-wrapper">
-            <input type="password" name="password" id="log-password" placeholder="A tua password" required class="form-input">
-            <button type="button" class="toggle-password" data-target="log-password" aria-label="Mostrar password">
-              <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              <svg class="eye-closed hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-            </button>
-          </div>          
+          <input type="password" name="password" placeholder="A tua password" required class="form-input">
           <button type="submit" class="btn-primary subscribe-btn">ENTRAR</button>
         </form>
-      </div>
 
+        <!-- Link para abrir a recuperação -->
+        <div id="forgot-password-container" style="text-align: center; margin-top: 15px; display: block;">
+          <a href="#" id="link-forgot-password" style="color: var(--dw-gray); font-size: 12px; text-decoration: underline;">Esqueceste-te da password?</a>
+        </div>
+
+        <!-- Formulário de Recuperação (Inicialmente invisível) -->
+        <form id="reset-request-form" class="subscribe-form" style="display: none; margin-top: 20px;">
+          <p class="subscribe-modal-text" style="margin-bottom: 10px;">Insere o teu email para receberes o link de recuperação.</p>
+          <input type="email" name="email" placeholder="O teu email" required class="form-input">
+          <button type="submit" class="btn-primary subscribe-btn">ENVIAR LINK</button>
+          <button type="button" id="btn-back-to-login" style="margin-top: 15px; background: transparent; border: none; color: var(--dw-blue-bright); cursor: pointer; font-size: 13px; text-decoration: underline;">Voltar ao Login</button>
+        </form>
+      </div>
     </div>
   </div>
 

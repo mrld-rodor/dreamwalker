@@ -92,6 +92,10 @@ class Subscriber(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     last_login = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    # Recuperação de password
+    reset_token = db.Column(db.String(64), nullable=True, index=True)
+    reset_token_exp = db.Column(db.DateTime, nullable=True)
+
     def __repr__(self):
         return f'<Subscriber {self.email} via {self.subscribed_via}>'
 

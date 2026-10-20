@@ -15,7 +15,7 @@ from control.models import User, Visit, DonationClick, Subscriber
 from control.email_sender import (
     Contato, EmailDeliveryError, EmailNetworkError, 
     send_email, send_verification_email, send_welcome_email,
-    send_campaign_email, send_login_email
+    send_campaign_email, send_login_email, send_reset_password_email,
 )
 
 app = Flask(
@@ -162,6 +162,62 @@ def donation_click():
     db.session.add(DonationClick(ip_address=ip, city=city, country=country))
     db.session.commit()
     return jsonify({'status': 'ok'}), 200
+
+
+@app.route('/api/request-password-reset', methods=['POST'])
+def request_password_reset():
+    email = (request.form.get('email') or '').strip().lower()
+    sub = Subscriber.query.filter_by(email=email).first()
+
+    if sub and not sub.blocked:
+        token = uuid.uuid4().hex
+        sub.reset_token = token
+        sub.reset_token_exp = datetime.utcnow() + timedelta(hours=1) # Expira em 1 hora
+        db.session.commit()
+
+        reset_url = url_for('reset_password_page', token=token, _external=True)
+        try:
+            send_reset_password_email(sub.email, sub.name, reset_url)
+        except Exception as e:
+            print(f"[ERROR] Falha ao enviar reset: {e}")
+
+    # Por segurança, respondemos sempre com sucesso, mesmo se o email não existir
+    return jsonify({'success': True, 'message': 'Se o email existir, receberás um link em breve.'})
+
+
+@app.route('/auth/reset-password/<token>')
+def reset_password_page(token):
+    sub = Subscriber.query.filter_by(reset_token=token).first()
+    
+    # Verifica se o token existe e se não expirou
+    if not sub or not sub.reset_token_exp or sub.reset_token_exp < datetime.utcnow():
+        flash('Link inválido ou expirado. Tenta novamente.', 'error')
+        return redirect(url_for('index'))
+
+    return render_template('reset_password.html', token=token)
+
+
+@app.route('/api/reset-password', methods=['POST'])
+def api_reset_password():
+    token = request.form.get('token')
+    password = request.form.get('password')
+
+    sub = Subscriber.query.filter_by(reset_token=token).first()
+
+    if not sub or not sub.reset_token_exp or sub.reset_token_exp < datetime.utcnow():
+        return jsonify({'success': False, 'message': 'Link inválido ou expirado.'}), 400
+
+    if not password or len(password) < 6:
+        return jsonify({'success': False, 'message': 'A password deve ter pelo menos 6 caracteres.'}), 400
+
+    sub.set_password(password)
+    sub.reset_token = None       # Invalida o token (uso único)
+    sub.reset_token_exp = None
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': 'Password alterada com sucesso! Já podes fazer login.'})
+
+
 
 # ============================================================
 # AUTENTICAÇÃO E SUBSCRIÇÃO

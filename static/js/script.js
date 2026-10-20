@@ -856,6 +856,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+    
+    // Lógica de Recuperação de Password
+    const linkForgot = document.getElementById('link-forgot-password');
+    const resetForm = document.getElementById('reset-request-form');
+    const loginFormElement = document.getElementById('login-form');
+    const forgotContainer = document.getElementById('forgot-password-container');
+    const btnBack = document.getElementById('btn-back-to-login');
+
+    if (linkForgot && resetForm && loginFormElement) {
+      
+      // Clicou em "Esqueceste-te da password?"
+      linkForgot.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginFormElement.style.display = 'none';
+        forgotContainer.style.display = 'none';
+        resetForm.style.display = 'flex'; 
+      });
+
+      // Clicou em "Voltar ao Login"
+      btnBack.addEventListener('click', () => {
+        resetForm.style.display = 'none';
+        loginFormElement.style.display = 'flex';
+        forgotContainer.style.display = 'block';
+      });
+
+      // Submissão do formulário de recuperação
+      resetForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = resetForm.querySelector('button[type="submit"]');
+        const originalText = btn.textContent;
+        btn.disabled = true; 
+        btn.textContent = 'A ENVIAR...';
+
+        try {
+          const res = await fetch('/api/request-password-reset', { method: 'POST', body: new FormData(resetForm) });
+          const data = await res.json();
+          
+          if (data.success) {
+            showFlash('success', data.message);
+            resetForm.reset();
+            btnBack.click(); // Volta ao login
+          } else {
+            showFlash('error', data.message);
+          }
+        } catch (err) {
+          showFlash('error', 'Erro de rede.');
+        } finally {
+          btn.disabled = false; 
+          btn.textContent = originalText;
+        }
+      });
+    }
   }
 
     // ============================================================
