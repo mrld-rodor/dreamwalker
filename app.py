@@ -175,6 +175,7 @@ def api_subscribe():
     name = (request.form.get('name') or '').strip()
     email = (request.form.get('email') or '').strip().lower()
     consent = request.form.get('consent') in ['1', 'true', 'on', 'yes']
+    password = request.form.get('password', '')
 
     if not name or not email or not consent:
         return jsonify({'success': False, 'message': 'Preenche todos os campos e aceita os termos.'}), 400
@@ -245,6 +246,10 @@ def api_subscribe():
         email_verified=False, verification_token=token, 
         verification_sent_at=datetime.utcnow(),
     )
+
+    if password:
+        new_sub.set_password(password)
+
     db.session.add(new_sub)
     db.session.commit()
 
@@ -579,6 +584,29 @@ def admin_send_email():
         'success': True, 
         'message': f'Enviados: {sucesso}. Falhas: {falha}.'
     })
+
+
+@app.route('/api/subscriber-login', methods=['POST'])
+def api_subscriber_login():
+    email = (request.form.get('email') or '').strip().lower()
+    password = request.form.get('password') or ''
+
+    sub = Subscriber.query.filter_by(email=email).first()
+
+    if not sub or not sub.password_hash or not sub.check_password(password):
+        return jsonify({'success': False, 'message': 'Email ou password inválidos.'}), 401
+
+    if sub.blocked:
+        return jsonify({'success': False, 'message': 'A tua conta está bloqueada.'}), 403
+
+    # Login com sucesso
+    session['subscriber_id'] = sub.id
+    session.permanent = True
+    sub.last_login = datetime.utcnow()
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': f'Bem-vindo de volta, {sub.name.split()[0]}!'})
+
 
 # ============================================================
 # ERRO 404

@@ -58,6 +58,7 @@ class Subscriber(db.Model):
 
     # Origem do registo: "google" ou "email"
     subscribed_via = db.Column(db.String(20), default='google', nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)
 
     # Dados do Google (nullable para registos por email)
     google_id = db.Column(db.String(120), unique=True, nullable=True, index=True)
@@ -93,3 +94,9 @@ class Subscriber(db.Model):
 
     def __repr__(self):
         return f'<Subscriber {self.email} via {self.subscribed_via}>'
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)

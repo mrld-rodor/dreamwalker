@@ -762,4 +762,131 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 6000);
   }
 
+
+  // ============================================================
+  // LÓGICA DO MODAL DE REGISTO / LOGIN (ABAS)
+  // ============================================================  
+  const tabBtnRegister = document.getElementById('tab-btn-register');
+  const tabBtnLogin = document.getElementById('tab-btn-login');
+  const tabContentRegister = document.getElementById('tab-content-register');
+  const tabContentLogin = document.getElementById('tab-content-login');
+
+  if (subscribeModal) {
+    // Lógica para trocar de aba
+    if (tabBtnRegister && tabBtnLogin) {
+      tabBtnRegister.addEventListener('click', () => {
+        tabBtnRegister.classList.add('active');
+        tabBtnLogin.classList.remove('active');
+        tabContentRegister.classList.remove('hidden');
+        tabContentLogin.classList.add('hidden');
+      });
+
+      tabBtnLogin.addEventListener('click', () => {
+        tabBtnLogin.classList.add('active');
+        tabBtnRegister.classList.remove('active');
+        tabContentLogin.classList.remove('hidden');
+        tabContentRegister.classList.add('hidden');
+      });
+    }
+
+    // Fechar modal
+    subscribeModal.querySelectorAll('[data-close-subscribe]').forEach(el => {
+      el.addEventListener('click', () => {
+        subscribeModal.classList.remove('is-open');
+        document.body.classList.remove('modal-open');
+      });
+    });
+
+    // Submissão do Formulário de Registo
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+      registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = registerForm.querySelector('button[type="submit"]');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'A CRIAR...';
+
+        try {
+          const res = await fetch('/api/subscribe', { method: 'POST', body: new FormData(registerForm) });
+          const data = await res.json();
+          
+          if (data.success) {
+            subscribeModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+            showFlash('success', data.message);
+            registerForm.reset();
+          } else {
+            showFlash('error', data.message);
+          }
+        } catch (err) {
+          showFlash('error', 'Erro de rede.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    }
+
+    // Submissão do Formulário de Login
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = loginForm.querySelector('button[type="submit"]');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'A ENTRAR...';
+
+        try {
+          const res = await fetch('/api/subscriber-login', { method: 'POST', body: new FormData(loginForm) });
+          const data = await res.json();
+          
+          if (data.success) {
+            showFlash('success', data.message);
+            setTimeout(() => window.location.reload(), 1000); // Recarrega para atualizar o avatar
+          } else {
+            showFlash('error', data.message);
+          }
+        } catch (err) {
+          showFlash('error', 'Erro de rede.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    }
+  }
+
+    // ============================================================
+  // MOSTRAR/ESCONDER PASSWORD (OLHO)
+  // ============================================================
+  const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+
+  togglePasswordButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // Vai buscar o input através do ID que está no data-target
+      const targetId = this.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      
+      // Vai buscar os dois ícones dentro do botão
+      const eyeOpen = this.querySelector('.eye-open');
+      const eyeClosed = this.querySelector('.eye-closed');
+
+      if (input.type === 'password') {
+        // Muda para texto visível
+        input.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+        this.setAttribute('aria-label', 'Esconder password');
+      } else {
+        // Muda para password escondida
+        input.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+        this.setAttribute('aria-label', 'Mostrar password');
+      }
+    });
+  });
+
 });

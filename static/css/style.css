@@ -3821,3 +3821,74 @@ body.modal-open { overflow: hidden; }
     gap: 0;
   }  
 }
+
+/* Abas do Modal de Registo/Login */
+.subscribe-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(107, 104, 255, 0.2);
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dw-gray);
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--dw-white);
+}
+
+.tab-btn.active {
+  color: var(--dw-blue-bright);
+  border-bottom-color: var(--dw-blue-bright);
+  text-shadow: 0 0 10px rgba(107, 104, 255, 0.4);
+}
+
+/* ============================================================
+   OLHO DA PASSWORD (MOSTRAR/ESCONDER)
+============================================================ */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper .form-input {
+  padding-right: 40px; /* Dá espaço para o olho não ficar por cima do texto */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--dw-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.25s ease;
+}
+
+.toggle-password:hover {
+  color: var(--dw-white);
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+}
