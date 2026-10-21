@@ -143,6 +143,7 @@
                 <th>Cidade</th>
                 <th>IP</th>
                 <th>Página</th>
+                <th>SO / Navegador</th> 
               </tr>
             </thead>
             <tbody>
@@ -153,6 +154,7 @@
                   <td>{{ visit.city or '—' }}</td>
                   <td class="admin-cell-mono">{{ visit.ip_address or '—' }}</td>
                   <td class="admin-cell-mono">{{ visit.path }}</td>
+                  <td class="admin-cell-mono">{{ visit.os_name or '—' }} / {{ visit.browser_name or '—' }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -224,9 +226,13 @@
                   <span class="admin-visitor-city">{{ visit.city or '—' }}</span>
                   <span class="admin-visitor-date">{{ visit.timestamp.strftime('%d/%m %H:%M') }}</span>
                 </div>
-                <div class="admin-visitor-item-bottom">
+                                <div class="admin-visitor-item-bottom">
                   <span class="admin-visitor-ip">{{ visit.ip_address or '—' }}</span>
                   <span class="admin-visitor-country">{{ visit.country or '—' }}</span>
+                </div>
+                <!-- NOVO: SO e Navegador -->
+                <div style="font-size: 10px; color: var(--dw-gray); margin-top: 4px; text-align: left;">
+                  💻 {{ visit.os_name or '—' }} · 🌐 {{ visit.browser_name or '—' }}
                 </div>
               </div>
             {% endfor %}

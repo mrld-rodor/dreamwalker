@@ -4,6 +4,7 @@ import time
 from collections import defaultdict
 from datetime import datetime, timedelta
 from urllib.parse import unquote
+from user_agents import parse
 
 from flask import Flask, flash, render_template, request, jsonify, redirect, url_for, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -92,9 +93,19 @@ def log_visit():
         country = request.headers.get('X-Vercel-IP-Country')
         if city: city = unquote(city)
         if country: country = unquote(country)
-        user_agent = request.headers.get('User-Agent', '')[:500]
+        
+        ua_string = request.headers.get('User-Agent', '')
+        ua = parse(ua_string) # 👈 Extrai os dados
 
-        new_visit = Visit(ip_address=ip, city=city, country=country, path=request.path, user_agent=user_agent)
+        new_visit = Visit(
+            ip_address=ip, 
+            city=city, 
+            country=country, 
+            path=request.path, 
+            user_agent=ua_string[:500],
+            os_name=ua.os.family,          
+            browser_name=ua.browser.family  
+        )
         db.session.add(new_visit)
         db.session.commit()
 

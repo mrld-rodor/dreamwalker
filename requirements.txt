@@ -16,8 +16,12 @@ MarkupSafe==3.0.3
 psycopg2-binary==2.9.13
 pycparser==3.11
 python-dotenv==1.2.3
+PyYAML==6.0.3
 requests==2.34.2
 SQLAlchemy==2.1.4
 typing_extensions==4.16.0
+ua-parser==1.0.2
+ua-parser-builtins==202610
 urllib3==2.8.0
+user-agents==2.2.0
 Werkzeug==3.1.8

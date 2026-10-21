@@ -33,6 +33,8 @@ class Visit(db.Model):
     country = db.Column(db.String(100), nullable=True)
     path = db.Column(db.String(255), nullable=True)
     user_agent = db.Column(db.String(500), nullable=True)
+    os_name = db.Column(db.String(50), nullable=True)       
+    browser_name = db.Column(db.String(50), nullable=True)
 
     def __repr__(self):
         return f'<Visit {self.timestamp} {self.city}/{self.country}>'
