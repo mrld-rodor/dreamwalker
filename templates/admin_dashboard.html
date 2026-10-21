@@ -9,6 +9,11 @@
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon/favicon-96x96.png') }}" sizes="96x96" />
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Plugin para mostrar as percentagens -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+  
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -208,6 +213,44 @@
 
 
   <!-- ============================================================
+       NOVA SECÇÃO: GRÁFICOS (CHART.JS)
+  ============================================================ -->
+  <div class="admin-charts-grid">
+    <!-- 1. Linha do Tempo (Ocupa 2 colunas em desktop) -->
+    <div class="admin-chart-card" style="grid-column: 1 / -1;">
+      <h3 class="admin-top-title">Tráfego e Engajamento (7 dias)</h3>
+      <div style="position: relative; height: 300px; width: 100%;">
+        <canvas id="timelineChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 2. Funil de Conversão -->
+    <div class="admin-chart-card">
+      <h3 class="admin-top-title">Funil de Conversão</h3>
+      <div style="position: relative; height: 300px; width: 100%;">
+        <canvas id="funnelChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 3. Top Países -->
+    <div class="admin-chart-card">
+      <h3 class="admin-top-title">Top Países</h3>
+      <div style="position: relative; height: 300px; width: 100%; display: flex; justify-content: center;">
+        <canvas id="countryChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 4. Interação por Conto (Ocupa 2 colunas em desktop) -->
+    <div class="admin-chart-card" style="grid-column: 1 / -1;">
+      <h3 class="admin-top-title">Interação por Conto (Views vs Compras)</h3>
+      <div style="position: relative; height: 350px; width: 100%;">
+        <canvas id="storyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
        TABELA DE SUBSCRITORES E ENVIO DE EMAILS
   ============================================================ -->
   <div class="admin-section" style="margin-top: 48px;">
@@ -374,6 +417,18 @@
 </div>
 
 <script>
+  // 1. O Flask injeta os dados como strings JSON
+  const chartData = {
+  dates: JSON.parse('{{ chart_dates | tojson | safe }}'),
+  visits: JSON.parse('{{ chart_visits | tojson | safe }}'),
+  donations: JSON.parse('{{ chart_donations | tojson | safe }}'),
+  funnel: JSON.parse('{{ funnel_data | tojson | safe }}'),
+  countryLabels: JSON.parse('{{ country_labels | tojson | safe }}'),
+  countryData: JSON.parse('{{ country_data | tojson | safe }}'),
+  storyLabels: JSON.parse('{{ story_labels | tojson | safe }}'),
+  storyViews: JSON.parse('{{ story_views | tojson | safe }}'),
+  storyBuys: JSON.parse('{{ story_buy_clicks | tojson | safe }}')
+  };
   // ============================================================
   // AUXILIARES DE ALERTA E CONFIRMAÇÃO
   // ============================================================
@@ -584,6 +639,125 @@
     document.querySelectorAll('.admin-action-btn.delete').forEach(btn => {
       btn.addEventListener('click', () => deleteSubscriber(btn.dataset.id));
     });
+
+        // ============================================================
+    // INICIALIZAÇÃO DOS GRÁFICOS (CHART.JS)
+    // ============================================================
+    
+    // 👇 REGISTAR O PLUGIN DE DADOS (OBRIGATÓRIO) 👇
+    Chart.register(ChartDataLabels);
+
+    const blueBright = '#6B68FF';
+    const blueDeep = '#0603B4';
+    const yellow = '#FFC857';
+    const gray = '#9CA3AF';
+
+    Chart.defaults.color = gray;
+    Chart.defaults.font.family = "'Roboto Mono', monospace";
+
+    // 1. Linha do Tempo (Mantém-se igual, mas desativamos o datalabels para não poluir)
+    const timelineCtx = document.getElementById('timelineChart');
+    if (timelineCtx) {
+      new Chart(timelineCtx, {
+        type: 'line',
+        data: {
+          labels: chartData.dates,
+          datasets: [
+            { label: 'Visitas', data: chartData.visits, borderColor: blueBright, backgroundColor: 'rgba(107, 104, 255, 0.1)', fill: true, tension: 0.4 },
+            { label: 'Cliques Doação', data: chartData.donations, borderColor: yellow, borderDash: [5, 5], tension: 0.4 }
+          ]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: { datalabels: { display: false } } // Desliga os números na linha
+        }
+      });
+    }
+
+    // 2. Funil (Mantém-se igual)
+    const funnelCtx = document.getElementById('funnelChart');
+    if (funnelCtx) {
+      new Chart(funnelCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Visitas', 'Ver Detalhes', 'Cliques Compra', 'Compras'],
+          datasets: [{
+            data: chartData.funnel,
+            backgroundColor: [blueDeep, blueBright, yellow, '#00C853'],
+            borderRadius: 4
+          }]
+        },
+        options: { 
+          indexAxis: 'y', 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          plugins: { 
+            legend: { display: false },
+            datalabels: { display: false } // Desliga os números nas barras
+          } 
+        }
+      });
+    }
+
+    // 👇 3. Países (PIZZA/DOUGHNUT) - AQUI ADICIONAMOS AS PERCENTAGENS 👇
+    const countryCtx = document.getElementById('countryChart');
+    if (countryCtx) {
+      new Chart(countryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: chartData.countryLabels,
+          datasets: [{
+            data: chartData.countryData,
+            backgroundColor: ['#3A36FF', '#6B68FF', '#8B88FF', '#0603B4', '#1E1B8E', '#4A4A4A'],
+            borderWidth: 0
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          cutout: '65%',
+          plugins: {
+            // Configuração do Plugin de Percentagens
+            datalabels: {
+              color: '#FFFFFF', // Cor do texto
+              font: {
+                weight: 'bold',
+                size: 13
+              },
+              formatter: (value, ctx) => {
+                let sum = 0;
+                let dataArr = ctx.chart.data.datasets[0].data;
+                dataArr.map(data => { sum += data; });
+                if (sum === 0) return ''; // Se não houver dados, não mostra nada
+                let percentage = (value * 100 / sum).toFixed(1) + "%";
+                return percentage;
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 4. Contos (Barras Agrupadas - Mantém-se igual)
+    const storyCtx = document.getElementById('storyChart');
+    if (storyCtx) {
+      new Chart(storyCtx, {
+        type: 'bar',
+        data: {
+          labels: chartData.storyLabels,
+          datasets: [
+            { label: 'Visualizações', data: chartData.storyViews, backgroundColor: blueDeep },
+            { label: 'Cliques em Comprar', data: chartData.storyBuys, backgroundColor: yellow }
+          ]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: { datalabels: { display: false } } // Desliga os números nas barras
+        }
+      });
+    }
   });
 </script>
 </body>

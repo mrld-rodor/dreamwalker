@@ -104,3 +104,16 @@ class Subscriber(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class StoryEvent(db.Model):
+    __tablename__ = 'story_events'
+
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    story_id = db.Column(db.String(10), nullable=False) # Ex: "01", "02"
+    action = db.Column(db.String(20), nullable=False)   # "view" ou "buy_click"
+    country = db.Column(db.String(100), nullable=True)
+
+    def __repr__(self):
+        return f'<StoryEvent {self.story_id} - {self.action}>'

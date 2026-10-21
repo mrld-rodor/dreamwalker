@@ -3892,3 +3892,40 @@ body.modal-open { overflow: hidden; }
   width: 18px;
   height: 18px;
 }
+
+
+/* ============================================================
+   PAINEL ADMIN — GRÁFICOS E CARDS
+============================================================ */
+
+/* Grelha que organiza os gráficos */
+.admin-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 coluna no mobile */
+  gap: 24px;                  /* Espaço entre os gráficos */
+  margin-top: 48px;           /* 👈 DISTÂNCIA DO TOPO (O que pediste) */
+  margin-bottom: 48px;
+}
+
+/* No desktop, os gráficos ficam lado a lado */
+@media (min-width: 1024px) {
+  .admin-charts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* O cartão que envolve cada gráfico (com o mesmo efeito dos outros cards) */
+.admin-chart-card {
+  background: rgba(6, 3, 180, 0.06);
+  border: 1px solid rgba(107, 104, 255, 0.25);
+  border-radius: 12px;
+  padding: 24px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.admin-chart-card:hover {
+  border-color: rgba(107, 104, 255, 0.5);
+  box-shadow: 0 0 20px rgba(58, 54, 255, 0.2);
+}

@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================================
   // LINKS INTERNOS — esconder header ao navegar (só mobile)
   // ============================================================
-  // Apanha links que apontam para âncoras: "#...", "/#...", ou "/"
   const internalLinks = document.querySelectorAll('a[href^="#"], a[href^="/#"], a[href="/"]');
 
   internalLinks.forEach(link => {
@@ -95,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleScroll() {
     const currentY = window.pageYOffset;
 
-    // Desktop → header sempre visível
     if (!isMobile()) {
       header.classList.remove('is-hidden');
       lastScrollY = currentY;
@@ -103,12 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Perto do topo → sempre visível
     if (currentY < SHOW_AT_TOP) {
       header.classList.remove('is-hidden');
       suppressHeaderReveal = false;
     }
-    // A descer → esconde
     else if (currentY > lastScrollY) {
       header.classList.add('is-hidden');
       if (menu && !menu.classList.contains('hidden')) {
@@ -117,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (toggle) toggle.classList.remove('open');
       }
     }
-    // A subir → mostra, MAS só se não estiver bloqueado
     else if (currentY < lastScrollY && !suppressHeaderReveal) {
       header.classList.remove('is-hidden');
     }
@@ -268,6 +263,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (closeBtn) closeBtn.focus();
 
       if (window.__carouselStopAutoplay) window.__carouselStopAutoplay();
+
+      fetch('/api/track-story-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ story_id: num, action: 'view' })
+      }).catch(console.warn);
     }
 
     function closeModal() {
@@ -296,6 +297,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'hotmart',
             url: modalBuy.href
           });
+        } else {
+          // 👇 PONTO 1.4: RASTREAR CLIQUE EM COMPRAR (BUY CLICK) 👇
+          fetch('/api/track-story-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ story_id: modalNumber.textContent, action: 'buy_click' })
+          }).catch(console.warn);
         }
       });
     }
@@ -311,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-    // ============================================================
+  // ============================================================
   // FLASH MESSAGES — auto-fade
   // ============================================================
   const flashMessages = document.querySelectorAll('.flash-message');
@@ -361,31 +369,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let autoCloseTimer = null;
 
-    // ------------------------------------------------------------
-    // Limpa o formulário completamente
-    // ------------------------------------------------------------
     function clearForm() {
-      // Não usamos o contactForm.reset() para não apagar os campos já preenchidos
-      
       contactForm.querySelectorAll('input:not([type="hidden"]), textarea').forEach(field => {
-        // Se não for o honeypot E não for um campo bloqueado, limpa
         if (field.name !== 'website' && !field.hasAttribute('readonly')) {
           field.value = '';
         }
       });
-      
       if (formStart) formStart.value = (Date.now() / 1000).toString();
     }
 
-    // Limpa ao carregar a página (evita cache do browser)
     clearForm();
-
-    // Limpa também quando a página volta do bfcache (botão "atrás")
     window.addEventListener('pageshow', clearForm);
 
-    // ------------------------------------------------------------
-    // Modal de feedback
-    // ------------------------------------------------------------
     function openFeedback(type, message) {
       if (!feedbackModal) return;
 
@@ -400,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'Ops, algo falhou';
       feedbackMsg.textContent = message || '';
 
-      // Reinicia a animação da barra de countdown
       const bar = feedbackModal.querySelector('.feedback-timer-bar');
       if (bar) {
         bar.style.animation = 'none';
@@ -408,7 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bar.style.animation = '';
       }
 
-      // Auto-fecha em 5 segundos
       clearTimeout(autoCloseTimer);
       autoCloseTimer = setTimeout(closeFeedback, 5000);
     }
@@ -430,15 +423,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // ------------------------------------------------------------
-    // Submissão do formulário
-    // ------------------------------------------------------------
     contactForm.addEventListener('submit', async (e) => {
-      // Bloqueia se não estiver autenticado
       if (!isSubscriberLoggedIn()) {
         e.preventDefault();
-
-        // Guarda os dados do formulário para retomar depois do login
         const formData = new FormData(contactForm);
         const data = {};
         formData.forEach((v, k) => {
@@ -449,7 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // A partir daqui, é o comportamento normal (utilizador autenticado)
       e.preventDefault();
 
       const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -462,12 +448,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const formData = new FormData(contactForm);
-
         const response = await fetch('/enviar-contato', {
           method: 'POST',
           body: formData,
         });
-
         const data = await response.json();
 
         if (data.success) {
@@ -495,14 +479,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   donationButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      // Se não está autenticado, abre o modal de login
       if (!isSubscriberLoggedIn()) {
         e.preventDefault();
         openLoginModal({ type: 'donation' });
         return;
       }
 
-      // Autenticado → deixa clicar normalmente + tracking
       fetch('/api/donation-click', { method: 'POST', keepalive: true })
         .catch(err => console.warn('[donation-click] falhou:', err));
     });
@@ -513,7 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Retomar ação após login
   // ------------------------------------------------------------
   function showContinueToast(message) {
-    // Remove se já existir
     const existing = document.querySelector('.pending-action-toast');
     if (existing) existing.remove();
 
@@ -522,7 +503,6 @@ document.addEventListener('DOMContentLoaded', () => {
     toast.textContent = message;
     document.body.appendChild(toast);
 
-    // Auto-remove após 8 segundos
     setTimeout(() => {
       toast.classList.add('is-hiding');
       setTimeout(() => toast.remove(), 400);
@@ -545,18 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const pending = JSON.parse(pendingRaw);
 
         setTimeout(() => {
-
-          // // ---- DOAÇÃO ----
-          // if (pending.type === 'donation') {
-          //   const btn = document.querySelector('.donation-btn');
-          //   if (btn) {
-          //     btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          //     highlightPendingButton(btn);
-          //     showContinueToast('Sessão iniciada! Clica novamente para continuar.');
-          //   }
-          // }
-
-          // ---- HOTMART ----
           if (pending.type === 'hotmart') {
             const btn = document.querySelector('.btn-primary.conto-modal-btn')
                      || document.getElementById('modal-buy');
@@ -566,8 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
               showContinueToast('Sessão iniciada! Clica novamente para comprar.');
             }
           }
-
-          // ---- CONTACTO ----
           else if (pending.type === 'contact') {
             const form = document.getElementById('contact-form');
             if (form && pending.formData) {
@@ -594,9 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
               }
             }
           }
-
         }, 400);
-
       } catch (err) {
         console.warn('[login-resume] falhou:', err);
       }
@@ -608,7 +572,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================================
   const subscribeFab       = document.getElementById('subscribe-fab');
   const subscribeModal     = document.getElementById('subscribe-modal');
-  const subscribeForm      = document.getElementById('subscribe-form');
 
   function openSubscribeModal() {
     if (!subscribeModal) return;
@@ -625,7 +588,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (subscribeFab && subscribeModal) {
-    // 1. Tentar restaurar a posição (se existir e for válida)
     const storedX = localStorage.getItem('fab_x');
     const storedY = localStorage.getItem('fab_y');
 
@@ -633,7 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const px = parseFloat(storedX);
       const py = parseFloat(storedY);
       
-      // Só aplica se os valores forem reais (não NaN) e estiverem dentro do ecrã
       if (!isNaN(px) && !isNaN(py) && px > 0 && py > 0 && px < window.innerWidth && py < window.innerHeight) {
         subscribeFab.style.transform = `translate(${px}px, ${py}px)`;
         subscribeFab.style.bottom = 'auto';
@@ -644,21 +605,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 2. Lógica de Arrasto (Drag)
     let isDragging = false;
     let hasMoved = false;
     let startX, startY;
-    let startLeft, startTop; // Posição onde o dedo tocou
+    let startLeft, startTop;
 
     subscribeFab.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 && e.pointerType === 'mouse') return;
       
-      // Pega a posição exata do botão no ecrã naquele milissegundo
       const rect = subscribeFab.getBoundingClientRect();
       startLeft = rect.left;
       startTop = rect.top;
 
-      // Fixa o botão nessa posição para começar a arrastar
       subscribeFab.style.transform = `translate(${startLeft}px, ${startTop}px)`;
       subscribeFab.style.bottom = 'auto';
       subscribeFab.style.right = 'auto';
@@ -684,7 +642,6 @@ document.addEventListener('DOMContentLoaded', () => {
       let newX = startLeft + deltaX;
       let newY = startTop + deltaY;
 
-      // Limites (para não sair do ecrã)
       const maxX = window.innerWidth - subscribeFab.offsetWidth;
       const maxY = window.innerHeight - subscribeFab.offsetHeight;
 
@@ -699,18 +656,15 @@ document.addEventListener('DOMContentLoaded', () => {
       isDragging = false;
       subscribeFab.releasePointerCapture(e.pointerId);
 
-      // Guarda a posição final onde o utilizador soltou o dedo
       const finalRect = subscribeFab.getBoundingClientRect();
       localStorage.setItem('fab_x', finalRect.left);
       localStorage.setItem('fab_y', finalRect.top);
 
-      // Se foi apenas um clique (e não um arrasto), abre o modal
       if (!hasMoved) {
         openSubscribeModal();
       }
     });
 
-    // Impede a abertura do modal se foi um arrasto
     subscribeFab.addEventListener('click', (e) => {
       if (hasMoved) {
         e.preventDefault();
@@ -719,7 +673,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Resto dos eventos (modal)
     subscribeModal.querySelectorAll('[data-close-subscribe]').forEach(el => {
       el.addEventListener('click', closeSubscribeModal);
     });
@@ -736,7 +689,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function showFlash(type, message) {
     let container = document.getElementById('flash-container');
 
-    // Se não existir, cria
     if (!container) {
       container = document.createElement('div');
       container.id = 'flash-container';
@@ -755,7 +707,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.appendChild(flash);
 
-    // Auto-fade após 6 segundos
     setTimeout(() => {
       flash.classList.add('is-hiding');
       setTimeout(() => flash.remove(), 500);
@@ -772,7 +723,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabContentLogin = document.getElementById('tab-content-login');
 
   if (subscribeModal) {
-    // Lógica para trocar de aba
     if (tabBtnRegister && tabBtnLogin) {
       tabBtnRegister.addEventListener('click', () => {
         tabBtnRegister.classList.add('active');
@@ -789,7 +739,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Fechar modal
     subscribeModal.querySelectorAll('[data-close-subscribe]').forEach(el => {
       el.addEventListener('click', () => {
         subscribeModal.classList.remove('is-open');
@@ -797,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Submissão do Formulário de Registo
+    // Formulário de Registo
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
       registerForm.addEventListener('submit', async (e) => {
@@ -828,7 +777,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Submissão do Formulário de Login
+    // Formulário de Login
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
       loginForm.addEventListener('submit', async (e) => {
@@ -844,7 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           if (data.success) {
             showFlash('success', data.message);
-            setTimeout(() => window.location.reload(), 1000); // Recarrega para atualizar o avatar
+            setTimeout(() => window.location.reload(), 1000);
           } else {
             showFlash('error', data.message);
           }
@@ -857,7 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
     
-    // Lógica de Recuperação de Password
+    // Recuperação de Password
     const linkForgot = document.getElementById('link-forgot-password');
     const resetForm = document.getElementById('reset-request-form');
     const loginFormElement = document.getElementById('login-form');
@@ -865,8 +814,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnBack = document.getElementById('btn-back-to-login');
 
     if (linkForgot && resetForm && loginFormElement) {
-      
-      // Clicou em "Esqueceste-te da password?"
       linkForgot.addEventListener('click', (e) => {
         e.preventDefault();
         loginFormElement.style.display = 'none';
@@ -874,14 +821,12 @@ document.addEventListener('DOMContentLoaded', () => {
         resetForm.style.display = 'flex'; 
       });
 
-      // Clicou em "Voltar ao Login"
       btnBack.addEventListener('click', () => {
         resetForm.style.display = 'none';
         loginFormElement.style.display = 'flex';
         forgotContainer.style.display = 'block';
       });
 
-      // Submissão do formulário de recuperação
       resetForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = resetForm.querySelector('button[type="submit"]');
@@ -896,7 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (data.success) {
             showFlash('success', data.message);
             resetForm.reset();
-            btnBack.click(); // Volta ao login
+            btnBack.click();
           } else {
             showFlash('error', data.message);
           }
@@ -910,29 +855,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-    // ============================================================
+  // ============================================================
   // MOSTRAR/ESCONDER PASSWORD (OLHO)
   // ============================================================
   const togglePasswordButtons = document.querySelectorAll('.toggle-password');
 
   togglePasswordButtons.forEach(button => {
     button.addEventListener('click', function() {
-      // Vai buscar o input através do ID que está no data-target
       const targetId = this.getAttribute('data-target');
       const input = document.getElementById(targetId);
-      
-      // Vai buscar os dois ícones dentro do botão
       const eyeOpen = this.querySelector('.eye-open');
       const eyeClosed = this.querySelector('.eye-closed');
 
       if (input.type === 'password') {
-        // Muda para texto visível
         input.type = 'text';
         eyeOpen.classList.add('hidden');
         eyeClosed.classList.remove('hidden');
         this.setAttribute('aria-label', 'Esconder password');
       } else {
-        // Muda para password escondida
         input.type = 'password';
         eyeOpen.classList.remove('hidden');
         eyeClosed.classList.add('hidden');
