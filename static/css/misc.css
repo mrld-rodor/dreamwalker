@@ -1,0 +1,22 @@
+/* ============================================================
+   DREAMWALKER — PÁGINAS LEGAIS E 404
+============================================================ */
+
+/* PÁGINAS LEGAIS */
+.legal-heading { font-family: var(--font-orbitron); font-weight: 500; font-size: clamp(16px, 2vw, 18px); letter-spacing: 0.05em; color: var(--dw-white); margin-top: 32px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(107, 104, 255, 0.25); }
+.legal-list { list-style: none; padding-left: 0; margin: 12px 0; }
+.legal-list li { position: relative; padding-left: 20px; margin-bottom: 8px; line-height: 1.7; }
+.legal-list li::before { content: '▸'; position: absolute; left: 0; color: var(--dw-blue-bright); font-weight: 700; }
+.legal-content a { color: var(--dw-blue-bright); transition: color 0.25s ease; }
+.legal-content a:hover { color: var(--dw-white); }
+
+/* PÁGINA 404 */
+.site-body-404 { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: url('../img/background.png') center/cover no-repeat; color: var(--dw-white); font-family: var(--font-mono); padding: 24px; margin: 0; overflow: hidden; position: relative; }
+.site-body-404::before { content: ''; position: fixed; inset: 0; background: radial-gradient(circle at center, rgba(58, 54, 255, 0.15) 0%, rgba(0, 0, 0, 0) 60%); pointer-events: none; z-index: 0; }
+.error-404-main { position: relative; z-index: 1; max-width: 640px; width: 100%; margin: 0; text-align: center; }
+.error-404-code { font-family: var(--font-orbitron); font-weight: 900; font-size: clamp(80px, 18vw, 180px); line-height: 1; letter-spacing: 0.05em; color: var(--dw-gray-light); margin-bottom: 24px; text-shadow: 0 0 18px rgba(6, 3, 180, 0.4), 0 0 26px rgba(6, 3, 180, 0.3); }
+.error-404-actions { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
+@media (max-width: 480px) { .error-404-actions { flex-direction: column; align-items: stretch; } }
+.error-404-card { position: relative; max-width: 640px; width: 100%; margin: 0 auto 32px; padding: 48px 40px; text-align: center; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(107, 104, 255, 0.35); border-radius: 16px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 0 30px rgba(58, 54, 255, 0.2), inset 0 0 40px rgba(6, 3, 180, 0.1); transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+.error-404-card:hover { border-color: rgba(107, 104, 255, 0.55); box-shadow: 0 0 40px rgba(58, 54, 255, 0.3), inset 0 0 50px rgba(6, 3, 180, 0.15); }
+@media (max-width: 640px) { .error-404-card { padding: 32px 24px; margin-bottom: 24px; } }

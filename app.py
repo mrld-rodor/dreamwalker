@@ -550,88 +550,113 @@ def admin_dashboard():
     
     now = datetime.utcnow()
     today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    week = now - timedelta(days=7)
-    month = now - timedelta(days=30)
-    period = request.args.get('period', 'all')
 
-    # 1. Filtros de Visitas
-    q_visits = Visit.query
-    if period == 'today': q_visits = q_visits.filter(Visit.timestamp >= today)
-    elif period == 'week': q_visits = q_visits.filter(Visit.timestamp >= week)
-    elif period == 'month': q_visits = q_visits.filter(Visit.timestamp >= month)
+    # ─── Filtros de Mês e Ano ───
+    selected_month = request.args.get('month', now.month, type=int)
+    selected_year = request.args.get('year', now.year, type=int)
+    
+    start_date = datetime(selected_year, selected_month, 1)
+    if selected_month == 12:
+        end_date = datetime(selected_year + 1, 1, 1)
+    else:
+        end_date = datetime(selected_year, selected_month + 1, 1)
 
-    visits = q_visits.order_by(Visit.timestamp.desc()).limit(500).all()
+    month_names = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+    available_years = list(range(2026, now.year + 2)) 
+    if now.year < 2026: available_years = [2026]
 
-    # 2. Contadores Gerais
+    # ─── LÓGICA DE PAGINAÇÃO POR DIA ───
+    # 1. Descobrir quais foram os dias com visitas neste mês
+    visits_in_month = Visit.query.filter(Visit.timestamp >= start_date, Visit.timestamp < end_date).all()
+    # Cria uma lista de dias únicos formatados como "YYYY-MM-DD", ordenados do mais recente para o mais antigo
+    available_days = sorted(list(set([v.timestamp.strftime('%Y-%m-%d') for v in visits_in_month])), reverse=True)
+
+    # 2. Ver qual o dia selecionado (se nenhum, seleciona o primeiro dia disponível)
+    selected_day_str = request.args.get('day')
+    if not selected_day_str and available_days:
+        selected_day_str = available_days[0]
+
+    # 3. Vai buscar as visitas desse dia específico
+    visits_list = []
+    if selected_day_str:
+        day_start = datetime.strptime(selected_day_str, '%Y-%m-%d')
+        day_end = day_start + timedelta(days=1)
+        visits_list = Visit.query.filter(Visit.timestamp >= day_start, Visit.timestamp < day_end).order_by(Visit.timestamp.desc()).all()
+
+    # 4. Descobrir qual é o dia anterior e o próximo para a navegação
+    prev_day = None
+    next_day = None
+    if selected_day_str in available_days:
+        current_idx = available_days.index(selected_day_str)
+        if current_idx > 0:
+            prev_day = available_days[current_idx - 1] # Dia mais antigo
+        if current_idx < len(available_days) - 1:
+            next_day = available_days[current_idx + 1] # Dia mais recente
+
+    # --- Contadores e Gráficos (Mantêm-se iguais) ---
     counters = {
         'total': Visit.query.count(), 
         'today': Visit.query.filter(Visit.timestamp >= today).count(),
-        'week': Visit.query.filter(Visit.timestamp >= week).count(), 
-        'month': Visit.query.filter(Visit.timestamp >= month).count()
+        'week': Visit.query.filter(Visit.timestamp >= now - timedelta(days=7)).count(), 
+        'month': Visit.query.filter(Visit.timestamp >= now - timedelta(days=30)).count()
     }
     donation_counters = {
         'total': DonationClick.query.count(), 
         'today': DonationClick.query.filter(DonationClick.timestamp >= today).count(),
-        'week': DonationClick.query.filter(DonationClick.timestamp >= week).count(), 
-        'month': DonationClick.query.filter(DonationClick.timestamp >= month).count()
+        'week': DonationClick.query.filter(DonationClick.timestamp >= now - timedelta(days=7)).count(), 
+        'month': DonationClick.query.filter(DonationClick.timestamp >= now - timedelta(days=30)).count()
     }
 
-    # 3. Dados para os Gráficos (Últimos 7 dias)
     chart_dates, chart_visits, chart_donations = [], [], []
     for i in range(6, -1, -1):
         day = today - timedelta(days=i)
-        next_day = day + timedelta(days=1)
+        next_d = day + timedelta(days=1)
         chart_dates.append(day.strftime('%d/%m'))
-        chart_visits.append(Visit.query.filter(Visit.timestamp >= day, Visit.timestamp < next_day).count())
-        chart_donations.append(DonationClick.query.filter(DonationClick.timestamp >= day, DonationClick.timestamp < next_day).count())
+        chart_visits.append(Visit.query.filter(Visit.timestamp >= day, Visit.timestamp < next_d).count())
+        chart_donations.append(DonationClick.query.filter(DonationClick.timestamp >= day, DonationClick.timestamp < next_d).count())
 
-    # 4. Dados do Funil de Conversão
     total_visits = Visit.query.count()
     total_views = StoryEvent.query.filter_by(action='view').count()
     total_buy_clicks = StoryEvent.query.filter_by(action='buy_click').count()
-    total_purchases = 0 # Fica 0 até implementarmos a Hotmart
-    funnel_data = [total_visits, total_views, total_buy_clicks, total_purchases]
+    funnel_data = [total_visits, total_views, total_buy_clicks, 0]
 
-    # 5. Dados dos Países (Top 5 + Outros)
     all_countries = db.session.query(Visit.country, db.func.count(Visit.country)).filter(Visit.country.isnot(None)).group_by(Visit.country).order_by(db.func.count(Visit.country).desc()).all()
     top_5_countries = all_countries[:5]
     other_countries_count = sum([c[1] for c in all_countries[5:]])
-    
     country_labels = [c[0] for c in top_5_countries]
     country_data = [c[1] for c in top_5_countries]
     if other_countries_count > 0:
         country_labels.append('Outros')
         country_data.append(other_countries_count)
 
-    # 6. Dados por Conto
     story_stats = db.session.query(
         StoryEvent.story_id,
         db.func.sum(db.case((StoryEvent.action == 'view', 1), else_=0)).label('views'),
         db.func.sum(db.case((StoryEvent.action == 'buy_click', 1), else_=0)).label('buy_clicks')
     ).group_by(StoryEvent.story_id).all()
-
     story_labels = [f"Conto {s[0]}" for s in story_stats]
     story_views = [s[1] for s in story_stats]
     story_buy_clicks = [s[2] for s in story_stats]
 
-    # 7. Tops (Cidades e Países) para a tabela lateral
     top_cities = db.session.query(Visit.city, db.func.count(Visit.city)).filter(Visit.city.isnot(None)).group_by(Visit.city).order_by(db.func.count(Visit.city).desc()).limit(5).all()
     top_countries = db.session.query(Visit.country, db.func.count(Visit.country)).filter(Visit.country.isnot(None)).group_by(Visit.country).order_by(db.func.count(Visit.country).desc()).limit(5).all()
-
-    # 8. Subscritores
     subscribers = Subscriber.query.order_by(Subscriber.created_at.desc()).limit(100).all()
 
     return render_template('admin_dashboard.html',
-        visits=visits,
+        visits=visits_list,
+        selected_day=selected_day_str, 
+        prev_day=prev_day,             
+        next_day=next_day,             
         counters=counters,
         donation_counters=donation_counters,
         top_cities=top_cities,          
         top_countries=top_countries,    
-        current_period=period,
         current_user_name=current_user.username,
         subscribers=subscribers,
-        
-        # Dados dos gráficos
+        month_names=month_names,
+        selected_month=selected_month,
+        selected_year=selected_year,
+        available_years=available_years,
         chart_dates=chart_dates,
         chart_visits=chart_visits,
         chart_donations=chart_donations,

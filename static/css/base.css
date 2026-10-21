@@ -1,0 +1,82 @@
+/* ============================================================
+   DREAMWALKER — BASE (Fontes, Variáveis, Reset)
+============================================================ */
+
+/* ---------- FONTES ---------- */
+@font-face { font-family: 'Amatic SC'; src: url('../fonts/AmaticSC-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Orbitron'; src: url('../fonts/Orbitron-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Orbitron'; src: url('../fonts/Orbitron-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Orbitron'; src: url('../fonts/Orbitron-Black.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Roboto Mono'; src: url('../fonts/RobotoMono-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Roboto Mono'; src: url('../fonts/RobotoMono-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Roboto Mono'; src: url('../fonts/RobotoMono-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+
+/* ---------- VARIÁVEIS ---------- */
+:root {
+  --dw-black:        #000000;
+  --dw-blue-deep:    #0603B4;
+  --dw-blue:         #3A36FF;
+  --dw-blue-bright:  #6B68FF;
+  --dw-blue-glow:    #8B88FF;
+  --dw-white:        #FFFFFF;
+  --dw-gray:         #9CA3AF;
+  --dw-gray-light:   #D3D3D3;
+  --dw-red:          #BB0A1E;
+  --dw-section-bg:   rgba(0, 0, 0, 0.5);
+  
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-amatic:   'Amatic SC', cursive;
+  --font-mono:     'Roboto Mono', monospace;
+}
+
+/* ---------- BASE ---------- */
+html { scroll-behavior: smooth; }
+
+@media (min-width: 768px) {
+  #inicio, #projeto, #contos, #autor, #comprar, #doacao, #contacto {
+    scroll-margin-top: 70px;
+  }
+}
+
+body {
+  background: var(--dw-black);
+  color: var(--dw-white);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body > main { flex: 1; }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('../img/background.png');   
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  filter: brightness(0.55) saturate(1.1);
+}
+
+/* ---------- SCROLLBAR ---------- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--dw-black); }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--dw-blue), var(--dw-blue-deep)); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--dw-blue-bright), var(--dw-blue)); }
+
+/* ---------- TIPOGRAFIA ---------- */
+.hero-title { font-family: var(--font-orbitron); font-weight: 400; letter-spacing: 0.05em; line-height: 1.1; text-shadow: 0 0 8px rgba(6, 3, 180, 0.4), 0 0 16px rgba(6, 3, 180, 0.3); }
+.hero-slogan { font-family: var(--font-amatic); font-weight: 700; color: var(--dw-red); }
+.section-title { font-family: var(--font-orbitron); font-weight: 700; letter-spacing: 0.1em; }
+.cta-title { font-family: var(--font-amatic); font-weight: 700; color: var(--dw-blue-bright); text-shadow: 0 0 20px rgba(107, 104, 255, 0.5), 0 0 40px rgba(58, 54, 255, 0.3); }
+
+.body-text { color: var(--dw-gray); line-height: 1.8; text-align: left; }
+@media (min-width: 768px) { .body-text { text-align: justify; } }
+
+.span-text { font-family: var(--font-orbitron); font-weight: 500; color: var(--dw-white); letter-spacing: 0.05em; line-height: 1.1; text-shadow: 0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(139,136,255,0.9), 0 0 16px rgba(89,87,240,0.8), 0 0 28px rgba(58,54,255,0.6), 0 0 48px rgba(28,25,231,0.4); }
