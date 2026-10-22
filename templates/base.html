@@ -6,6 +6,7 @@
   <title>{% block title %}Dreamwalker Tales{% endblock %}</title>
   <meta name="description" content="{% block description %}Contos baseados em sonhos lúcidos reais. Histórias vividas, não imaginadas.{% endblock %}">
   <meta name="author" content="Amiraldo Rodrigues">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- Preload das fontes críticas -->
   <link rel="preload" href="{{ url_for('static', filename='fonts/Orbitron-Black.woff2') }}" as="font" type="font/woff2" crossorigin>
@@ -303,6 +304,7 @@
         <div class="subscribe-separator"><span>ou usa o teu email</span></div>
 
         <form id="register-form" class="subscribe-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="text" name="name" placeholder="O teu nome" required class="form-input">
           <input type="email" name="email" placeholder="O teu email" required class="form-input">
           <div class="password-wrapper">
@@ -343,6 +345,7 @@
 
         <!-- Formulário de Login Normal -->
         <form id="login-form" class="subscribe-form" style="display: flex;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="email" name="email" placeholder="O teu email" required class="form-input">
           <input type="password" name="password" placeholder="A tua password" required class="form-input">
           <button type="submit" class="btn-primary subscribe-btn">ENTRAR</button>
@@ -356,6 +359,7 @@
         <!-- Formulário de Recuperação (Inicialmente invisível) -->
         <form id="reset-request-form" class="subscribe-form" style="display: none; margin-top: 20px;">
           <p class="subscribe-modal-text" style="margin-bottom: 10px;">Insere o teu email para receberes o link de recuperação.</p>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="email" name="email" placeholder="O teu email" required class="form-input">
           <button type="submit" class="btn-primary subscribe-btn">ENVIAR LINK</button>
           <button type="button" id="btn-back-to-login" style="margin-top: 15px; background: transparent; border: none; color: var(--dw-blue-bright); cursor: pointer; font-size: 13px; text-decoration: underline;">Voltar ao Login</button>

@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 from urllib.parse import unquote
 from user_agents import parse
 
+from flask_wtf.csrf import CSRFProtect, CSRFError
+
 from flask import Flask, flash, render_template, request, jsonify, redirect, url_for, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -24,6 +26,12 @@ app = Flask(
     template_folder=str("templates"),
     static_folder=str("static"),
 )
+
+# ============================================================
+# PROTEÇÃO CSRF
+# ============================================================
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
@@ -162,9 +170,11 @@ def enviar_contato():
         send_email(Contato(nome, email, mensagem))
         return jsonify({'success': True, 'message': 'Mensagem enviada!'})
     except Exception as e:
-        return jsonify({'success': False, 'message': f'Erro ao enviar: {str(e)}'}), 500
+        print(f"[ERROR] Falha ao enviar contacto: {e}")
+        return jsonify({'success': False, 'message': 'Ocorreu um erro ao processar o teu pedido. Tenta novamente mais tarde.'}), 500
 
 @app.route('/api/donation-click', methods=['POST'])
+@csrf.exempt
 def donation_click():
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     city = unquote(request.headers.get('X-Vercel-IP-City')) if request.headers.get('X-Vercel-IP-City') else None
@@ -175,6 +185,7 @@ def donation_click():
     return jsonify({'status': 'ok'}), 200
 
 @app.route('/api/track-story-event', methods=['POST'])
+@csrf.exempt
 def track_story_event():
     data = request.get_json()
     story_id = data.get('story_id')
@@ -291,7 +302,8 @@ def api_subscribe():
         try:
             send_login_email(existing.email, existing.name or name, login_url)
         except Exception as e:
-            return jsonify({'success': False, 'message': f'Erro ao enviar email: {str(e)}'}), 500
+            print(f"[ERROR] Falha no fluxo de subscrição: {e}")
+            return jsonify({'success': False, 'message': 'Ocorreu um erro ao processar a subscrição. Tenta novamente mais tarde.'}), 500
 
         return jsonify({
             'success': True,
@@ -312,7 +324,8 @@ def api_subscribe():
         try:
             send_verification_email(existing.email, existing.name or name, verify_url)
         except Exception as e:
-            return jsonify({'success': False, 'message': str(e)}), 500
+            print(f"[ERROR] Falha no fluxo de subscrição: {e}")
+            return jsonify({'success': False, 'message': 'Ocorreu um erro ao processar a subscrição. Tenta novamente mais tarde.'}), 500
 
         return jsonify({
             'success': True,
@@ -341,7 +354,8 @@ def api_subscribe():
     try:
         send_verification_email(email, name, verify_url)
     except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
+        print(f"[ERROR] Falha no fluxo de subscrição: {e}")
+        return jsonify({'success': False, 'message': 'Ocorreu um erro ao processar a subscrição. Tenta novamente mais tarde.'}), 500
 
     return jsonify({
         'success': True,
@@ -796,7 +810,7 @@ def page_not_found(e):
 @app.route('/api/admin/users/create', methods=['POST'])
 def api_create_admin():
     # Verifica se o pedido tem o token correto
-    if request.headers.get('X-Admin-Token') != os.getenv('SECRET_KEY'):
+    if request.headers.get('X-Admin-Token') != os.getenv('ADMIN_API_TOKEN'):
         return jsonify({'error': 'Não autorizado'}), 401
 
     username = request.form.get('username')
@@ -818,7 +832,7 @@ def api_create_admin():
 
 @app.route('/api/admin/users/delete', methods=['POST'])
 def api_delete_admin():
-    if request.headers.get('X-Admin-Token') != os.getenv('SECRET_KEY'):
+    if request.headers.get('X-Admin-Token') != os.getenv('ADMIN_API_TOKEN'):
         return jsonify({'error': 'Não autorizado'}), 401
 
     username = request.form.get('username')
@@ -842,12 +856,47 @@ def api_delete_admin():
 
 @app.route('/api/admin/users/list', methods=['GET'])
 def api_list_admins():
-    if request.headers.get('X-Admin-Token') != os.getenv('SECRET_KEY'):
+    if request.headers.get('X-Admin-Token') != os.getenv('ADMIN_API_TOKEN'):
         return jsonify({'error': 'Não autorizado'}), 401
 
     users = User.query.all()
     user_list = [{'id': u.id, 'username': u.username, 'created_at': u.created_at} for u in users]
     return jsonify({'users': user_list}), 200
+
+
+# ============================================================
+# HEADERS DE SEGURANÇA
+# ============================================================
+@app.after_request
+def add_security_headers(response):
+    # 1. Impede Clickjacking (o site não pode ser embutido noutro site)
+    response.headers['X-Frame-Options'] = 'DENY'
+    
+    # 2. Impede adivinhação de tipo de ficheiro (MIME-sniffing)
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    
+    # 3. Força HTTPS (só o browser usa isto se o site já estiver em HTTPS)
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    
+    # 4. Controla quanta informação de referência é enviada para outros sites
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    
+    # 5. Content Security Policy (CSP)
+    # Como usamos Tailwind (que gera estilos inline) e Jinja (que injeta dados inline),
+    # precisamos de permitir 'unsafe-inline' para scripts e estilos.
+    # O 'self' permite ficheiros do teu próprio domínio.
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdn.plot.ly; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data: https://lh3.googleusercontent.com; "
+        "connect-src 'self' https://api.resend.com; "
+        "frame-ancestors 'none';"
+    )
+    response.headers['Content-Security-Policy'] = csp
+    
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)

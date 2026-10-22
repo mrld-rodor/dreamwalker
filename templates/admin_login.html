@@ -53,6 +53,7 @@
 
         <div class="admin-field">
           <label for="username">Utilizador</label>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input
             type="text"
             id="username"

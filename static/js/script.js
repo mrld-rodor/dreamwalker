@@ -3,6 +3,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // ============================================================
+  // CSRF TOKEN
+  // ============================================================
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  // ============================================================
   // ELEMENTOS GLOBAIS
   // ============================================================
   const header = document.querySelector('.navbar');
@@ -266,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       fetch('/api/track-story-event', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
         body: JSON.stringify({ story_id: num, action: 'view' })
       }).catch(console.warn);
     }
@@ -301,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // 👇 PONTO 1.4: RASTREAR CLIQUE EM COMPRAR (BUY CLICK) 👇
           fetch('/api/track-story-event', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
             body: JSON.stringify({ story_id: modalNumber.textContent, action: 'buy_click' })
           }).catch(console.warn);
         }
@@ -450,6 +455,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(contactForm);
         const response = await fetch('/enviar-contato', {
           method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+          },
           body: formData,
         });
         const data = await response.json();
@@ -485,7 +493,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      fetch('/api/donation-click', { method: 'POST', keepalive: true })
+      fetch('/api/donation-click', { 
+        method: 'POST',
+        headers: {
+        'X-CSRFToken': csrfToken,},
+        keepalive: true })
         .catch(err => console.warn('[donation-click] falhou:', err));
     });
   });
@@ -686,9 +698,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================================
   // HELPER — mostrar flash dinamicamente (sem reload)
   // ============================================================
-  function showFlash(type, message) {
+    function showFlash(type, message) {
     let container = document.getElementById('flash-container');
 
+    // Se não existir, cria
     if (!container) {
       container = document.createElement('div');
       container.id = 'flash-container';
@@ -696,17 +709,31 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(container);
     }
 
+    // Cria a div da mensagem
     const flash = document.createElement('div');
     flash.className = `flash-message flash-${type}`;
-    flash.innerHTML = `
-      <span class="flash-text">${message}</span>
-      <button type="button" class="flash-close" aria-label="Fechar">✕</button>
-    `;
 
-    flash.querySelector('.flash-close').addEventListener('click', () => flash.remove());
+    // Cria o span do texto (AQUI ESTÁ A PROTEÇÃO)
+    const textSpan = document.createElement('span');
+    textSpan.className = 'flash-text';
+    textSpan.textContent = message; // textContent ignora HTML e trata tudo como texto
 
+    // Cria o botão de fechar
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'flash-close';
+    closeBtn.setAttribute('aria-label', 'Fechar');
+    closeBtn.textContent = '✕';
+
+    // Adiciona o evento de clique ao botão
+    closeBtn.addEventListener('click', () => flash.remove());
+
+    // Junta as peças
+    flash.appendChild(textSpan);
+    flash.appendChild(closeBtn);
     container.appendChild(flash);
 
+    // Auto-fade após 6 segundos
     setTimeout(() => {
       flash.classList.add('is-hiding');
       setTimeout(() => flash.remove(), 500);
@@ -757,7 +784,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'A CRIAR...';
 
         try {
-          const res = await fetch('/api/subscribe', { method: 'POST', body: new FormData(registerForm) });
+          const res = await fetch('/api/subscribe', { 
+            method: 'POST', 
+            headers: {'X-CSRFToken': csrfToken,}, 
+            body: new FormData(registerForm) });
           const data = await res.json();
           
           if (data.success) {
@@ -788,7 +818,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'A ENTRAR...';
 
         try {
-          const res = await fetch('/api/subscriber-login', { method: 'POST', body: new FormData(loginForm) });
+          const res = await fetch('/api/subscriber-login', { 
+            method: 'POST', 
+            headers: {'X-CSRFToken': csrfToken,}, 
+            body: new FormData(loginForm) });
           const data = await res.json();
           
           if (data.success) {
@@ -835,7 +868,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'A ENVIAR...';
 
         try {
-          const res = await fetch('/api/request-password-reset', { method: 'POST', body: new FormData(resetForm) });
+          const res = await fetch('/api/request-password-reset', { 
+            method: 'POST', 
+            headers: {'X-CSRFToken': csrfToken,}, 
+            body: new FormData(resetForm) });
           const data = await res.json();
           
           if (data.success) {

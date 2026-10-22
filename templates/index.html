@@ -277,7 +277,7 @@
       {% endif %}
 
       <form id="contact-form" class="space-y-4" data-anime="up" data-delay="1" autocomplete="off">
-        
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <!-- Honeypot -->
         <input type="text" name="website" tabindex="-1" autocomplete="off"
               style="position:absolute; left:-9999px; opacity:0; pointer-events:none;"
